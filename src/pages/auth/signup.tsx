@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowLeft, Check, ChevronRight } from 'lucide-react'
-import { useTheme } from '@/components/theme/theme-provider'
 
 const Signup = () => {
-  const { theme } = useTheme()
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [passwordStrength, setPasswordStrength] = useState(0)

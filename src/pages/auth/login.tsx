@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Eye, EyeOff, ArrowLeft, Check, ChevronRight } from 'lucide-react'
-import { useTheme } from '@/components/theme/theme-provider'
 
 const Login = () => {
-  const { theme } = useTheme()
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',

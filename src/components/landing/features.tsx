@@ -1,4 +1,3 @@
-import React from 'react'
 import { ShieldCheck, Users, FileText, Lock, Sparkles, Database, Clock, Zap } from 'lucide-react'
 
 const Features = () => {

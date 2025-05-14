@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle, RefreshCw } from 'lucide-react'
-import { useTheme } from '@/components/theme/theme-provider'
 
 const VerifyOtp = () => {
-  const { theme } = useTheme()
   const navigate = useNavigate()
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''))
   const [isVerified, setIsVerified] = useState(false)

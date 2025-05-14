@@ -1,4 +1,4 @@
-import { ArrowRight, RotateCw, Database, Lock, UserCheck, GitBranch, LayoutGrid, Workflow, RefreshCw, Activity, User } from 'lucide-react'
+import { ArrowRight, RotateCw, Database, Lock,  GitBranch, LayoutGrid, Workflow, RefreshCw, Activity, User } from 'lucide-react'
 
 const Integration = () => {
   return (
