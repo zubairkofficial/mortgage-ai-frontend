@@ -2,10 +2,11 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/auth/login";
 import Landing from "./pages/landing";
-import Dashboard from "./pages/dashboard/page";
+import Layout from "./pages/layout/layout";
 import Signup from "./pages/auth/signup";
 import VerifyOtp from "./pages/auth/verify-otp";
-
+import UserTable from "./pages/admin/user-table";
+import Home from './pages/dashboard/home';
 const router = createBrowserRouter([
     {
         path: "/",
@@ -13,7 +14,17 @@ const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <Dashboard />
+        element: <Layout />,
+        children: [
+            {
+                path: "",
+                element: <Home />
+            },
+            {
+                path: "users",
+                element: <UserTable />
+            }
+        ]
     },
     {
         path: "/login",
@@ -27,6 +38,7 @@ const router = createBrowserRouter([
         path: "/verify-otp",
         element: <VerifyOtp />
     }
+
 ])
 
 const AppRouter = () => {
