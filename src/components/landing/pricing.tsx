@@ -148,18 +148,6 @@ const Pricing = () => {
           </div>
         </div>
         
-        <div className="mt-10 max-w-4xl mx-auto rounded-xl bg-brand-blue/5 border border-brand-blue/20 p-8 flex flex-col md:flex-row items-center justify-between">
-          <div className="text-center md:text-left mb-4 md:mb-0">
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-brand-blue/10 text-xs font-medium text-brand-blue mb-2">
-              Limited Time Offer
-            </div>
-            <h3 className="text-xl font-bold">30-Day Free Trial</h3>
-            <p className="text-muted-foreground mt-1">Try any plan risk-free for 30 days. No credit card required.</p>
-          </div>
-          <button className="rounded-md bg-brand-blue px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-brand-blue/20 hover:bg-brand-blue/90 transition-colors">
-            Start Free Trial
-          </button>
-        </div>
       </div>
     </section>
   )
