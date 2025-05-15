@@ -109,27 +109,27 @@ const BorrowerDashboard: FC = () => {
               {/* Progress Stages */}
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-gray-700">Application Progress</span>
+                  <span className="text-sm font-medium text-foreground">Application Progress</span>
                 </div>
-                <div className="flex justify-center items-center  relative">
+                <div className="flex justify-center items-center relative">
                   {/* Stage indicators with connecting lines */}
                   <div className="flex items-center w-full bottom-3">
                     {/* Stage 1: Draft */}
                     <div className="flex flex-col items-center relative z-10">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 1 ? 'bg-primary text-white' : 'bg-gray-200'}`}>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
                         {application.stage > 1 ? <IconCheck size={14} /> : '1'}
                       </div>
                       <span className="text-xs mt-2 font-medium">Draft</span>
                     </div>
                     
                     {/* Connector 1-2 */}
-                    <div className="flex-1 px-2 mx-1 ">
-                      <div className={`h-1 ${application.stage >= 2 ? 'bg-primary' : 'bg-gray-200'} relative -top-2`}></div>
+                    <div className="flex-1 px-2 mx-1">
+                      <div className={`h-1 ${application.stage >= 2 ? 'bg-primary' : 'bg-muted'} relative -top-2`}></div>
                     </div>
                     
                     {/* Stage 2: Submitted */}
                     <div className="flex flex-col items-center relative z-10">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 2 ? 'bg-primary text-white' : 'bg-gray-200'}`}>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
                         {application.stage > 2 ? <IconCheck size={14} /> : '2'}
                       </div>
                       <span className="text-xs mt-2 font-medium">Submitted</span>
@@ -137,12 +137,12 @@ const BorrowerDashboard: FC = () => {
                     
                     {/* Connector 2-3 */}
                     <div className="flex-1 px-2 mx-1">
-                      <div className={`h-1 ${application.stage >= 3 ? 'bg-primary' : 'bg-gray-200'} relative -top-2`}></div>
+                      <div className={`h-1 ${application.stage >= 3 ? 'bg-primary' : 'bg-muted'} relative -top-2`}></div>
                     </div>
                     
                     {/* Stage 3: Processing */}
                     <div className="flex flex-col items-center relative z-10">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 3 ? 'bg-primary text-white' : 'bg-gray-200'}`}>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
                         {application.stage > 3 ? <IconCheck size={14} /> : '3'}
                       </div>
                       <span className="text-xs mt-2 font-medium">Processing</span>
@@ -150,12 +150,12 @@ const BorrowerDashboard: FC = () => {
                     
                     {/* Connector 3-4 */}
                     <div className="flex-1 px-2 mx-1">
-                      <div className={`h-1 ${application.stage >= 4 ? 'bg-primary' : 'bg-gray-200'} relative -top-2`}></div>
+                      <div className={`h-1 ${application.stage >= 4 ? 'bg-primary' : 'bg-muted'} relative -top-2`}></div>
                     </div>
                     
                     {/* Stage 4: Decision */}
                     <div className="flex flex-col items-center relative z-10">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 4 ? (application.isRejected ? 'bg-red-500 text-white' : 'bg-green-500 text-white') : 'bg-gray-200'}`}>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 4 ? (application.isRejected ? 'bg-destructive text-destructive-foreground' : 'bg-[var(--brand-teal)] text-primary-foreground') : 'bg-muted text-muted-foreground'}`}>
                         {application.stage >= 4 ? (application.isRejected ? <IconX size={14} /> : <IconCheck size={14} />) : '4'}
                       </div>
                       <span className="text-xs mt-2 font-medium">Decision</span>
