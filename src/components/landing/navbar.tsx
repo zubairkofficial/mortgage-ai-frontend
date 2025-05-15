@@ -26,12 +26,12 @@ const Navbar = () => {
   }
 
   return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+    <header className={`top-0 z-50 w-full transition-all duration-300 ${
       scrolled 
-        ? 'border-b' 
+        ? 'border-b sticky' 
         : 'bg-transparent'
     }`}>
-      <div className="container  flex h-20 items-center justify-between px-6 md:px-8 mx-auto">
+      <div className="container flex h-20 items-center justify-between px-6 md:px-8 mx-auto">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="relative">

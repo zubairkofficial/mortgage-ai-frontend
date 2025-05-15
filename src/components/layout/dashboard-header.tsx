@@ -2,20 +2,29 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import Helpers from "@/config/helpers"
-
+import { useTheme } from "../theme/theme-provider"
+import { IconSun, IconMoon } from "@tabler/icons-react"
 interface ActionButton {
-  label: string
+  label: string | React.ReactNode
   onClick: () => void
   variant?: "default" | "secondary" | "ghost" | "link" | "outline" | "destructive"
   className?: string
   mobileHidden?: boolean
 }
 
-export function DashboardHeader({ title = "Documents" }: { title?: string }) {
+export function DashboardHeader({ title = "Dashboard" }: { title?: string }) {
+
+  const { theme, setTheme } = useTheme();
   const actionButtons: ActionButton[] = [
     {
       label: "Toast",
       onClick: () => { Helpers.showToast('Hello') },
+      variant: "ghost",
+      mobileHidden: true
+    },
+    {
+      label: theme === "dark" ? <IconSun /> : <IconMoon />,
+      onClick: () => { setTheme(theme === "dark" ? "light" : "dark") },
       variant: "ghost",
       mobileHidden: true
     },

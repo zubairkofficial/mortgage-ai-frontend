@@ -46,6 +46,30 @@
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
   --sidebar-border: hsl(220 13% 91%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  
+  /* Gradient colors and card variations */
+  --gradient-primary-from: hsl(222, 100%, 97%);
+  --gradient-primary-to: hsl(240, 100%, 97%);
+  --gradient-primary-border: hsl(222, 84%, 95%);
+  --gradient-secondary-from: hsl(174, 100%, 97%);
+  --gradient-secondary-to: hsl(160, 100%, 97%);
+  --gradient-secondary-border: hsl(174, 84%, 95%);
+  --gradient-accent-from: hsl(43, 100%, 97%);
+  --gradient-accent-to: hsl(36, 100%, 97%);
+  --gradient-accent-border: hsl(43, 84%, 95%);
+  --gradient-info-from: hsl(196, 100%, 97%);
+  --gradient-info-to: hsl(200, 100%, 97%);
+  --gradient-info-border: hsl(196, 84%, 95%);
+  
+  /* Card variations */
+  --card-primary-bg: var(--gradient-primary-from);
+  --card-primary-border: var(--gradient-primary-border);
+  --card-secondary-bg: var(--gradient-secondary-from);
+  --card-secondary-border: var(--gradient-secondary-border);
+  --card-accent-bg: var(--gradient-accent-from);
+  --card-accent-border: var(--gradient-accent-border);
+  --card-info-bg: var(--gradient-info-from);
+  --card-info-border: var(--gradient-info-border);
 }
 
 .dark {
@@ -88,6 +112,30 @@
   --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
   --sidebar-border: hsl(240 3.7% 15.9%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  
+  /* Gradient colors and card variations for dark mode */
+  --gradient-primary-from: hsl(222, 47%, 15%);
+  --gradient-primary-to: hsl(240, 47%, 18%);
+  --gradient-primary-border: hsl(222, 47%, 20%);
+  --gradient-secondary-from: hsl(174, 40%, 15%);
+  --gradient-secondary-to: hsl(160, 40%, 18%);
+  --gradient-secondary-border: hsl(174, 40%, 20%);
+  --gradient-accent-from: hsl(43, 40%, 15%);
+  --gradient-accent-to: hsl(36, 40%, 18%);
+  --gradient-accent-border: hsl(43, 40%, 20%);
+  --gradient-info-from: hsl(196, 40%, 15%);
+  --gradient-info-to: hsl(200, 40%, 18%);
+  --gradient-info-border: hsl(196, 40%, 20%);
+  
+  /* Card variations for dark mode */
+  --card-primary-bg: var(--gradient-primary-from);
+  --card-primary-border: var(--gradient-primary-border);
+  --card-secondary-bg: var(--gradient-secondary-from);
+  --card-secondary-border: var(--gradient-secondary-border);
+  --card-accent-bg: var(--gradient-accent-from);
+  --card-accent-border: var(--gradient-accent-border);
+  --card-info-bg: var(--gradient-info-from);
+  --card-info-border: var(--gradient-info-border);
 }
 
 @theme inline {
@@ -132,6 +180,30 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  
+  /* Gradient colors */
+  --color-gradient-primary-from: var(--gradient-primary-from);
+  --color-gradient-primary-to: var(--gradient-primary-to);
+  --color-gradient-primary-border: var(--gradient-primary-border);
+  --color-gradient-secondary-from: var(--gradient-secondary-from);
+  --color-gradient-secondary-to: var(--gradient-secondary-to);
+  --color-gradient-secondary-border: var(--gradient-secondary-border);
+  --color-gradient-accent-from: var(--gradient-accent-from);
+  --color-gradient-accent-to: var(--gradient-accent-to);
+  --color-gradient-accent-border: var(--gradient-accent-border);
+  --color-gradient-info-from: var(--gradient-info-from);
+  --color-gradient-info-to: var(--gradient-info-to);
+  --color-gradient-info-border: var(--gradient-info-border);
+  
+  /* Card variations */
+  --color-card-primary-bg: var(--card-primary-bg);
+  --color-card-primary-border: var(--card-primary-border);
+  --color-card-secondary-bg: var(--card-secondary-bg);
+  --color-card-secondary-border: var(--card-secondary-border);
+  --color-card-accent-bg: var(--card-accent-bg);
+  --color-card-accent-border: var(--card-accent-border);
+  --color-card-info-bg: var(--card-info-bg);
+  --color-card-info-border: var(--card-info-border);
 }
 
 @layer base {
@@ -141,4 +213,21 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Utility classes for gradient cards */
+.card-gradient-primary {
+  @apply bg-gradient-to-r from-[var(--gradient-primary-from)] to-[var(--gradient-primary-to)] border-[var(--gradient-primary-border)];
+}
+
+.card-gradient-secondary {
+  @apply bg-gradient-to-r from-[var(--gradient-secondary-from)] to-[var(--gradient-secondary-to)] border-[var(--gradient-secondary-border)];
+}
+
+.card-gradient-accent {
+  @apply bg-gradient-to-r from-[var(--gradient-accent-from)] to-[var(--gradient-accent-to)] border-[var(--gradient-accent-border)];
+}
+
+.card-gradient-info {
+  @apply bg-gradient-to-r from-[var(--gradient-info-from)] to-[var(--gradient-info-to)] border-[var(--gradient-info-border)];
 }
