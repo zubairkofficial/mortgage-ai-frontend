@@ -26,7 +26,7 @@ const applications: Application[] = [
     amount: "$320,000",
     term: "15 years",
     status: "Approved",
-    statusColor: "text-green-600 bg-green-100",
+    statusColor: "text-[var(--brand-teal)] bg-[color-mix(in_srgb,var(--brand-teal)_20%,transparent)]",
     stage: 2,
   },
 ]
@@ -82,7 +82,11 @@ const BorrowerDashboard: FC = () => {
       {/* Loan Applications Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
         {applications.map((application) => (
-          <Card key={application.id} className="hover:shadow-md transition-shadow border-l-4" style={{ borderLeftColor: application.status === "Approved" ? "#10b981" : application.status === "Rejected" ? "#ef4444" : "#6366f1" }}>
+          <Card key={application.id} className="hover:shadow-md transition-shadow border-l-4" style={{ 
+            borderLeftColor: application.status === "Approved" ? "var(--brand-teal)" : 
+                             application.status === "Rejected" ? "var(--destructive)" : 
+                             "var(--primary)" 
+          }}>
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
                 <div>
@@ -96,12 +100,12 @@ const BorrowerDashboard: FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-4 mb-4">
-                <div className="bg-primary rounded-md p-2 flex-1">
-                  <span className="text-xs text-gray-500 block">Amount</span>
+                <div className="bg-secondary rounded-md p-2 flex-1">
+                  <span className="text-xs text-muted-foreground block">Amount</span>
                   <span className="font-semibold">{application.amount}</span>
                 </div>
-                <div className="bg-primary rounded-md p-2 flex-1">
-                  <span className="text-xs text-gray-500 block">Term</span>
+                <div className="bg-secondary rounded-md p-2 flex-1">
+                  <span className="text-xs text-muted-foreground block">Term</span>
                   <span className="font-semibold">{application.term}</span>
                 </div>
               </div>
@@ -186,7 +190,7 @@ const BorrowerDashboard: FC = () => {
       {/* Add New Application Button */}
       <div className="flex justify-center mt-2">
         <button 
-          className="flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+          className="flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
           onClick={() => navigate("/borrower/application")}
         >
           <IconPlus className="mr-2 h-4 w-4" />
