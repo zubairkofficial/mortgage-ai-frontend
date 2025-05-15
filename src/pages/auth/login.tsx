@@ -91,19 +91,7 @@ const Login = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-2 text-sm">
-            <Link to="/" className="opacity-80 hover:opacity-100 transition-opacity">
-              Home
-            </Link>
-            <span>•</span>
-            <Link to="/about" className="opacity-80 hover:opacity-100 transition-opacity">
-              About
-            </Link>
-            <span>•</span>
-            <Link to="/contact" className="opacity-80 hover:opacity-100 transition-opacity">
-              Contact
-            </Link>
-          </div>
+   
         </div>
       </div>
       

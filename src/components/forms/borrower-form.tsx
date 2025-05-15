@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { CheckIcon, ChevronRightIcon, ArrowRightIcon } from 'lucide-react';
+import { useState } from 'react';
+import { CheckIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -33,15 +32,7 @@ const steps = [
   { id: 'step5', title: 'Complete', description: 'Browse and upload' },
 ];
 
-// Status types for the application process
-type ApplicationStatus = 
-  | 'askMissingInfo'
-  | 'askMissingData'
-  | 'dismissed'
-  | 'notMeetCriteria'
-  | 'approved'
-  | 'qualified'
-  | 'review';
+
 
 export default function BorrowerForm() {
   const [currentStep, setCurrentStep] = useState(0);

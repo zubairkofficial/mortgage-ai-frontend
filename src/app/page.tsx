@@ -1,17 +1,6 @@
 import { DataTable } from "@/components/dashboard/data-table"
 import { ChartAreaInteractive } from "@/components/dashboard/chart-area-interactive"
 import { SectionCards } from "@/components/dashboard/section-cards"
-import { z } from "zod"
-
-const tableSchema = z.object({
-  id: z.number(),
-  borrowerName: z.string(),
-  loanType: z.string(),
-  status: z.string(),
-  amount: z.string(),
-  ltv: z.string(),
-  underwriter: z.string(),
-})
 
 const mortgageApplicationsData = [
   {

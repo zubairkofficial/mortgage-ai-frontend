@@ -1,9 +1,7 @@
 import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter, CardAction } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { mockUserData } from "@/lib/navlinks";
-import { IconCalendar,  IconFileText, IconTrendingUp, IconPlus } from "@tabler/icons-react";
-import { DataTable, createSortableColumn, createActionsColumn } from "@/components/common/table";
+import { IconCalendar, IconFileText, IconPlus, IconCheck, IconX } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 // Define application type
 type Application = {
@@ -14,19 +12,13 @@ type Application = {
   term: string;
   status: string;
   statusColor: string;
+  stage: number; // 1: Draft, 2: Submitted, 3: Processing, 4: Approved/Rejected
+  isRejected?: boolean;
 }
 
 // Mock applications data
 const applications: Application[] = [
-  {
-    id: "APP-001",
-    name: "Home Purchase Loan",
-    date: "2023-10-15",
-    amount: "$450,000",
-    term: "30 years",
-    status: "In Review",
-    statusColor: "text-amber-600 bg-amber-100",
-  },
+ 
   {
     id: "APP-002",
     name: "Refinance Application",
@@ -35,26 +27,9 @@ const applications: Application[] = [
     term: "15 years",
     status: "Approved",
     statusColor: "text-green-600 bg-green-100",
+    stage: 2,
   },
-  {
-    id: "APP-003",
-    name: "HELOC Application",
-    date: "2023-12-21",
-    amount: "$75,000",
-    term: "10 years",
-    status: "Pending Documents",
-    statusColor: "text-blue-600 bg-blue-100",
-  },
-  {
-    id: "APP-004",
-    name: "Investment Property Loan",
-    date: "2024-01-07",
-    amount: "$550,000",
-    term: "30 years",
-    status: "Submitted",
-    statusColor: "text-purple-600 bg-purple-100",
-  },
-];
+]
 
 // Get time of day for greeting
 const getTimeOfDay = () => {
@@ -68,39 +43,6 @@ const BorrowerDashboard: FC = () => {
   const timeOfDay = getTimeOfDay();
   const navigate = useNavigate();   
   const userName = mockUserData.name;
-
-  // Define table columns
-  const columns = [
-    createSortableColumn<Application, string>("id", "Application ID"),
-    createSortableColumn<Application, string>("name", "Name"),
-    createSortableColumn<Application, string>("date", "Submission Date", 
-      (data: Application) => <div>{new Date(data.date).toLocaleDateString()}</div>
-    ),
-    createSortableColumn<Application, string>("amount", "Amount"),
-    createSortableColumn<Application, string>("term", "Term"),
-    createSortableColumn<Application, string>("status", "Status", 
-      (data: Application) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${data.statusColor}`}>
-          {data.status}
-        </span>
-      )
-    ),
-    createActionsColumn<Application>([
-      { 
-        label: "View Details", 
-        onClick: (data: Application) => console.log("View details", data.id)
-      },
-      { 
-        label: "Edit Application", 
-        onClick: (data: Application) => console.log("Edit", data.id)
-      },
-      { 
-        label: "Delete", 
-        onClick: (data: Application) => console.log("Delete", data.id),
-        variant: "destructive" 
-      },
-    ])
-  ];
  
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -137,30 +79,120 @@ const BorrowerDashboard: FC = () => {
         </CardFooter>
       </Card>
 
-   
-      {/* Applications Table - Using DataTable component */}
-      <DataTable
-        columns={columns}
-        data={applications}
-        title="Your Applications"
-        description="Track and manage all your mortgage applications"
-        searchKey="name"
-        filterableColumns={[
-          {
-            id: "status",
-            title: "Status",
-            options: [
-              { label: "In Review", value: "In Review" },
-              { label: "Approved", value: "Approved" },
-              { label: "Pending Documents", value: "Pending Documents" },
-              { label: "Submitted", value: "Submitted" }
-            ]
-          }
-        ]}
-        actionButtonText="New Application"
-        actionButtonIcon={<IconPlus className="mr-2 h-4 w-4" />}
-        onActionButtonClick={() => navigate("/borrower/application")}
-      />
+      {/* Loan Applications Status Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+        {applications.map((application) => (
+          <Card key={application.id} className="hover:shadow-md transition-shadow border-l-4" style={{ borderLeftColor: application.status === "Approved" ? "#10b981" : application.status === "Rejected" ? "#ef4444" : "#6366f1" }}>
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-lg font-semibold">{application.name}</CardTitle>
+                  <CardDescription className="text-sm opacity-80">{application.id} • {new Date(application.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</CardDescription>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${application.statusColor} shadow-sm`}>
+                  {application.status}
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-4 mb-4">
+                <div className="bg-gray-50 rounded-md p-2 flex-1">
+                  <span className="text-xs text-gray-500 block">Amount</span>
+                  <span className="font-semibold">{application.amount}</span>
+                </div>
+                <div className="bg-gray-50 rounded-md p-2 flex-1">
+                  <span className="text-xs text-gray-500 block">Term</span>
+                  <span className="font-semibold">{application.term}</span>
+                </div>
+              </div>
+              
+              {/* Progress Stages */}
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium text-gray-700">Application Progress</span>
+                </div>
+                <div className="flex justify-center items-center  relative">
+                  {/* Stage indicators with connecting lines */}
+                  <div className="flex items-center w-full bottom-3">
+                    {/* Stage 1: Draft */}
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 1 ? 'bg-primary text-white' : 'bg-gray-200'}`}>
+                        {application.stage > 1 ? <IconCheck size={14} /> : '1'}
+                      </div>
+                      <span className="text-xs mt-2 font-medium">Draft</span>
+                    </div>
+                    
+                    {/* Connector 1-2 */}
+                    <div className="flex-1 px-2 mx-1 ">
+                      <div className={`h-1 ${application.stage >= 2 ? 'bg-primary' : 'bg-gray-200'} relative -top-2`}></div>
+                    </div>
+                    
+                    {/* Stage 2: Submitted */}
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 2 ? 'bg-primary text-white' : 'bg-gray-200'}`}>
+                        {application.stage > 2 ? <IconCheck size={14} /> : '2'}
+                      </div>
+                      <span className="text-xs mt-2 font-medium">Submitted</span>
+                    </div>
+                    
+                    {/* Connector 2-3 */}
+                    <div className="flex-1 px-2 mx-1">
+                      <div className={`h-1 ${application.stage >= 3 ? 'bg-primary' : 'bg-gray-200'} relative -top-2`}></div>
+                    </div>
+                    
+                    {/* Stage 3: Processing */}
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 3 ? 'bg-primary text-white' : 'bg-gray-200'}`}>
+                        {application.stage > 3 ? <IconCheck size={14} /> : '3'}
+                      </div>
+                      <span className="text-xs mt-2 font-medium">Processing</span>
+                    </div>
+                    
+                    {/* Connector 3-4 */}
+                    <div className="flex-1 px-2 mx-1">
+                      <div className={`h-1 ${application.stage >= 4 ? 'bg-primary' : 'bg-gray-200'} relative -top-2`}></div>
+                    </div>
+                    
+                    {/* Stage 4: Decision */}
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-all ${application.stage >= 4 ? (application.isRejected ? 'bg-red-500 text-white' : 'bg-green-500 text-white') : 'bg-gray-200'}`}>
+                        {application.stage >= 4 ? (application.isRejected ? <IconX size={14} /> : <IconCheck size={14} />) : '4'}
+                      </div>
+                      <span className="text-xs mt-2 font-medium">Decision</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              
+            </CardContent>
+            <CardFooter className="justify-between pt-2 border-t mt-2">
+              <span className="text-xs text-gray-500">Last updated: {new Date(application.date).toLocaleDateString()}</span>
+              <button 
+                className="text-primary hover:text-primary/80 font-medium text-sm flex items-center gap-1 hover:underline transition-colors"
+                onClick={() => navigate(`/borrower/application/${application.id}`)}
+              >
+                View Details 
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
+      {/* Add New Application Button */}
+      <div className="flex justify-center mt-2">
+        <button 
+          className="flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+          onClick={() => navigate("/borrower/application")}
+        >
+          <IconPlus className="mr-2 h-4 w-4" />
+          New Application
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import {
   IconDashboard,
-  IconInnerShadowTop,
+
   IconMessageCircle,
   IconSettings,
   IconUsers,
