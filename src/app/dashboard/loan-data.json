@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "borrowerName": "John Smith",
+    "loanType": "Mortgage",
+    "status": "Approved",
+    "amount": "$450,000",
+    "ltv": "75%",
+    "underwriter": "Eddie Lake"
+  },
+  {
+    "id": 2,
+    "borrowerName": "Sarah Johnson",
+    "loanType": "Commercial",
+    "status": "In Review",
+    "amount": "$1,200,000",
+    "ltv": "68%",
+    "underwriter": "Jamik Tashpulatov"
+  },
+  {
+    "id": 3,
+    "borrowerName": "Acme Industries",
+    "loanType": "Commercial",
+    "status": "Approved",
+    "amount": "$3,500,000",
+    "ltv": "65%",
+    "underwriter": "Maya Johnson"
+  },
+  {
+    "id": 4,
+    "borrowerName": "Robert Chen",
+    "loanType": "Personal",
+    "status": "In Review",
+    "amount": "$75,000",
+    "ltv": "80%",
+    "underwriter": "Carlos Rodriguez"
+  },
+  {
+    "id": 5,
+    "borrowerName": "Green Valley LLC",
+    "loanType": "Commercial",
+    "status": "Approved",
+    "amount": "$2,100,000",
+    "ltv": "72%",
+    "underwriter": "Sarah Chen"
+  },
+  {
+    "id": 6,
+    "borrowerName": "Maria Garcia",
+    "loanType": "Mortgage",
+    "status": "In Review",
+    "amount": "$325,000",
+    "ltv": "78%",
+    "underwriter": "Raj Patel"
+  },
+  {
+    "id": 7,
+    "borrowerName": "Tech Solutions Inc.",
+    "loanType": "Commercial",
+    "status": "Approved",
+    "amount": "$950,000",
+    "ltv": "70%",
+    "underwriter": "Leila Ahmadi"
+  },
+  {
+    "id": 8,
+    "borrowerName": "David Wilson",
+    "loanType": "Mortgage",
+    "status": "In Review",
+    "amount": "$575,000",
+    "ltv": "82%",
+    "underwriter": "Thomas Wilson"
+  }
+] 

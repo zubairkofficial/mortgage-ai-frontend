@@ -53,7 +53,7 @@ class Helpers {
 
   static showToast = (
     message: string,
-    type: 'success' | 'error' | 'info' = 'info',
+    type: 'success' | 'error' | 'info' = 'success',
     duration: number = 3000
   ): void => {
     // Create a container for Toaster if it doesn't exist

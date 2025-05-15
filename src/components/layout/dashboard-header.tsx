@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import Helpers from "@/config/helpers"
 import { useTheme } from "../theme/theme-provider"
 import { IconSun, IconMoon } from "@tabler/icons-react"
+import Helpers from "@/config/helpers"
 interface ActionButton {
   label: string | React.ReactNode
   onClick: () => void
@@ -18,7 +18,7 @@ export function DashboardHeader({ title = "Dashboard" }: { title?: string }) {
   const actionButtons: ActionButton[] = [
     {
       label: "Toast",
-      onClick: () => { Helpers.showToast('Hello') },
+      onClick: () => { Helpers.showToast('Hello','success') },
       variant: "ghost",
       mobileHidden: true
     },

@@ -112,10 +112,7 @@ const BorrowerDashboard: FC = () => {
             Good {timeOfDay}, {userName}!
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              Active User
-            </Badge>
+      
           </CardAction>
         </CardHeader>
         <CardContent>

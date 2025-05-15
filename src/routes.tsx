@@ -12,6 +12,8 @@ import Home from './pages/dashboard/home';
 import BorrowerDashboard from './pages/borrower/dashboard/dashboard';
 import BorrowerForm from './components/forms/borrower-form';
 import ApplicationForm from './pages/borrower/application/application-form';
+import ForgotPassword from './pages/auth/forgot-password';
+import ResetPassword from './pages/auth/reset-password';
 
 const router = createBrowserRouter([
     {
@@ -69,6 +71,14 @@ const router = createBrowserRouter([
     {
         path: "/verify-otp",
         element: <VerifyOtp />
+    },
+    {
+        path: "/forgot-password",
+        element: <ForgotPassword />
+    },
+    {
+        path: "/reset-password",
+        element: <ResetPassword />
     }
 ])
 

@@ -60,8 +60,6 @@ export default function BorrowerForm() {
     },
     applicationComplete: false,
   });
-  const [applicationStatus, setApplicationStatus] = useState<ApplicationStatus | null>(null);
-
   // Update form data
   const updateFormData = (field: string, value: any) => {
     setFormData((prev) => ({
@@ -129,9 +127,7 @@ export default function BorrowerForm() {
   };
 
   // Handle application status change
-  const handleStatusChange = (status: ApplicationStatus) => {
-    setApplicationStatus(status);
-  };
+
 
   // Get step icon component based on current state
   const getStepIcon = (stepIndex: number) => {
@@ -402,6 +398,45 @@ export default function BorrowerForm() {
     );
   };
 
+  // Render horizontal step indicators
+  const renderHorizontalSteps = () => {
+    return (
+      <div className="flex w-full justify-between mb-8">
+        {steps.map((step, index) => (
+          <div key={step.id} className="flex flex-col items-center">
+            {/* Step connector line */}
+            {index > 0 && (
+              <div className="hidden sm:block absolute h-0.5 bg-muted" style={{
+                position: 'relative',
+                top: '20px',
+                left: `calc(${(index - 1) * (100 / (steps.length - 1))}% + 40px)`,
+                right: `calc(${100 - index * (100 / (steps.length - 1))}% + 40px)`,
+              }} />
+            )}
+            
+            {/* Step icon */}
+            <div className="relative z-10">
+              {getStepIcon(index)}
+            </div>
+            
+            {/* Step title and description */}
+            <div className="mt-2 text-center">
+              <div className={cn(
+                "font-medium text-sm",
+                index === currentStep ? "text-primary" : index < currentStep ? "text-primary/70" : "text-muted-foreground"
+              )}>
+                {step.title}
+              </div>
+              <div className="text-xs text-muted-foreground hidden sm:block">
+                {step.description}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="w-full min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -411,29 +446,17 @@ export default function BorrowerForm() {
         </div>
         
         <div className="bg-card rounded-xl shadow-sm overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-4">
-            {/* Left sidebar with steps */}
-            <div className="bg-sidebar text-sidebar-foreground p-6">
-              <div className="flex flex-col">
-                {steps.map((step, index) => (
-                  <div key={step.id} className="relative">
-                    <div className="flex items-center gap-4 py-4">
-                      {getStepIcon(index)}
-                      <div className="hidden sm:block">
-                        <div className="font-semibold">{step.title}</div>
-                        <div className="text-sm text-sidebar-accent-foreground">{step.description}</div>
-                      </div>
-                    </div>
-                    {index < steps.length - 1 && (
-                      <div className="absolute left-5 top-14 bottom-0 w-0.5 bg-sidebar-border" />
-                    )}
-                  </div>
-                ))}
-              </div>
+          <div className="p-6 md:p-8">
+            {/* Horizontal steps at the top */}
+            <div className="relative">
+              {renderHorizontalSteps()}
             </div>
             
+            {/* Line separating steps from content */}
+            <div className="h-px bg-border w-full my-6"></div>
+            
             {/* Main content area */}
-            <div className="lg:col-span-3 p-6 md:p-8">
+            <div>
               {renderStepContent()}
             </div>
           </div>

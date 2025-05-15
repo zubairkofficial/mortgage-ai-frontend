@@ -139,7 +139,7 @@ export function DataTable<TData, TValue>({
   }, [])
 
   return (
-    <div className="space-y-4 px-6 py-2 border border-primary rounded-2xl">
+    <div className="space-y-4 px-6 py-6 border border-primary rounded-2xl">
       {/* Table Header */}
       <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
         {(title || description) && (

@@ -22,36 +22,36 @@ interface CardData {
 export function SectionCards() {
   const cardsData: CardData[] = [
     {
-      title: "Total Revenue",
-      value: "$1,250.00",
+      title: "Loan Origination",
+      value: "$12,563,750",
       trend: "up",
-      trendValue: "+12.5%",
-      message: "Trending up this month",
-      description: "Visitors for the last 6 months"
+      trendValue: "+8.3%",
+      message: "Increased activity this month",
+      description: "Total value of originated loans"
     },
     {
-      title: "New Customers",
-      value: "1,234",
+      title: "Approval Rate",
+      value: "68.7%",
       trend: "down",
-      trendValue: "-20%",
-      message: "Down 20% this period",
-      description: "Acquisition needs attention"
+      trendValue: "-3.2%",
+      message: "Slight decrease from last month",
+      description: "Ratio of approved applications"
     },
     {
-      title: "Active Accounts",
-      value: "45,678",
+      title: "Active Applications",
+      value: "1,458",
       trend: "up",
-      trendValue: "+12.5%",
-      message: "Strong user retention",
-      description: "Engagement exceed targets"
+      trendValue: "+15.2%",
+      message: "Strong application growth",
+      description: "Currently in processing queue"
     },
     {
-      title: "Growth Rate",
-      value: "4.5%",
-      trend: "up",
-      trendValue: "+4.5%",
-      message: "Steady performance increase",
-      description: "Meets growth projections"
+      title: "Avg. Processing Time",
+      value: "18.5 days",
+      trend: "down",
+      trendValue: "-2.3 days",
+      message: "Faster processing time",
+      description: "From submission to decision"
     }
   ]
 
