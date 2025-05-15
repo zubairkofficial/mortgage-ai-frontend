@@ -96,11 +96,11 @@ const BorrowerDashboard: FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-4 mb-4">
-                <div className="bg-gray-50 rounded-md p-2 flex-1">
+                <div className="bg-primary rounded-md p-2 flex-1">
                   <span className="text-xs text-gray-500 block">Amount</span>
                   <span className="font-semibold">{application.amount}</span>
                 </div>
-                <div className="bg-gray-50 rounded-md p-2 flex-1">
+                <div className="bg-primary rounded-md p-2 flex-1">
                   <span className="text-xs text-gray-500 block">Term</span>
                   <span className="font-semibold">{application.term}</span>
                 </div>
