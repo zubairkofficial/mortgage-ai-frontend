@@ -1,8 +1,8 @@
 import {
- 
   type Icon,
 } from "@tabler/icons-react"
-import { BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, MessageSquareIcon, MailIcon, BookOpenIcon, SettingsIcon } from "lucide-react";
+import { BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, MessageSquareIcon, MailIcon, BookOpenIcon
+ } from "lucide-react";
 import { ClipboardCheckIcon, AlertCircleIcon, FileIcon } from "lucide-react";
 import { UserRole } from "./users"
 

@@ -2,7 +2,6 @@ import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter, CardAction } from "@/components/ui/card";
 import { IconCalendar, IconFileText, IconPlus, IconCheck, IconUsers, IconBriefcase,  IconRobot, IconBuildingArch } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import { mockUserData } from "@/lib/navlinks";
 import { useAuth } from "@/contexts/auth-context";
 
 // Define application type
