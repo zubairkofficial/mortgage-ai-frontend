@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { dummyUsers } from '@/lib/users';
 import { toast } from 'sonner';
-import { useUserStore, User } from '@/stores/userStore';
+import { useUser, User } from '@/stores/userStore';
 
 // Auth context interface
 interface AuthContextType {
@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Provider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, setUser, clearUser } = useUserStore();
+  const { user, setUser, clearUser } = useUser();
   const [isLoading, setIsLoading] = useState(true);
 
   // Check for existing user on mount
@@ -29,9 +29,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<boolean> => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     const foundUser = dummyUsers.find(u => u.email === email && u.password === password);
-    
+
     if (foundUser) {
       // Omit password from stored user
       const { password, ...userWithoutPassword } = foundUser;
@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success(`Welcome back, ${foundUser.name}!`);
       return true;
     }
-    
+
     toast.error('Invalid email or password');
     return false;
   };

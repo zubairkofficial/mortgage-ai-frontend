@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowLeft, Check, ChevronRight } from 'lucide-react'
 import { findUserByCredentials, UserRole } from '@/lib/users'
 import { toast } from 'sonner'
-import { useUserStore } from '@/stores/userStore'
+import { useUser } from '@/stores/userStore'
 
 const Login = () => {
   const navigate = useNavigate()
-  const setUser = useUserStore(state => state.setUser)
+  const setUser = useUser(state => state.setUser)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',

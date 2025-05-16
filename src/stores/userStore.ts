@@ -19,7 +19,7 @@ interface UserState {
 }
 
 // Create user store with persistence
-export const useUserStore = create<UserState>()(
+export const useUser = create<UserState>()(
   persist(
     (set) => ({
       user: null,

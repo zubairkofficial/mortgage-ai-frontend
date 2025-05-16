@@ -1,8 +1,9 @@
 import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter, CardAction } from "@/components/ui/card";
-import { mockUserData } from "@/lib/navlinks";
 import { IconCalendar, IconFileText, IconPlus, IconCheck, IconUsers, IconBriefcase,  IconRobot, IconBuildingArch } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { mockUserData } from "@/lib/navlinks";
+import { useAuth } from "@/contexts/auth-context";
 
 // Define application type
 type Application = {
@@ -41,9 +42,10 @@ const getTimeOfDay = () => {
 };
 
 const BorrowerDashboard: FC = () => {
+  const { user } = useAuth();
   const timeOfDay = getTimeOfDay();
   const navigate = useNavigate();   
-  const userName = mockUserData.name;
+  const userName = user?.name;
  
   return (
     <div className="flex flex-col gap-6 w-full">

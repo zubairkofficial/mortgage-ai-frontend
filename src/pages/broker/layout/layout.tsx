@@ -3,12 +3,12 @@ import { DashboardHeader } from "@/components/layout/dashboard-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { brokerNavLinks } from "@/lib/navlinks"
 import { Outlet, Navigate } from "react-router-dom"
-import { useUserStore } from "@/stores/userStore"
+import { useUser } from "@/stores/userStore"
 import { UserRole } from "@/lib/users"
 
 export default function BrokerLayout() {
     // Get user from global state
-    const user = useUserStore(state => state.user)
+    const user = useUser(state => state.user)
     
     // Redirect if not authenticated or not a broker
     if (!user || user.role !== UserRole.BROKER) {

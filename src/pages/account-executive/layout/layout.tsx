@@ -5,13 +5,13 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { accountExecutiveNavLinks } from "@/lib/navlinks";
 import { UserRole } from "@/lib/users";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { useUserStore } from "@/stores/userStore";
+import { useUser } from "@/stores/userStore";
 
 
 
 const AccountExecutiveLayout: FC = () => {
   // Get user from global state
-  const user = useUserStore(state => state.user);
+  const user = useUser(state => state.user);
   
   // Redirect if not authenticated or not an account executive
   if (!user || user.role !== UserRole.ACCOUNT_EXECUTIVE) {

@@ -17,7 +17,7 @@ import {
 import { type NavItem } from "@/lib/navlinks"
 import { useNavigate } from "react-router-dom";
 import { UserRole } from "@/lib/users";
-import { useUserStore } from "@/stores/userStore"
+import { useUser } from "@/stores/userStore"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   navLinks: NavItem[]
@@ -32,7 +32,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function AppSidebar({ navLinks, userData, ...props }: AppSidebarProps) {
   const navigate = useNavigate();
-  const clearUser = useUserStore(state => state.clearUser);
+  const clearUser = useUser(state => state.clearUser);
   
   const handleLogout = () => {
     clearUser();

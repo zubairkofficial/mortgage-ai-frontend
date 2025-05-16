@@ -98,16 +98,28 @@ export const brokerNavLinks: NavItem[] = [
     icon: <UsersIcon className="h-4 w-4" />,
   },
   {
-    title: "Settings",
-    url: "/broker/settings",
-    icon: <SettingsIcon className="h-4 w-4" />,
+    title: "CRM",
+    url: "/broker/crm",
+    icon: <MessageSquareIcon className="h-4 w-4" />,
   },
   {
-    title: "Chat",
-    url: "/broker/chat",
-    icon: <MessageSquareIcon className="h-4 w-4" />,
+    title: "Matchmaking",
+    url: "/broker/matchmaking",
+    icon: <ActivityIcon className="h-4 w-4" />,
+  },
+  {
+    title: "AI Assistant",
+    url: "/broker/ai-assistant",
+    icon: <BookOpenIcon className="h-4 w-4" />,
+  },
+  {
+    title: "Loan Structuring",
+    url: "/broker/loan-structuring",
+    icon: <FileTextIcon className="h-4 w-4" />,
   }
 ]
+
+
 
 // Navigation links for underwriting manager
 export const underwritingManagerNavLinks: NavItem[] = [

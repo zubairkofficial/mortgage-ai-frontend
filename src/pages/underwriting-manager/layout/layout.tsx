@@ -5,13 +5,13 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { underwritingManagerNavLinks } from "@/lib/navlinks";
 import { UserRole } from "@/lib/users";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { useUserStore } from "@/stores/userStore";
+import { useUser } from "@/stores/userStore";
 
 
 
 const UnderwritingManagerLayout: FC = () => {
   // Get user from global state
-  const user = useUserStore(state => state.user);
+  const user = useUser(state => state.user);
   
   // Redirect if not authenticated or not an underwriting manager
   if (!user || user.role !== UserRole.UNDERWRITING_MANAGER) {
