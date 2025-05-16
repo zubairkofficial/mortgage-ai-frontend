@@ -4,7 +4,7 @@ import {
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/layout/nav-main"
-import { NavUser } from "@/components/layout/user-menu"
+import { UserMenu } from "@/components/layout/user-menu"
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +15,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { type NavItem } from "@/lib/navlinks"
+import { useNavigate } from "react-router-dom";
+import { UserRole } from "@/lib/users";
+import { useUserStore } from "@/stores/userStore"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   navLinks: NavItem[]
@@ -22,10 +25,20 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     name: string
     email: string
     avatar: string
+    id: string
+    role: UserRole
   }
 }
 
 export function AppSidebar({ navLinks, userData, ...props }: AppSidebarProps) {
+  const navigate = useNavigate();
+  const clearUser = useUserStore(state => state.clearUser);
+  
+  const handleLogout = () => {
+    clearUser();
+    navigate('/login');
+  };
+  
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -44,10 +57,14 @@ export function AppSidebar({ navLinks, userData, ...props }: AppSidebarProps) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navLinks} />
+        <NavMain items={navLinks.map((link) => ({
+          title: link.title,
+          url: link.url,
+          icon: link.icon
+        }))} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={userData} />
+        <UserMenu user={userData} onLogout={handleLogout} />
       </SidebarFooter>
     </Sidebar>
   )

@@ -1,8 +1,13 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowLeft, Check, ChevronRight } from 'lucide-react'
+import { findUserByCredentials, UserRole } from '@/lib/users'
+import { toast } from 'sonner'
+import { useUserStore } from '@/stores/userStore'
 
 const Login = () => {
+  const navigate = useNavigate()
+  const setUser = useUserStore(state => state.setUser)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
@@ -20,8 +25,63 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic here
-    console.log('Login form submitted:', formData)
+    const user = findUserByCredentials(formData.email, formData.password)
+
+    if (user) {
+      // Store user in Zustand store for persistence
+      setUser(user)
+
+      // Redirect based on role
+      switch (user.role) {
+        case UserRole.BROKER:
+          navigate('/broker')
+          break
+
+        case UserRole.ACCOUNT_EXECUTIVE:
+          navigate('/account-executive')
+          break
+        case UserRole.UNDERWRITING_MANAGER:
+          navigate('/underwriting-manager')
+          break
+        case UserRole.BRANCH_MANAGER:
+          navigate('/branch-manager')
+          break
+        default:
+          navigate('/broker')
+      }
+
+      toast.success(`Welcome back, ${user.name}!`)
+    } else {
+      toast.error('Invalid email or password')
+    }
+  }
+
+  // Demo login buttons for quick access
+  const handleDemoLogin = (role: UserRole) => {
+    let email = ''
+
+    switch (role) {
+      case UserRole.BROKER:
+        email = 'broker@example.com'
+        break
+
+      case UserRole.ACCOUNT_EXECUTIVE:
+        email = 'executive@example.com'
+        break
+      case UserRole.UNDERWRITING_MANAGER:
+        email = 'underwriter@example.com'
+        break
+      case UserRole.BRANCH_MANAGER:
+        email = 'branch@example.com'
+        break
+
+    }
+
+    setFormData({
+      email,
+      password: '12345678',
+      rememberMe: false
+    })
   }
 
   return (
@@ -32,18 +92,18 @@ const Login = () => {
           <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 rounded-full bg-white blur-3xl"></div>
           <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 rounded-full bg-white blur-3xl"></div>
         </div>
-        
+
         <div className="relative z-10 flex flex-col justify-between h-full w-full p-12">
           <div>
             <div className="flex items-center gap-2">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 className="h-10 w-10"
               >
                 <path d="M2 22h20" />
@@ -54,11 +114,11 @@ const Login = () => {
               </svg>
               <span className="font-bold text-2xl">MortgageAI</span>
             </div>
-            
+
             <h1 className="text-4xl font-bold mt-16 leading-tight">Welcome back to your mortgage platform</h1>
             <p className="mt-6 text-lg opacity-90 max-w-md">Access your dashboard to track applications, review documents, and stay updated on your mortgage process.</p>
           </div>
-          
+
           <div className="space-y-8">
             <div className="flex items-start gap-4">
               <div className="bg-white/20 p-3 rounded-full">
@@ -69,7 +129,7 @@ const Login = () => {
                 <p className="opacity-80 mt-1">Access all your mortgage applications and documents in one place.</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4">
               <div className="bg-white/20 p-3 rounded-full">
                 <Check className="h-6 w-6" />
@@ -79,7 +139,7 @@ const Login = () => {
                 <p className="opacity-80 mt-1">Get real-time updates on application status changes and approvals.</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4">
               <div className="bg-white/20 p-3 rounded-full">
                 <Check className="h-6 w-6" />
@@ -90,25 +150,25 @@ const Login = () => {
               </div>
             </div>
           </div>
-          
-   
+
+
         </div>
       </div>
-      
+
       {/* Right side - Login form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <Link to="/" className="lg:hidden flex items-center gap-2 group">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   className="h-8 w-8 text-brand-blue dark:text-brand-light-blue"
                 >
                   <path d="M2 22h20" />
@@ -119,8 +179,8 @@ const Login = () => {
                 </svg>
                 <span className="font-bold text-lg tracking-tight">MortgageAI</span>
               </Link>
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
               >
                 <ArrowLeft size={16} />
@@ -131,7 +191,7 @@ const Login = () => {
             <h2 className="text-2xl font-bold mt-8">Welcome back</h2>
             <p className="text-sm text-muted-foreground mt-1">Sign in to access your account</p>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-1">
               <label htmlFor="email" className="text-sm font-medium">
@@ -155,8 +215,8 @@ const Login = () => {
                 <label htmlFor="password" className="text-sm font-medium">
                   Password
                 </label>
-                <Link 
-                  to="/forgot-password" 
+                <Link
+                  to="/forgot-password"
                   className="text-xs text-brand-blue hover:text-brand-teal dark:text-brand-light-blue transition-colors"
                 >
                   Forgot password?
@@ -215,6 +275,44 @@ const Login = () => {
             <Link to="/signup" className="font-medium text-brand-blue hover:text-brand-teal dark:text-brand-light-blue transition-colors">
               Sign up
             </Link>
+          </div>
+
+          {/* Demo accounts section */}
+          <div className="mt-8 border-t pt-6">
+            <h3 className="font-medium text-center mb-3">Demo Accounts</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => handleDemoLogin(UserRole.BROKER)}
+                className="p-2 border rounded hover:bg-secondary transition-colors"
+              >
+                Broker Portal
+              </button>
+
+
+              <button
+                type="button"
+                onClick={() => handleDemoLogin(UserRole.ACCOUNT_EXECUTIVE)}
+                className="p-2 border rounded hover:bg-secondary transition-colors"
+              >
+                Account Executive Portal
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDemoLogin(UserRole.UNDERWRITING_MANAGER)}
+                className="p-2 border rounded hover:bg-secondary transition-colors"
+              >
+                Underwriting Manager Portal
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDemoLogin(UserRole.BRANCH_MANAGER)}
+                className="p-2 border rounded hover:bg-secondary transition-colors"
+              >
+                Branch Manager Portal
+              </button>
+             
+            </div>
           </div>
         </div>
       </div>

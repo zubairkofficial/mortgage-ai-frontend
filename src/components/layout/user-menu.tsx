@@ -1,11 +1,12 @@
+"use client"
+
 import {
-  IconCreditCard,
-  IconDotsVertical,
-  IconLogout,
-  IconNotification,
-  IconUserCircle,
-  type Icon,
-} from "@tabler/icons-react"
+  BellIcon,
+  CreditCardIcon,
+  LogOutIcon,
+  MoreVerticalIcon,
+  UserCircleIcon,
+} from "lucide-react"
 
 import {
   Avatar,
@@ -28,36 +29,18 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-interface MenuItem {
-  label: string
-  icon: Icon
-}
-
-export function NavUser({
+export function UserMenu({
   user,
+  onLogout,
 }: {
   user: {
     name: string
     email: string
     avatar: string
   }
+  onLogout: () => void
 }) {
   const { isMobile } = useSidebar()
-  
-  const menuItems: MenuItem[] = [
-    {
-      label: "Account",
-      icon: IconUserCircle,
-    },
-    {
-      label: "Billing",
-      icon: IconCreditCard,
-    },
-    {
-      label: "Notifications",
-      icon: IconNotification,
-    },
-  ]
 
   return (
     <SidebarMenu>
@@ -74,15 +57,15 @@ export function NavUser({
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="text-muted-foreground truncate text-xs">
+                <span className="truncate text-xs text-muted-foreground">
                   {user.email}
                 </span>
               </div>
-              <IconDotsVertical className="ml-auto size-4" />
+              <MoreVerticalIcon className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -95,7 +78,7 @@ export function NavUser({
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="truncate text-xs text-muted-foreground">
                     {user.email}
                   </span>
                 </div>
@@ -103,16 +86,22 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {menuItems.map((item) => (
-                <DropdownMenuItem key={item.label}>
-                  <item.icon />
-                  {item.label}
-                </DropdownMenuItem>
-              ))}
+              <DropdownMenuItem>
+                <UserCircleIcon />
+                Account
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <CreditCardIcon />
+                Billing
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <BellIcon />
+                Notifications
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <IconLogout />
+            <DropdownMenuItem onClick={onLogout}>
+              <LogOutIcon />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

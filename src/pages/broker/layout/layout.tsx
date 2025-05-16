@@ -1,19 +1,29 @@
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { DashboardHeader } from "@/components/layout/dashboard-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { adminNavLinks, mockUserData } from "@/lib/navlinks"
-import { Outlet } from "react-router-dom"
+import { brokerNavLinks } from "@/lib/navlinks"
+import { Outlet, Navigate } from "react-router-dom"
+import { useUserStore } from "@/stores/userStore"
+import { UserRole } from "@/lib/users"
 
-export default function Layout() {
+export default function BrokerLayout() {
+    // Get user from global state
+    const user = useUserStore(state => state.user)
+    
+    // Redirect if not authenticated or not a broker
+    if (!user || user.role !== UserRole.BROKER) {
+        return <Navigate to="/login" />
+    }
+    
     return (
         <SidebarProvider>
             <AppSidebar 
                 variant="inset" 
-                navLinks={adminNavLinks} 
-                userData={mockUserData} 
+                navLinks={brokerNavLinks} 
+                userData={user} 
             />
             <SidebarInset>
-                <DashboardHeader />
+                <DashboardHeader userType="broker" />
                 <div className="flex flex-1 flex-col">
                     <div className="@container/main flex flex-1 flex-col gap-2">
                         <div className="flex flex-col gap-4 p-4 md:gap-6 md:py-6">

@@ -1,3 +1,4 @@
+import * as React from "react"
 import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,10 +17,27 @@ export function NavMain({
   items?: {
     title: string
     url: string
-    icon?: Icon
+    icon?: Icon | React.ReactNode
   }[]
 }) {
   const navigate = useNavigate();
+
+  const renderIcon = (icon: any) => {
+    // If it's already a React element, just return it
+    if (React.isValidElement(icon)) {
+      return icon;
+    }
+    
+    // If it's a component class/function (Tabler icon)
+    if (typeof icon === 'function') {
+      // Create a new element with the icon component
+      return React.createElement(icon, { className: "h-4 w-4" });
+    }
+    
+    // Return null for any other case
+    return null;
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -46,7 +64,7 @@ export function NavMain({
           {items && items.length > 0 && items.map((item) => (
             <SidebarMenuItem key={item.title} onClick={() => navigate(item.url)}>
               <SidebarMenuButton tooltip={item.title}>
-                {item.icon && <item.icon />}
+                {item.icon && renderIcon(item.icon)}
                 <span>{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
