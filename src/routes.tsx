@@ -19,6 +19,7 @@ import ForgotPassword from './pages/auth/forgot-password';
 import ResetPassword from './pages/auth/reset-password';
 import LoanStructuringPage from './pages/broker/borrower/loan-structuring';
 import QualificationAssessmentPage from './pages/broker/borrower/qualification-assessment';
+import ChatLayout from '@layout/chat-layout'
 
 
 const router = createBrowserRouter([
@@ -191,6 +192,13 @@ const router = createBrowserRouter([
                 element: <div>Broker Certifications Page</div>
             }
         ]
+    },
+
+    {
+        path : "/chat",
+        element : (
+            <ChatLayout />
+        ),
     },
 
     // Lender Portal Routes
