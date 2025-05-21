@@ -2,17 +2,17 @@ import { FC } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { AppSidebar } from "@/components/layout/app-sidebar";
-import { underwritingManagerNavLinks } from "@/lib/navlinks";
+import { lenderNavLinks } from "@/lib/navlinks";
 import { UserRole } from "@/lib/users";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useUser } from "@/stores/userStore";
 
-const UnderwritingManagerLayout: FC = () => {
+const LenderLayout: FC = () => {
   // Get user from global state
   const user = useUser(state => state.user);
   
   // Redirect if not authenticated or not an underwriting manager
-  if (!user || user.role !== UserRole.UNDERWRITING_MANAGER) {
+  if (!user || user.role !== UserRole.LENDER) {
     return <Navigate to="/login" />;
   }
 
@@ -20,7 +20,7 @@ const UnderwritingManagerLayout: FC = () => {
     <SidebarProvider>
       <AppSidebar 
           variant="inset" 
-          navLinks={underwritingManagerNavLinks} 
+          navLinks={lenderNavLinks} 
           userData={user} 
       />
       <SidebarInset>
@@ -37,4 +37,4 @@ const UnderwritingManagerLayout: FC = () => {
   );
 };
 
-export default UnderwritingManagerLayout; 
+export default LenderLayout; 

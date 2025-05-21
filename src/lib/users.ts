@@ -4,7 +4,8 @@ export enum UserRole {
   ACCOUNT_EXECUTIVE = 'account_executive',
   UNDERWRITING_MANAGER = 'underwriting_manager',
   BRANCH_MANAGER = 'branch_manager',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
+  LENDER = 'lender'
 }
 
 // Dummy users for each role
@@ -49,6 +50,13 @@ export const dummyUsers = [
     password: '12345678',
     role: UserRole.ADMIN,
     avatar: '/avatars/admin.jpg',
+  },
+  {
+    id: '6',
+    name: 'Lender User',
+    email: 'lender@example.com',
+    password: '12345678',
+    role: UserRole.LENDER,
   },
 ];
 

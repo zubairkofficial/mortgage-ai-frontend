@@ -12,6 +12,13 @@ export type NavItem = {
   icon?: Icon | React.ReactNode
 }
 
+export const lenderNavLinks: NavItem[] = [
+  {
+    title: "Dashboard",
+    url: "/lender",
+    icon: <BarChartIcon className="h-4 w-4" />,
+  },
+]
 
 // Navigation links for branch manager
 export const branchManagerNavLinks: NavItem[] = [
@@ -94,7 +101,7 @@ export const brokerNavLinks: NavItem[] = [
   },
   {
     title: "Applications",
-    url: "/broker/applications",
+    url: "/broker/application",
     icon: <UsersIcon className="h-4 w-4" />,
   },
   {

@@ -9,6 +9,7 @@ import Testimonials from '@/components/landing/testimonial'
 import Contact from '@/components/landing/contact'
 import Footer from '@/components/landing/footer'
 import ScrollToTop from '@/components/common/scroll-to-top'
+import ChatWidget from '@/components/common/chat-widget'
 
 function Landing() {
   return (
@@ -69,6 +70,7 @@ function Landing() {
       </div>
       
       <ScrollToTop />
+      <ChatWidget />
     </div>
   )
 }

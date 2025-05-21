@@ -6,15 +6,19 @@ import BorrowerLayout from "./pages/broker/layout/layout";
 import AccountExecutiveLayout from "./pages/account-executive/layout/layout";
 import UnderwritingManagerLayout from "./pages/underwriting-manager/layout/layout";
 import BranchManagerLayout from "./pages/branch-manager/layout/layout";
+import LenderLayout from "./pages/lender/layout/layout";
 import Signup from "./pages/auth/signup";
 import VerifyOtp from "./pages/auth/verify-otp";
 import BorrowerDashboard from './pages/broker/dashboard/dashboard';
 import AccountExecutiveDashboard from './pages/account-executive/dashboard/dashboard';
 import UnderwritingManagerDashboard from './pages/underwriting-manager/dashboard/dashboard';
 import BranchManagerDashboard from './pages/branch-manager/dashboard/dashboard';
+import LenderDashboard from './pages/lender/dashboard/dashboard';
 import ApplicationForm from './pages/broker/application/application-form';
 import ForgotPassword from './pages/auth/forgot-password';
 import ResetPassword from './pages/auth/reset-password';
+import LoanStructuringPage from './pages/broker/borrower/loan-structuring';
+import QualificationAssessmentPage from './pages/broker/borrower/qualification-assessment';
 
 
 const router = createBrowserRouter([
@@ -43,11 +47,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "qualification",
-                element: <div>Qualification Page</div>
+                element: <QualificationAssessmentPage />
             },
             {
                 path: "loan-structuring",
-                element: <div>Loan Structuring Page</div>
+                element: <LoanStructuringPage />
             },
             {
                 path: "matchmaking",
@@ -185,6 +189,48 @@ const router = createBrowserRouter([
             {
                 path: "certifications",
                 element: <div>Broker Certifications Page</div>
+            }
+        ]
+    },
+
+    // Lender Portal Routes
+    {
+        path: "/lender",
+        element: (
+            <LenderLayout />
+        ),
+        children: [
+            {
+                path: "",
+                element: <LenderDashboard />
+            },
+            {
+                path: "applications",
+                element: <div>Loan Applications Page</div>
+            },
+            {
+                path: "portfolio",
+                element: <div>Portfolio Management Page</div>
+            },
+            {
+                path: "risk-assessment",
+                element: <div>Risk Assessment Page</div>
+            },
+            {
+                path: "funding",
+                element: <div>Funding Management Page</div>
+            },
+            {
+                path: "reports",
+                element: <div>Reports Page</div>
+            },
+            {
+                path: "compliance",
+                element: <div>Compliance Monitoring Page</div>
+            },
+            {
+                path: "settings",
+                element: <div>Lender Settings Page</div>
             }
         ]
     },

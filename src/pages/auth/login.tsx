@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowLeft, Check, ChevronRight } from 'lucide-react'
 import { findUserByCredentials, UserRole } from '@/lib/users'
 import { toast } from 'sonner'
-import { useUser } from '@/stores/userStore'
+import { User, useUser } from '@/stores/userStore'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -29,14 +29,13 @@ const Login = () => {
 
     if (user) {
       // Store user in Zustand store for persistence
-      setUser(user)
+      setUser(user as User)
 
       // Redirect based on role
       switch (user.role) {
         case UserRole.BROKER:
           navigate('/broker')
           break
-
         case UserRole.ACCOUNT_EXECUTIVE:
           navigate('/account-executive')
           break
@@ -45,6 +44,9 @@ const Login = () => {
           break
         case UserRole.BRANCH_MANAGER:
           navigate('/branch-manager')
+          break
+        case UserRole.LENDER:
+          navigate('/lender')
           break
         default:
           navigate('/broker')
@@ -74,7 +76,9 @@ const Login = () => {
       case UserRole.BRANCH_MANAGER:
         email = 'branch@example.com'
         break
-
+      case UserRole.LENDER:
+        email = 'lender@example.com'
+        break
     }
 
     setFormData({
@@ -311,7 +315,13 @@ const Login = () => {
               >
                 Branch Manager Portal
               </button>
-             
+              <button
+                type="button"
+                onClick={() => handleDemoLogin(UserRole.LENDER)}
+                className="p-2 border rounded hover:bg-secondary transition-colors"
+              >
+                Lender Portal
+              </button>
             </div>
           </div>
         </div>
