@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter, CardAction } from "@/components/ui/card";
-import { IconCalendar, IconFileText, IconPlus, IconCheck, IconUsers, IconBriefcase,  IconRobot, IconBuildingArch } from "@tabler/icons-react";
+import { Calendar, FileText, Plus, Check, Users, Briefcase, Bot, Building2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -62,11 +62,11 @@ const BorrowerDashboard: FC = () => {
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm">
-              <IconCalendar size={18} className="text-primary" />
+              <Calendar size={18} className="text-primary" />
               <span>Today: {new Date().toLocaleDateString()}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <IconFileText size={18} className="text-primary" />
+              <FileText size={18} className="text-primary" />
               <span>{applications.length} Active Applications</span>
             </div>
           </div>
@@ -85,28 +85,28 @@ const BorrowerDashboard: FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/applications")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconFileText size={32} className="text-primary mb-2" />
+            <FileText size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Borrower Intake</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/qualification")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconCheck size={32} className="text-primary mb-2" />
+            <Check size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Qualification</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/loan-structuring")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconBriefcase size={32} className="text-primary mb-2" />
+            <Briefcase size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Loan Structuring</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/matchmaking")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconBuildingArch size={32} className="text-primary mb-2" />
+            <Building2 size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Lender Matchmaking</span>
           </CardContent>
         </Card>
@@ -120,7 +120,7 @@ const BorrowerDashboard: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center mb-4">
-              <IconRobot size={48} className="text-primary mr-4" />
+              <Bot size={48} className="text-primary mr-4" />
               <div>
                 <p className="mb-2">Leverage AI to streamline your workflow:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
@@ -146,7 +146,7 @@ const BorrowerDashboard: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center mb-4">
-              <IconUsers size={48} className="text-primary mr-4" />
+              <Users size={48} className="text-primary mr-4" />
               <div>
                 <p className="mb-2">Manage your borrower relationships efficiently:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
@@ -209,7 +209,7 @@ const BorrowerDashboard: FC = () => {
               ))
             ) : (
               <div className="text-center p-6">
-                <IconFileText size={48} className="mx-auto text-muted-foreground mb-2" />
+                <FileText size={48} className="mx-auto text-muted-foreground mb-2" />
                 <p className="text-muted-foreground">No active applications found.</p>
               </div>
             )}
@@ -220,7 +220,7 @@ const BorrowerDashboard: FC = () => {
             className="flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
             onClick={() => navigate("/broker/application")}
           >
-            <IconPlus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 h-4 w-4" />
             New Application
           </button>
         </CardFooter>

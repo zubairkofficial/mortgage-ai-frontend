@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { IconCalendar, IconUsers,  IconArrowUpRight, IconArrowDownRight, IconBriefcase, IconChartLine, IconBookUpload, IconCertificate, IconClipboardCheck } from "@tabler/icons-react";
+import { Calendar, Users, ArrowUpRight, ArrowDownRight, Briefcase, ChartLine, Book, ClipboardCheck } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -63,15 +63,15 @@ const BranchManagerDashboard: FC = () => {
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm">
-              <IconCalendar size={18} className="text-primary" />
+              <Calendar size={18} className="text-primary" />
               <span>Today: {new Date().toLocaleDateString()}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <IconUsers size={18} className="text-primary" />
+              <Users size={18} className="text-primary" />
               <span>{branchStats.activeBrokers} Active Team Members</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <IconBriefcase size={18} className="text-primary" />
+              <Briefcase size={18} className="text-primary" />
               <span>{branchStats.totalLoans} Active Loan Applications</span>
             </div>
           </div>
@@ -90,28 +90,28 @@ const BranchManagerDashboard: FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/branch-manager/team")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconUsers size={32} className="text-primary mb-2" />
+            <Users size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Broker Team</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/branch-manager/performance")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconChartLine size={32} className="text-primary mb-2" />
+            <ChartLine size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Performance Metrics</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/branch-manager/compliance")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconClipboardCheck size={32} className="text-primary mb-2" />
+            <ClipboardCheck size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Compliance</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/branch-manager/training")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconBookUpload size={32} className="text-primary mb-2" />
+            <Book size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Training Resources</span>
           </CardContent>
         </Card>
@@ -128,9 +128,9 @@ const BranchManagerDashboard: FC = () => {
               <div className="text-3xl font-bold">{branchStats.conversionRate.value}%</div>
               <div className={`flex items-center gap-1 text-sm ${branchStats.conversionRate.isIncrease ? 'text-[var(--brand-teal)]' : 'text-destructive'}`}>
                 {branchStats.conversionRate.isIncrease ? (
-                  <IconArrowUpRight size={16} />
+                  <ArrowUpRight size={16} />
                 ) : (
-                  <IconArrowDownRight size={16} />
+                  <ArrowDownRight size={16} />
                 )}
                 <span className="text-xs">{branchStats.conversionRate.changePercent}%</span>
               </div>
@@ -147,9 +147,9 @@ const BranchManagerDashboard: FC = () => {
               <div className="text-3xl font-bold">{branchStats.revenue.value}</div>
               <div className={`flex items-center gap-1 text-sm ${branchStats.revenue.isIncrease ? 'text-[var(--brand-teal)]' : 'text-destructive'}`}>
                 {branchStats.revenue.isIncrease ? (
-                  <IconArrowUpRight size={16} />
+                  <ArrowUpRight size={16} />
                 ) : (
-                  <IconArrowDownRight size={16} />
+                  <ArrowDownRight size={16} />
                 )}
                 <span className="text-xs">{branchStats.revenue.changePercent}%</span>
               </div>
@@ -166,9 +166,9 @@ const BranchManagerDashboard: FC = () => {
               <div className="text-3xl font-bold">{branchStats.complianceScore.value}%</div>
               <div className={`flex items-center gap-1 text-sm ${branchStats.complianceScore.isIncrease ? 'text-[var(--brand-teal)]' : 'text-destructive'}`}>
                 {branchStats.complianceScore.isIncrease ? (
-                  <IconArrowUpRight size={16} />
+                  <ArrowUpRight size={16} />
                 ) : (
-                  <IconArrowDownRight size={16} />
+                  <ArrowDownRight size={16} />
                 )}
                 <span className="text-xs">{branchStats.complianceScore.changePercent}%</span>
               </div>
@@ -183,7 +183,7 @@ const BranchManagerDashboard: FC = () => {
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-semibold">Team Performance</CardTitle>
             <div className="flex items-center gap-2">
-              <IconChartLine size={18} className="text-primary" />
+              <ChartLine size={18} className="text-primary" />
               <span className="text-sm font-medium">Current Month</span>
             </div>
           </div>
@@ -212,7 +212,7 @@ const BranchManagerDashboard: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center mb-4">
-              <IconUsers size={48} className="text-primary mr-4" />
+              <Users size={48} className="text-primary mr-4" />
               <div>
                 <p className="mb-2">Manage broker teams at the branch level:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
@@ -238,7 +238,7 @@ const BranchManagerDashboard: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center mb-4">
-              <IconClipboardCheck size={48} className="text-primary mr-4" />
+              <ClipboardCheck size={48} className="text-primary mr-4" />
               <div>
                 <p className="mb-2">Enforce compliance across your branch:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
@@ -320,7 +320,6 @@ const BranchManagerDashboard: FC = () => {
         </CardHeader>
         <CardContent>
           <div className="flex items-center mb-6">
-            <IconCertificate size={48} className="text-primary mr-4" />
             <div>
               <p>Track and encourage professional development within your team. Set certification goals and monitor progress.</p>
             </div>

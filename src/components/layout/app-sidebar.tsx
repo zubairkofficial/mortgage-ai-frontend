@@ -1,8 +1,4 @@
 import * as React from "react"
-import {
-  IconInnerShadowTop,
-} from "@tabler/icons-react"
-
 import { NavMain } from "@/components/layout/nav-main"
 import { UserMenu } from "@/components/layout/user-menu"
 import {
@@ -49,7 +45,7 @@ export function AppSidebar({ navLinks, userData, ...props }: AppSidebarProps) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
+                
                 <span className="text-base font-semibold">Mortgage AI</span>
               </a>
             </SidebarMenuButton>

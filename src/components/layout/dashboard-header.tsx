@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { useTheme } from "../theme/theme-provider"
-import { IconSun, IconMoon, IconBuildingBank } from "@tabler/icons-react"
 import Helpers from "@/config/helpers"
+import { Building, Sun, Moon } from "lucide-react"
 
 interface ActionButton {
   label: string | React.ReactNode
@@ -53,7 +53,7 @@ export function DashboardHeader({
       mobileHidden: true
     },
     {
-      label: theme === "dark" ? <IconSun /> : <IconMoon />,
+      label: theme === "dark" ? <Sun /> : <Moon />,
       onClick: () => { setTheme(theme === "dark" ? "light" : "dark") },
       variant: "ghost",
       mobileHidden: true
@@ -69,7 +69,7 @@ export function DashboardHeader({
           className="mx-2 data-[orientation=vertical]:h-4"
         />
         <div className="flex items-center gap-2">
-          <IconBuildingBank size={20} className="text-primary" />
+          <Building size={20} className="text-primary" />
           <h1 className="text-base font-medium">{headerTitle}</h1>
         </div>
         <div className="ml-auto flex items-center gap-2">

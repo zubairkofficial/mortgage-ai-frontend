@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { IconCalendar, IconFileCheck, IconFiles, IconArrowUpRight, IconArrowDownRight, IconAlertTriangle, IconFileSearch, IconCheckbox, IconHistory } from "@tabler/icons-react";
+import { Calendar, FileCheck, Files, ArrowUpRight, ArrowDownRight, Check, AlertTriangle, FileSearch, History } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { useAuth } from "@/contexts/auth-context";
@@ -57,20 +57,20 @@ const UnderwritingManagerDashboard: FC = () => {
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm">
-              <IconCalendar size={18} className="text-primary" />
+              <Calendar size={18} className="text-primary" />
               <span>Today: {new Date().toLocaleDateString()}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <IconFileCheck size={18} className="text-primary" />
+              <FileCheck size={18} className="text-primary" />
               <span>{underwritingStats.completedToday} Reviews Completed Today</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <IconFiles size={18} className="text-primary" />
+              <Files size={18} className="text-primary" />
               <span>{underwritingStats.pendingReviews} Pending Reviews</span>
             </div>
             {underwritingStats.complianceIssues > 0 && (
               <div className="flex items-center gap-2 text-sm text-amber-500">
-                <IconAlertTriangle size={18} />
+                <AlertTriangle size={18} />
                 <span>{underwritingStats.complianceIssues} Compliance Issues Flagged</span>
               </div>
             )}
@@ -90,28 +90,28 @@ const UnderwritingManagerDashboard: FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/underwriting-manager/applications")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconFileSearch size={32} className="text-primary mb-2" />
+            <FileSearch size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Document Validation</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/underwriting-manager/compliance")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconCheckbox size={32} className="text-primary mb-2" />
+            <Check size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Loan Compliance</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/underwriting-manager/audit-trails")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconHistory size={32} className="text-primary mb-2" />
+            <History size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Audit Trails</span>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/underwriting-manager/review-queue")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconFiles size={32} className="text-primary mb-2" />
+            <Files size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Review Queue</span>
           </CardContent>
         </Card>
@@ -128,9 +128,9 @@ const UnderwritingManagerDashboard: FC = () => {
               <div className="text-3xl font-bold">{underwritingStats.approvalRate.value}%</div>
               <div className={`flex items-center gap-1 text-sm ${underwritingStats.approvalRate.isIncrease ? 'text-[var(--brand-teal)]' : 'text-destructive'}`}>
                 {underwritingStats.approvalRate.isIncrease ? (
-                  <IconArrowUpRight size={16} />
+                  <ArrowUpRight size={16} />
                 ) : (
-                  <IconArrowDownRight size={16} />
+                  <ArrowDownRight size={16} />
                 )}
                 <span className="text-xs">{underwritingStats.approvalRate.changePercent}%</span>
               </div>
@@ -161,9 +161,9 @@ const UnderwritingManagerDashboard: FC = () => {
               <div className="text-3xl font-bold">{underwritingStats.efficiencyRate.value}%</div>
               <div className={`flex items-center gap-1 text-sm ${underwritingStats.efficiencyRate.isIncrease ? 'text-[var(--brand-teal)]' : 'text-destructive'}`}>
                 {underwritingStats.efficiencyRate.isIncrease ? (
-                  <IconArrowUpRight size={16} />
+                      <ArrowUpRight size={16} />
                 ) : (
-                  <IconArrowDownRight size={16} />
+                  <ArrowDownRight size={16} />
                 )}
                 <span className="text-xs">{underwritingStats.efficiencyRate.changePercent}%</span>
               </div>
@@ -265,7 +265,7 @@ const UnderwritingManagerDashboard: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center mb-4">
-              <IconAlertTriangle size={48} className="text-primary mr-4" />
+              <AlertTriangle size={48} className="text-primary mr-4" />
               <div>
                 <p className="mb-2">Ensure loan compliance with all regulations:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
@@ -291,7 +291,7 @@ const UnderwritingManagerDashboard: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center mb-4">
-              <IconHistory size={48} className="text-primary mr-4" />
+              <History size={48} className="text-primary mr-4" />
               <div>
                 <p className="mb-2">Maintain complete loan file integrity:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">

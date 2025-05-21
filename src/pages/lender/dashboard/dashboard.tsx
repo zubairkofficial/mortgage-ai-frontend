@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { IconCalendar, IconFileText, IconCheck, IconBuildingArch, IconChartBar, IconArrowUpRight, IconArrowDownRight } from '@tabler/icons-react';
+import { Calendar, FileText, Check, Building, ChartBar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { getTimeOfDay } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from 'recharts';
@@ -41,11 +41,11 @@ const LenderDashboard: FC = () => {
                 <CardContent>
                     <div className="flex flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm">
-                            <IconCalendar size={18} className="text-primary" />
+                            <Calendar size={18} className="text-primary" />
                             <span>Today: {new Date().toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                            <IconFileText size={18} className="text-primary" />
+                            <FileText size={18} className="text-primary" />
                             <span>12 Active Applications</span>
                         </div>
                     </div>
@@ -64,28 +64,28 @@ const LenderDashboard: FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/lender/applications")}>
                     <CardContent className="flex flex-col items-center justify-center p-6">
-                        <IconFileText size={32} className="text-primary mb-2" />
+                        <FileText size={32} className="text-primary mb-2" />
                         <span className="text-sm font-medium text-center">Applications</span>
                     </CardContent>
                 </Card>
                 
                 <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/lender/reviews")}>
                     <CardContent className="flex flex-col items-center justify-center p-6">
-                        <IconCheck size={32} className="text-primary mb-2" />
+                        <Check size={32} className="text-primary mb-2" />
                         <span className="text-sm font-medium text-center">Reviews</span>
                     </CardContent>
                 </Card>
                 
                 <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/lender/funding")}>
                     <CardContent className="flex flex-col items-center justify-center p-6">
-                        <IconBuildingArch size={32} className="text-primary mb-2" />
+                        <Building size={32} className="text-primary mb-2" />
                         <span className="text-sm font-medium text-center">Funding</span>
                     </CardContent>
                 </Card>
                 
                 <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/lender/analytics")}>
                     <CardContent className="flex flex-col items-center justify-center p-6">
-                        <IconChartBar size={32} className="text-primary mb-2" />
+                        <ChartBar size={32} className="text-primary mb-2" />
                         <span className="text-sm font-medium text-center">Analytics</span>
                     </CardContent>
                 </Card>
@@ -101,7 +101,7 @@ const LenderDashboard: FC = () => {
                         <div className="flex justify-between items-end">
                             <div className="text-3xl font-bold">12</div>
                             <div className="flex items-center gap-1 text-sm text-[var(--brand-teal)]">
-                                <IconArrowUpRight size={16} />
+                                <ArrowUpRight size={16} />
                                 <span className="text-xs">+2 this week</span>
                             </div>
                         </div>
@@ -116,7 +116,7 @@ const LenderDashboard: FC = () => {
                         <div className="flex justify-between items-end">
                             <div className="text-3xl font-bold">5</div>
                             <div className="flex items-center gap-1 text-sm text-[var(--brand-teal)]">
-                                <IconArrowDownRight size={16} />
+                                <ArrowDownRight size={16} />
                                 <span className="text-xs">-1 today</span>
                             </div>
                         </div>
@@ -131,7 +131,7 @@ const LenderDashboard: FC = () => {
                         <div className="flex justify-between items-end">
                             <div className="text-3xl font-bold">$2.4M</div>
                             <div className="flex items-center gap-1 text-sm text-[var(--brand-teal)]">
-                                <IconArrowUpRight size={16} />
+                                <ArrowUpRight size={16} />
                                 <span className="text-xs">+15% vs last month</span>
                             </div>
                         </div>
@@ -178,7 +178,7 @@ const LenderDashboard: FC = () => {
                         <div className="flex items-center justify-between">
                             <CardTitle className="text-lg font-semibold">Loan Performance</CardTitle>
                             <div className="flex items-center gap-2">
-                                <IconChartBar size={18} className="text-primary" />
+                                <ChartBar size={18} className="text-primary" />
                                 <span className="text-sm font-medium">2023 Monthly Loans</span>
                             </div>
                         </div>

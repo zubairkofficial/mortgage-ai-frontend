@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { IconCalendar, IconUsers, IconBuildingBank, IconArrowUpRight, IconArrowDownRight, IconChartBar, IconClipboardCheck, IconBriefcase, IconMessage } from "@tabler/icons-react";
+import { Calendar, Users, Building, ArrowUpRight, ArrowDownRight, ChartBar, ClipboardCheck, Briefcase,  MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -57,15 +57,15 @@ const AccountExecutiveDashboard: FC = () => {
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm">
-              <IconCalendar size={18} className="text-primary" />
+              <Calendar size={18} className="text-primary" />
               <span>Today: {new Date().toLocaleDateString()}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <IconUsers size={18} className="text-primary" />
+              <Users size={18} className="text-primary" />
               <span>{brokerStats.activeBrokers} Active Brokers</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <IconBuildingBank size={18} className="text-primary" />
+              <Building size={18} className="text-primary" />
               <span>{brokerStats.totalBranches} Branches</span>
             </div>
           </div>
@@ -84,28 +84,28 @@ const AccountExecutiveDashboard: FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/brokers")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconUsers size={32} className="text-primary mb-2" />
+            <Users size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Broker Management</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/branches")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconBuildingBank size={32} className="text-primary mb-2" />
+            <Building size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Branch Network</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/performance")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconChartBar size={32} className="text-primary mb-2" />
+            <ChartBar size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Performance Metrics</span>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/compliance")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <IconClipboardCheck size={32} className="text-primary mb-2" />
+            <ClipboardCheck size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">CRM Compliance</span>
           </CardContent>
         </Card>
@@ -136,9 +136,9 @@ const AccountExecutiveDashboard: FC = () => {
               <div className="text-3xl font-bold">{brokerStats.monthlyPerformance.value}%</div>
               <div className={`flex items-center gap-1 text-sm ${brokerStats.monthlyPerformance.isIncrease ? 'text-[var(--brand-teal)]' : 'text-destructive'}`}>
                 {brokerStats.monthlyPerformance.isIncrease ? (
-                  <IconArrowUpRight size={16} />
+                  <ArrowUpRight size={16} />
                 ) : (
-                  <IconArrowDownRight size={16} />
+                  <ArrowDownRight size={16} />
                 )}
                 <span className="text-xs">vs last month</span>
               </div>
@@ -155,9 +155,9 @@ const AccountExecutiveDashboard: FC = () => {
               <div className="text-3xl font-bold">{brokerStats.complianceRate.value}%</div>
               <div className={`flex items-center gap-1 text-sm ${brokerStats.complianceRate.isIncrease ? 'text-[var(--brand-teal)]' : 'text-destructive'}`}>
                 {brokerStats.complianceRate.isIncrease ? (
-                  <IconArrowUpRight size={16} />
+                  <ArrowUpRight size={16} />
                 ) : (
-                  <IconArrowDownRight size={16} />
+                  <ArrowDownRight size={16} />
                 )}
                 <span className="text-xs">vs target</span>
               </div>
@@ -172,7 +172,7 @@ const AccountExecutiveDashboard: FC = () => {
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-semibold">Broker Performance</CardTitle>
             <div className="flex items-center gap-2">
-              <IconChartBar size={18} className="text-primary" />
+              <ChartBar size={18} className="text-primary" />
               <span className="text-sm font-medium">2023 Monthly Loans</span>
             </div>
           </div>
@@ -199,7 +199,7 @@ const AccountExecutiveDashboard: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center mb-4">
-              <IconBriefcase size={48} className="text-primary mr-4" />
+              <Briefcase size={48} className="text-primary mr-4" />
               <div>
                 <p className="mb-2">Support consistent operations across your network:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
@@ -225,7 +225,7 @@ const AccountExecutiveDashboard: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center mb-4">
-              <IconMessage size={48} className="text-primary mr-4" />
+              <MessageCircle size={48} className="text-primary mr-4" />
               <div>
                 <p className="mb-2">Coordinate across your broker network:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
