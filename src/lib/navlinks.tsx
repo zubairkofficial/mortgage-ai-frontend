@@ -124,16 +124,7 @@ export const brokerNavLinks: NavItem[] = [
     url: "/broker/crm",
     icon: <MessageSquareIcon className="h-4 w-4" />,
   },
-  {
-    title: "Communications",
-    url: "/broker/communications",
-    icon: <MailIcon className="h-4 w-4" />,
-  },
-  {
-    title: "AI Assistant",
-    url: "/broker/ai-assistant",
-    icon: <BookOpenIcon className="h-4 w-4" />,
-  }
+
 ]
 
 // Navigation links for underwriting manager

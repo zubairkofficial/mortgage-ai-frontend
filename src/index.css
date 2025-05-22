@@ -231,3 +231,15 @@
 .card-gradient-info {
   @apply bg-gradient-to-r from-[var(--gradient-info-from)] to-[var(--gradient-info-to)] border-[var(--gradient-info-border)];
 }
+
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #ffffff;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 20px;
+}

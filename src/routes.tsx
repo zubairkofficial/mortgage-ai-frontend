@@ -75,10 +75,7 @@ const router = createBrowserRouter([
                 path: "borrower-profiles",
                 element: <BorrowerProfilesPage />
             },
-            {
-                path: "communications",
-                element: <ChatLayout />
-            }
+       
         ]
     },
     // Account Executive Portal Routes

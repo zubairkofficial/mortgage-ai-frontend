@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import { DataTable, createSortableColumn } from "@/components/common/table";
+import { DataTable, createSortableColumn, createActionsColumn } from "@/components/common/table";
 
 // Define Borrower type
 type Borrower = {
@@ -135,25 +135,21 @@ const BorrowerProfilesPage = () => {
       },
     },
     createSortableColumn("lastContact", "Last Contact"),
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        const borrower = row.original as Borrower;
-        return (
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={() => console.log("View profile", borrower.id)}>
-              View Profile
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => console.log("Edit borrower", borrower.id)}>
-              Edit
-            </Button>
-            <Button variant="ghost" size="sm" className="text-red-600" onClick={() => console.log("Delete borrower", borrower.id)}>
-              Delete
-            </Button>
-          </div>
-        );
+    createActionsColumn([
+      {
+        label: "View Profile",
+        onClick: (borrower: unknown) => console.log("View profile", (borrower as Borrower).id)
       },
-    }
+      {
+        label: "Edit",
+        onClick: (borrower: unknown) => console.log("Edit borrower", (borrower as Borrower).id)
+      },
+      {
+        label: "Delete",
+        onClick: (borrower: unknown) => console.log("Delete borrower", (borrower as Borrower).id),
+        variant: "destructive"
+      }
+    ])
   ], []);
 
   const filteredBorrowers = useMemo(() => {

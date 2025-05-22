@@ -71,40 +71,28 @@ export function ChatSidebar({ users, selectedUser, onUserSelect }: ChatSidebarPr
       <Button 
         variant="ghost" 
         size="icon" 
-        className="absolute right-0 top-4 translate-x-1/2 z-10 h-8 w-8 rounded-full border border-border bg-background"
+        className="absolute right-0 top-4 translate-x-1/2 z-10 h-8 w-8 rounded-full border bg-background"
         onClick={() => setCollapsed(!collapsed)}
       >
         {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
       </Button>
 
-      {collapsed && (
-        <div className="flex flex-col items-center pt-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 mb-2"
-            title="Back to Dashboard"
-            onClick={navigateToDashboard}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <Separator className="w-8 mb-2" />
-        </div>
-      )}
+    
 
       {!collapsed && (
         <>
+        <div>
           {/* Back to Dashboard Button */}
           <Button 
             variant="ghost" 
-            className="flex items-center w-full justify-start px-4 pt-4 pb-2"
+            className="flex items-center w-full justify-start px-4 pt-8 pb-8 hover:bg-none"
             onClick={navigateToDashboard}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             <span>Back to Dashboard</span>
           </Button>
           <Separator className="mb-2" />
-          
+          </div>
           {/* Sidebar Header */}
           <div className="p-4 flex justify-between items-center">
             <h2 className="text-xl font-semibold">Messages <span className="text-sm text-muted-foreground">({users.length})</span></h2>

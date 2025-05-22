@@ -83,14 +83,14 @@ const BorrowerDashboard: FC = () => {
 
       {/* Feature Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/applications")}>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/application")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
             <FileText size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Borrower Intake</span>
           </CardContent>
         </Card>
         
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/qualification")}>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/matchmaking")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
             <Check size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Qualification</span>

@@ -4,6 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 type AssessmentResult = {
   overallScore: number;
@@ -37,6 +45,8 @@ type AssessmentResult = {
 export default function QualificationAssessmentPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBorrower, setSelectedBorrower] = useState<string | null>(null);
 
   // Mock assessment result
   const mockAssessment: AssessmentResult = {
@@ -72,9 +82,10 @@ export default function QualificationAssessmentPage() {
     ]
   };
 
-  const handleRunAssessment = async () => {
+  const handleRunAssessment = async (borrowerId: string | null) => {
+    if (!borrowerId) return;
     setIsProcessing(true);
-    // Simulate API call
+    // Use borrowerId in your API call here
     await new Promise(resolve => setTimeout(resolve, 2000));
     setAssessmentResult(mockAssessment);
     setIsProcessing(false);
@@ -106,16 +117,48 @@ export default function QualificationAssessmentPage() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Qualification Assessment</h1>
-        <Button onClick={handleRunAssessment} disabled={isProcessing}>
-          {isProcessing ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            'Run Assessment'
-          )}
-        </Button>
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <Button disabled={isProcessing}>
+              {isProcessing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                'Run Assessment'
+              )}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Select Borrower</DialogTitle>
+            </DialogHeader>
+            <select
+              className="w-full mb-4"
+              value={selectedBorrower || ''}
+              onChange={(e) => setSelectedBorrower(e.target.value)}
+            >
+              <option value="" disabled>Select a borrower</option>
+              <option value="borrower1">Borrower 1</option>
+              <option value="borrower2">Borrower 2</option>
+            </select>
+            <DialogFooter>
+              <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  handleRunAssessment(selectedBorrower);
+                }}
+                disabled={!selectedBorrower}
+              >
+                Confirm
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {assessmentResult && (
