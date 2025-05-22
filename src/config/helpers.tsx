@@ -2,7 +2,9 @@ import ReactDOM from "react-dom/client";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 
+
 class Helpers {
+
   static localhost: string = "http://localhost:8080";
   static server: string ="https://api.example.com";
   static basePath: string = Helpers.localhost;
@@ -29,6 +31,10 @@ class Helpers {
     }
   };
 
+  static handleLogout = ()=> {
+    window.location.href = '/login'
+  
+  }
   static authHeaders = {
     headers: {
       "Content-Type": "application/json",

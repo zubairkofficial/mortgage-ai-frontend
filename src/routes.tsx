@@ -2,36 +2,40 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/auth/login";
 import Landing from "./pages/landing";
-import BorrowerLayout from "./pages/broker/layout/layout";
-import AccountExecutiveLayout from "./pages/account-executive/layout/layout";
-import UnderwritingManagerLayout from "./pages/underwriting-manager/layout/layout";
-import BranchManagerLayout from "./pages/branch-manager/layout/layout";
-import LenderLayout from "./pages/lender/layout/layout";
+import BorrowerLayout from "./pages/roles/broker/layout/layout";
+import AccountExecutiveLayout from "./pages/roles/account-executive/layout/layout";
+import UnderwritingManagerLayout from "./pages/roles/underwriting-manager/layout/layout";
+import BranchManagerLayout from "./pages/roles/branch-manager/layout/layout";
+import LenderLayout from "./pages/roles/lender/layout/layout";
 import Signup from "./pages/auth/signup";
 import VerifyOtp from "./pages/auth/verify-otp";
-import BorrowerDashboard from './pages/broker/dashboard/dashboard';
-import AccountExecutiveDashboard from './pages/account-executive/dashboard/dashboard';
-import UnderwritingManagerDashboard from './pages/underwriting-manager/dashboard/dashboard';
-import BranchManagerDashboard from './pages/branch-manager/dashboard/dashboard';
-import LenderDashboard from './pages/lender/dashboard/dashboard';
-import ApplicationForm from './pages/broker/application/application-form';
+import BorrowerDashboard from './pages/roles/broker/dashboard/dashboard';
+import AccountExecutiveDashboard from './pages/roles/account-executive/dashboard/dashboard';
+import UnderwritingManagerDashboard from './pages/roles/underwriting-manager/dashboard/dashboard';
+import BranchManagerDashboard from './pages/roles/branch-manager/dashboard/dashboard';
+import LenderDashboard from './pages/roles/lender/dashboard/dashboard';
+import ApplicationForm from './pages/roles/broker/application/application-form';
 import ForgotPassword from './pages/auth/forgot-password';
 import ResetPassword from './pages/auth/reset-password';
-import LoanStructuringPage from './pages/broker/borrower/loan-structuring';
-import QualificationAssessmentPage from './pages/broker/borrower/qualification-assessment';
-import ChatLayout from '@layout/chat-layout'
-
+import LoanStructuringPage from './pages/roles/broker/borrower/loan-structuring';
+import QualificationAssessmentPage from './pages/roles/broker/borrower/qualification-assessment';
+import ChatLayout from './pages/chat/chat-layout'
+import BrokerCRM from './pages/roles/broker/crm/crm';
+import BorrowerProfilesPage from './pages/roles/broker/borrower/borrower-profiles';
+import ApplicationTable from './pages/roles/broker/application/application-table';
+import ProfilePage from './pages/profile/profile-page';
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Landing />
     },
+   
     // Broker Portal Routes
     {
         path: "/broker",
         element: (
-                <BorrowerLayout />
+            <BorrowerLayout />
         ),
         children: [
             {
@@ -39,15 +43,19 @@ const router = createBrowserRouter([
                 element: <BorrowerDashboard />
             },
             {
+                path: "profile",
+                element: <ProfilePage />
+            },
+            {
                 path: "application",
+                element: <ApplicationTable />
+            },
+            {
+                path: "application/add",
                 element: <ApplicationForm />
             },
             {
-                path: "applications",
-                element: <div>Borrower Intake Page</div>
-            },
-            {
-                path: "qualification",
+                path: "matchmaking",
                 element: <QualificationAssessmentPage />
             },
             {
@@ -55,30 +63,37 @@ const router = createBrowserRouter([
                 element: <LoanStructuringPage />
             },
             {
-                path: "matchmaking",
-                element: <div>Lender Matchmaking Page</div>
-            },
-            {
                 path: "ai-assistant",
                 element: <div>AI Assistant Page</div>
             },
             {
                 path: "crm",
-                element: <div>CRM Integration Page</div>
+                element: <BrokerCRM />
+            },
+            {
+                path: "borrower-profiles",
+                element: <BorrowerProfilesPage />
+            },
+            {
+                path: "communications",
+                element: <ChatLayout />
             }
         ]
     },
-
     // Account Executive Portal Routes
     {
         path: "/account-executive",
         element: (
-                <AccountExecutiveLayout />
+            <AccountExecutiveLayout />
         ),
         children: [
             {
                 path: "",
                 element: <AccountExecutiveDashboard />
+            },
+            {
+                path: "profile",
+                element: <ProfilePage />
             },
             {
                 path: "brokers",
@@ -115,12 +130,16 @@ const router = createBrowserRouter([
     {
         path: "/underwriting-manager",
         element: (
-                <UnderwritingManagerLayout />
+            <UnderwritingManagerLayout />
         ),
         children: [
             {
                 path: "",
                 element: <UnderwritingManagerDashboard />
+            },
+            {
+                path: "profile",
+                element: <ProfilePage />
             },
             {
                 path: "applications",
@@ -152,12 +171,16 @@ const router = createBrowserRouter([
     {
         path: "/branch-manager",
         element: (
-                <BranchManagerLayout />      
+            <BranchManagerLayout />
         ),
         children: [
             {
                 path: "",
                 element: <BranchManagerDashboard />
+            },
+            {
+                path: "profile",
+                element: <ProfilePage />
             },
             {
                 path: "team",
@@ -195,10 +218,16 @@ const router = createBrowserRouter([
     },
 
     {
-        path : "/chat",
-        element : (
+        path: "/chat",
+        element: (
             <ChatLayout />
         ),
+        children: [
+            {
+                path: ":id",
+                element: <>Chat Page</>,
+            }
+        ]
     },
 
     // Lender Portal Routes
@@ -211,6 +240,10 @@ const router = createBrowserRouter([
             {
                 path: "",
                 element: <LenderDashboard />
+            },
+            {
+                path: "profile",
+                element: <ProfilePage />
             },
             {
                 path: "applications",

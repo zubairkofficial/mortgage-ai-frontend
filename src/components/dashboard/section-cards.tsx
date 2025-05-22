@@ -1,4 +1,4 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { TrendingDown, TrendingUp } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -66,14 +66,14 @@ export function SectionCards() {
             </CardTitle>
             <CardAction>
               <Badge variant="outline">
-                {card.trend === "up" ? <IconTrendingUp /> : <IconTrendingDown />}
+                {card.trend === "up" ? <TrendingUp /> : <TrendingDown />}
                 {card.trendValue}
               </Badge>
             </CardAction>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              {card.message} {card.trend === "up" ? <IconTrendingUp className="size-4" /> : <IconTrendingDown className="size-4" />}
+              {card.message} {card.trend === "up" ? <TrendingUp className="size-4" /> : <TrendingDown className="size-4" />}
             </div>
             <div className="text-muted-foreground">
               {card.description}

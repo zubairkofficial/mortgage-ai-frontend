@@ -14,15 +14,15 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import {
-  IconChevronDown,
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
-  IconDotsVertical,
-  IconLayoutColumns,
-  IconSearch,
-} from "@tabler/icons-react"
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  MoreHorizontal,
+  LayoutDashboard,
+  Search,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -160,7 +160,7 @@ export function DataTable<TData, TValue>({
       <div className="flex flex-col space-y-2 md:flex-row md:items-center md:gap-2 md:space-y-0">
         {searchKey && (
           <div className="relative flex-1">
-            <IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={globalFilter ?? ""}
@@ -202,9 +202,9 @@ export function DataTable<TData, TValue>({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="ml-auto h-8">
-                <IconLayoutColumns className="mr-2 h-4 w-4" />
+                <LayoutDashboard className="mr-2 h-4 w-4" />
                 View
-                <IconChevronDown className="ml-1 h-4 w-4" />
+                <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -318,7 +318,7 @@ export function DataTable<TData, TValue>({
               disabled={!table.getCanPreviousPage()}
             >
               <span className="sr-only">Go to first page</span>
-              <IconChevronsLeft className="h-4 w-4" />
+              <ChevronsLeft className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
@@ -327,7 +327,7 @@ export function DataTable<TData, TValue>({
               disabled={!table.getCanPreviousPage()}
             >
               <span className="sr-only">Go to previous page</span>
-              <IconChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
@@ -336,7 +336,7 @@ export function DataTable<TData, TValue>({
               disabled={!table.getCanNextPage()}
             >
               <span className="sr-only">Go to next page</span>
-              <IconChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
@@ -345,7 +345,7 @@ export function DataTable<TData, TValue>({
               disabled={!table.getCanNextPage()}
             >
               <span className="sr-only">Go to last page</span>
-              <IconChevronsRight className="h-4 w-4" />
+              <ChevronsRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -370,7 +370,7 @@ export function createSortableColumn<TData, TValue>(
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           {header}
-          <IconChevronDown className="ml-2 h-4 w-4" />
+          <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
@@ -398,7 +398,7 @@ export function createActionsColumn<TData>(
               variant="ghost"
               className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
             >
-              <IconDotsVertical className="h-4 w-4" />
+              <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Open menu</span>
             </Button>
           </DropdownMenuTrigger>

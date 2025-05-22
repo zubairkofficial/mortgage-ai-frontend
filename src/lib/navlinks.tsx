@@ -1,6 +1,6 @@
 import {
-  type Icon,
-} from "@tabler/icons-react"
+  IconNode,
+} from "lucide-react"
 import { BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, MessageSquareIcon, MailIcon, BookOpenIcon
  } from "lucide-react";
 import { ClipboardCheckIcon, AlertCircleIcon, FileIcon } from "lucide-react";
@@ -9,7 +9,7 @@ import { UserRole } from "./users"
 export type NavItem = {
   title: string
   url: string
-  icon?: Icon | React.ReactNode
+  icon?: IconNode | React.ReactNode
 }
 
 export const lenderNavLinks: NavItem[] = [
@@ -100,14 +100,19 @@ export const brokerNavLinks: NavItem[] = [
     icon: <BarChartIcon className="h-4 w-4" />,
   },
   {
-    title: "Applications",
-    url: "/broker/application",
+    title: "Borrower Management",
+    url: "/broker/borrower-profiles",
     icon: <UsersIcon className="h-4 w-4" />,
   },
   {
-    title: "CRM",
-    url: "/broker/crm",
-    icon: <MessageSquareIcon className="h-4 w-4" />,
+    title: "Loan Applications",
+    url: "/broker/application",
+    icon: <FileIcon className="h-4 w-4" />,
+  },
+  {
+    title: "Loan Structuring",
+    url: "/broker/loan-structuring",
+    icon: <FileTextIcon className="h-4 w-4" />,
   },
   {
     title: "Matchmaking",
@@ -115,18 +120,21 @@ export const brokerNavLinks: NavItem[] = [
     icon: <ActivityIcon className="h-4 w-4" />,
   },
   {
+    title: "CRM",
+    url: "/broker/crm",
+    icon: <MessageSquareIcon className="h-4 w-4" />,
+  },
+  {
+    title: "Communications",
+    url: "/broker/communications",
+    icon: <MailIcon className="h-4 w-4" />,
+  },
+  {
     title: "AI Assistant",
     url: "/broker/ai-assistant",
     icon: <BookOpenIcon className="h-4 w-4" />,
-  },
-  {
-    title: "Loan Structuring",
-    url: "/broker/loan-structuring",
-    icon: <FileTextIcon className="h-4 w-4" />,
   }
 ]
-
-
 
 // Navigation links for underwriting manager
 export const underwritingManagerNavLinks: NavItem[] = [
