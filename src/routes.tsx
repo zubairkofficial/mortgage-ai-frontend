@@ -24,6 +24,7 @@ import BrokerCRM from './pages/roles/broker/crm/crm';
 import BorrowerProfilesPage from './pages/roles/broker/borrower/borrower-profiles';
 import ApplicationTable from './pages/roles/broker/application/application-table';
 import ProfilePage from './pages/profile/profile-page';
+import NotFound from './pages/not-found';
 
 const router = createBrowserRouter([
     {
@@ -296,6 +297,10 @@ const router = createBrowserRouter([
     {
         path: "/reset-password",
         element: <ResetPassword />
+    },
+    {
+        path: "*",
+        element: <NotFound />
     }
 ])
 
