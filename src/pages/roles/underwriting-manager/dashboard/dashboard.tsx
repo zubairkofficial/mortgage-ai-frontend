@@ -88,7 +88,7 @@ const UnderwritingManagerDashboard: FC = () => {
 
       {/* Main Feature Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/underwriting-manager/applications")}>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/underwriting-manager/loan-validation")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
             <FileSearch size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Document Validation</span>

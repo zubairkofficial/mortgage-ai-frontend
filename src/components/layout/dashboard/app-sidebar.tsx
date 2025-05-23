@@ -45,6 +45,7 @@ export function AppSidebar({ navLinks, userData, ...props }: AppSidebarProps) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
+                <img src="/fav.svg" alt="Mortgage AI" width={20}  />
                 <span className="text-base font-semibold">Mortgage AI</span>
               </a>
             </SidebarMenuButton>

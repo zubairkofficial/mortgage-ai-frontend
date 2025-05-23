@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { useTheme } from "@/components/theme/theme-provider"
 import { toast } from "sonner"
-
+import { useNavigate } from "react-router-dom";
 import { Building, Sun, Moon } from "lucide-react"
 
 interface ActionButton {
@@ -42,16 +42,26 @@ export function DashboardHeader({
   userType?: UserTypeProps;
 }) {
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
 
   // Use title if provided, otherwise use role-based title
   const headerTitle = title || getRoleDisplayName(userType);
 
   const actionButtons: ActionButton[] = [
     {
+      label: "AI Assistant",
+      onClick: () => {
+      
+        navigate("ai-assistant");
+      },
+      variant: "default",
+    
+    },
+    {
       label: "Toast",
       onClick: () => {
-        toast.success("Event has been created", {
-          className: "bg-amber-700",
+        toast.info("Event has been created", {
+          
           description: "Sunday, December 03, 2023 at 9:00 AM",
           action: {
             label: "Undo",

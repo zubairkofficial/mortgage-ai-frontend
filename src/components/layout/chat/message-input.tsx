@@ -59,21 +59,10 @@ export function MessageInput({ message, onMessageChange, onSend }: MessageInputP
               }
             }}
           />
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-            <Smile className="h-5 w-5" />
-          </Button>
+      
         </div>
         
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground">
-                <Mic className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Voice message</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+    
         
         <Button 
           size="icon"

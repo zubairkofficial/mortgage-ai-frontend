@@ -5,6 +5,7 @@ import { BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, Mess
  } from "lucide-react";
 import { ClipboardCheckIcon, AlertCircleIcon, FileIcon } from "lucide-react";
 import { UserRole } from "./users"
+import { FileCheck, History } from "lucide-react"
 
 export type NavItem = {
   title: string
@@ -18,7 +19,28 @@ export const lenderNavLinks: NavItem[] = [
     url: "/lender",
     icon: <BarChartIcon className="h-4 w-4" />,
   },
-]
+  {
+    title: "Loan Review",
+    url: "/lender/loan-review",
+    icon: <FileTextIcon className="h-4 w-4" />,
+  },
+  {
+    title: "Loan Programs",
+    url: "/lender/loan-programs",
+    icon: <BuildingIcon className="h-4 w-4" />,
+  },
+  {
+    title: "Deal Pipeline",
+    url: "/lender/deal-pipeline",
+    icon: <ActivityIcon className="h-4 w-4" />,
+  },
+
+  {
+    title: "Compliance",
+    url: "/lender/compliance",
+    icon: <AlertCircleIcon className="h-4 w-4" />,
+  },
+];
 
 // Navigation links for branch manager
 export const branchManagerNavLinks: NavItem[] = [
@@ -52,11 +74,7 @@ export const branchManagerNavLinks: NavItem[] = [
     url: "/branch-manager/reports",
     icon: <FileTextIcon className="h-4 w-4" />,
   },
-  {
-    title: "Communications",
-    url: "/branch-manager/communications",
-    icon: <MailIcon className="h-4 w-4" />,
-  },
+ 
 ];
 
 // Navigation links for account executive
@@ -86,11 +104,7 @@ export const accountExecutiveNavLinks: NavItem[] = [
     url: "/account-executive/reports",
     icon: <FileTextIcon className="h-4 w-4" />,
   },
-  {
-    title: "Communications",
-    url: "/account-executive/communications",
-    icon: <MessageSquareIcon className="h-4 w-4" />,
-  },
+
 ];
 
 export const brokerNavLinks: NavItem[] = [
@@ -135,27 +149,22 @@ export const underwritingManagerNavLinks: NavItem[] = [
     icon: <BarChartIcon className="h-4 w-4" />,
   },
   {
-    title: "Loan Applications",
-    url: "/underwriting-manager/applications",
-    icon: <FileIcon className="h-4 w-4" />,
+    title: "Loan File Validation",
+    url: "/underwriting-manager/loan-validation",
+    icon: <FileCheck className="h-4 w-4" />,
   },
   {
-    title: "Review Queue",
-    url: "/underwriting-manager/review-queue",
-    icon: <ClipboardCheckIcon className="h-4 w-4" />,
-  },
-  {
-    title: "Team Management",
-    url: "/underwriting-manager/team",
-    icon: <UsersIcon className="h-4 w-4" />,
-  },
-  {
-    title: "Compliance",
+    title: "Compliance Checks",
     url: "/underwriting-manager/compliance",
     icon: <AlertCircleIcon className="h-4 w-4" />,
   },
   {
-    title: "Reports",
+    title: "Audit Trail",
+    url: "/underwriting-manager/audit-trail",
+    icon: <History className="h-4 w-4" />,
+  },
+  {
+    title: "Reports & Alerts",
     url: "/underwriting-manager/reports",
     icon: <FileTextIcon className="h-4 w-4" />,
   },
@@ -167,4 +176,4 @@ export const mockUserData = {
   name: "Test User",
   email: "test@example.com",
   role: UserRole.BROKER
-} 
+}; 

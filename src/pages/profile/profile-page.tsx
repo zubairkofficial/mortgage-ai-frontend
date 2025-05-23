@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { User, Lock, Mail, Phone, Building } from "lucide-react"
 
 const ProfilePage = () => {
-  const [activeTab, setActiveTab] = useState("profile")
+  const [activeTab, setActiveTab] = useState("Profile")
 
   return (
     <div className="container mx-auto py-8 px-4">

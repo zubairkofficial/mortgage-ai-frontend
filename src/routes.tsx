@@ -25,13 +25,40 @@ import BorrowerProfilesPage from './pages/roles/broker/borrower/borrower-profile
 import ApplicationTable from './pages/roles/broker/application/application-table';
 import ProfilePage from './pages/profile/profile-page';
 import NotFound from './pages/not-found';
-
+import LoanReview from './pages/roles/lender/loan-review/loan-review';
+import Compliance from './pages/roles/lender/compliance/compliance';
+import DealPipeline from './pages/roles/lender/deal-pipeline/deal-pipeline';
+import LoanPrograms from './pages/roles/lender/loan-programs/loan-programs';
+import TeamManagement from './pages/roles/branch-manager/team/team';
+import TrainingCenter from './pages/roles/branch-manager/training/training';
+import PerformanceDashboard from './pages/roles/branch-manager/performance/performance';
+import ReportsDashboard from './pages/roles/branch-manager/reports/reports';
+import OperationsDashboard from './pages/roles/branch-manager/operations/operations';
+import LoanValidationPage from './pages/roles/underwriting-manager/loan-validation/loan-validation';
+import CompliancePage from './pages/roles/underwriting-manager/compliance/compliance';
+import AuditTrailPage from './pages/roles/underwriting-manager/audit-trail/audit-trail';
+import ReportsPage from './pages/roles/underwriting-manager/reports/reports';
+import AIAssistant from './pages/chat/ai-assistant';
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Landing />
     },
-   
+
+    {
+        path: "/chat",
+        element: (
+            <ChatLayout />
+        ),
+        children: [
+            {
+                path: ":id",
+                element: <>Chat Page</>,
+            }
+        ]
+    },
+
+
     // Broker Portal Routes
     {
         path: "/broker",
@@ -65,7 +92,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "ai-assistant",
-                element: <div>AI Assistant Page</div>
+                element: <AIAssistant />
             },
             {
                 path: "crm",
@@ -75,9 +102,10 @@ const router = createBrowserRouter([
                 path: "borrower-profiles",
                 element: <BorrowerProfilesPage />
             },
-       
+
         ]
     },
+
     // Account Executive Portal Routes
     {
         path: "/account-executive",
@@ -140,31 +168,28 @@ const router = createBrowserRouter([
                 element: <ProfilePage />
             },
             {
-                path: "applications",
-                element: <div>Document Validation Page</div>
+                path: "ai-assistant",
+                element: <AIAssistant />
             },
             {
-                path: "review-queue",
-                element: <div>Review Queue Page</div>
-            },
-            {
-                path: "team",
-                element: <div>Team Management Page</div>
+                path: "loan-validation",
+                element: <LoanValidationPage />
             },
             {
                 path: "compliance",
-                element: <div>Loan Compliance Page</div>
+                element: <CompliancePage />
+            },
+            {
+                path: "audit-trail",
+                element: <AuditTrailPage />
             },
             {
                 path: "reports",
-                element: <div>Reports Page</div>
-            },
-            {
-                path: "audit-trails",
-                element: <div>Audit Trails Page</div>
+                element: <ReportsPage />
             }
         ]
     },
+
     // Branch Manager Portal Routes
     {
         path: "/branch-manager",
@@ -181,52 +206,34 @@ const router = createBrowserRouter([
                 element: <ProfilePage />
             },
             {
+                path: "ai-assistant",
+                element: <AIAssistant />
+            },
+            {
                 path: "team",
-                element: <div>Broker Team Management Page</div>
+                element: <TeamManagement />
             },
             {
                 path: "performance",
-                element: <div>Performance Metrics Page</div>
+                element: <PerformanceDashboard />
             },
             {
                 path: "operations",
-                element: <div>Branch Operations Page</div>
+                element: <OperationsDashboard />
             },
             {
                 path: "training",
-                element: <div>Training Resources Page</div>
+                element: <TrainingCenter />
             },
             {
                 path: "reports",
-                element: <div>Reports Page</div>
+                element: <ReportsDashboard />
             },
-            {
-                path: "communications",
-                element: <div>Communications Page</div>
-            },
-            {
-                path: "compliance",
-                element: <div>Compliance Monitoring Page</div>
-            },
-            {
-                path: "certifications",
-                element: <div>Broker Certifications Page</div>
-            }
+
+
         ]
     },
 
-    {
-        path: "/chat",
-        element: (
-            <ChatLayout />
-        ),
-        children: [
-            {
-                path: ":id",
-                element: <>Chat Page</>,
-            }
-        ]
-    },
 
     // Lender Portal Routes
     {
@@ -244,36 +251,29 @@ const router = createBrowserRouter([
                 element: <ProfilePage />
             },
             {
-                path: "applications",
-                element: <div>Loan Applications Page</div>
+                path: "ai-assistant",
+                element: <AIAssistant />
             },
             {
-                path: "portfolio",
-                element: <div>Portfolio Management Page</div>
-            },
-            {
-                path: "risk-assessment",
-                element: <div>Risk Assessment Page</div>
-            },
-            {
-                path: "funding",
-                element: <div>Funding Management Page</div>
-            },
-            {
-                path: "reports",
-                element: <div>Reports Page</div>
+                path: "loan-review",
+                element: <LoanReview />
             },
             {
                 path: "compliance",
-                element: <div>Compliance Monitoring Page</div>
+                element: <Compliance />
             },
             {
-                path: "settings",
-                element: <div>Lender Settings Page</div>
-            }
+                path: "deal-pipeline",
+                element: <DealPipeline />
+            },
+            {
+                path: "loan-programs",
+                element: <LoanPrograms />
+            },
+
         ]
     },
-
+ 
     // Authentication Routes
     {
         path: "/login",

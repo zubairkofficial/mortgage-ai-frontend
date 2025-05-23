@@ -120,6 +120,29 @@ export function MessageList({ messages, isTyping, typingUser }: MessageListProps
             </div>
           </div>
         );
+      case 'text':
+        return (
+          <div className={cn(
+            "mb-4", 
+            message.isSender ? "flex justify-end" : "flex justify-start"
+          )}>
+            <div className="max-w-md">
+              <div className={cn(
+                "rounded-lg p-3",
+                message.isSender ? "bg-primary/10" : "bg-muted"
+              )}>
+                <p className="text-sm">{message.content.text}</p>
+              </div>
+              <div className={cn(
+                "flex items-center mt-1",
+                message.isSender ? "justify-end" : "justify-start"
+              )}>
+                <span className="text-xs text-muted-foreground">{message.timestamp}</span>
+                {message.isRead && message.isSender && <Check className="h-4 w-4 ml-1 text-brand-teal" />}
+              </div>
+            </div>
+          </div>
+        );
       default:
         return null;
     }
