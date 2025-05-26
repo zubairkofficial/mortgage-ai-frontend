@@ -39,6 +39,11 @@ import CompliancePage from './pages/roles/underwriting-manager/compliance/compli
 import AuditTrailPage from './pages/roles/underwriting-manager/audit-trail/audit-trail';
 import ReportsPage from './pages/roles/underwriting-manager/reports/reports';
 import AIAssistant from './pages/chat/ai-assistant';
+import OperationsSupport from './pages/roles/account-executive/operations/operations';
+import ComplianceMonitoring from './pages/roles/account-executive/compliance/compliance';
+import ReportsAnalytics from './pages/roles/account-executive/reports/reports';
+import BrokerNetworkOverview from './pages/roles/account-executive/broker-network/broker-network';
+import TrainingResources from './pages/roles/account-executive/training/training';
 const router = createBrowserRouter([
     {
         path: "/",
@@ -123,31 +128,23 @@ const router = createBrowserRouter([
             },
             {
                 path: "brokers",
-                element: <div>Broker Management Page</div>
-            },
-            {
-                path: "performance",
-                element: <div>Performance Metrics Page</div>
-            },
-            {
-                path: "branches",
-                element: <div>Branch Network Management Page</div>
-            },
+                element: <BrokerNetworkOverview/>
+            }, 
             {
                 path: "reports",
-                element: <div>Reports Page</div>
-            },
-            {
-                path: "communications",
-                element: <div>Communications Page</div>
+                element: <ReportsAnalytics/>
             },
             {
                 path: "compliance",
-                element: <div>CRM Compliance Page</div>
+                element: <ComplianceMonitoring/>
             },
             {
                 path: "operations",
-                element: <div>Operations Support Page</div>
+                element: <OperationsSupport/>
+            },
+            {
+                path: "training",
+                element: <TrainingResources/>
             }
         ]
     },

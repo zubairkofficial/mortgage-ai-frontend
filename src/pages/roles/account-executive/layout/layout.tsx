@@ -21,7 +21,7 @@ const AccountExecutiveLayout: FC = () => {
   return (
     <SidebarProvider>
       <AppSidebar 
-        variant="inset" 
+        variant="inset"
         navLinks={accountExecutiveNavLinks} 
         userData={user} 
       />

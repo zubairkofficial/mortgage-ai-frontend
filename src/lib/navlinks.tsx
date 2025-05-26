@@ -6,6 +6,7 @@ import { BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, Mess
 import { ClipboardCheckIcon, AlertCircleIcon, FileIcon } from "lucide-react";
 import { UserRole } from "./users"
 import { FileCheck, History } from "lucide-react"
+import { Briefcase } from "lucide-react"
 
 export type NavItem = {
   title: string
@@ -85,26 +86,30 @@ export const accountExecutiveNavLinks: NavItem[] = [
     icon: <BarChartIcon className="h-4 w-4" />,
   },
   {
-    title: "Manage Brokers",
+    title: "Broker Network",
     url: "/account-executive/brokers",
     icon: <UsersIcon className="h-4 w-4" />,
   },
   {
-    title: "Performance",
-    url: "/account-executive/performance",
-    icon: <ActivityIcon className="h-4 w-4" />,
+    title: "Compliance",
+    url: "/account-executive/compliance",
+    icon: <ClipboardCheckIcon className="h-4 w-4" />,
   },
   {
-    title: "Branches",
-    url: "/account-executive/branches",
-    icon: <BuildingIcon className="h-4 w-4" />,
+    title: "Operations",
+    url: "/account-executive/operations",
+    icon: <Briefcase className="h-4 w-4" />,
   },
   {
     title: "Reports",
     url: "/account-executive/reports",
     icon: <FileTextIcon className="h-4 w-4" />,
   },
-
+  {
+    title: "Training",
+    url: "/account-executive/training",
+    icon: <BookOpenIcon className="h-4 w-4" />,
+  },
 ];
 
 export const brokerNavLinks: NavItem[] = [
