@@ -1,13 +1,18 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { MessageSquare, X, Send, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import ChatGPTFormatter from './chatgpt-formatter'
 
 interface Message {
   id: string
   content: string
   isAI: boolean
   timestamp: Date
+  isStreaming?: boolean
 }
+
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -15,37 +20,145 @@ const ChatWidget = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm your AI assistant. How can I help you today?",
+      content: "Hello! I'm your AI loan application assistant. I can help you check your application status, answer questions about the loan process, and provide guidance. How can I assist you today?",
       isAI: true,
       timestamp: new Date()
     }
   ])
   const [isTyping, setIsTyping] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [streamingMessage, setStreamingMessage] = useState<string>('')
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const simulateAIResponse = async (userMessage: string) => {
-    setIsTyping(true)
-    
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Simple response logic - you can make this more sophisticated
-    let response = "I'm not sure how to help with that. Could you please provide more details?"
-    
-    if (userMessage.toLowerCase().includes('hello') || userMessage.toLowerCase().includes('hi')) {
-      response = "Hello! How can I assist you today?"
-    } else if (userMessage.toLowerCase().includes('help')) {
-      response = "I'm here to help! What specific information are you looking for?"
-    } else if (userMessage.toLowerCase().includes('thank')) {
-      response = "You're welcome! Is there anything else I can help you with?"
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const getAIResponse = async (userMessage: string) => {
+    try {
+      setIsTyping(true)
+      setError(null)
+      setStreamingMessage('')
+
+      // Cancel any ongoing stream
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController()
+
+      const response = await fetch(OPENAI_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: "You are an AI assistant for a loan application platform. Your role is to help borrowers with their loan applications, check application status, and provide guidance about the loan process. Be professional, helpful, and empathetic. If you don't know specific details about a borrower's application, ask them to provide their application ID or contact customer support. Generate fictional and dummy responses according to the user's message."
+            },
+            ...messages.map(msg => ({
+              role: msg.isAI ? "assistant" : "user",
+              content: msg.content
+            })),
+            {
+              role: "user",
+              content: userMessage
+            }
+          ],
+        
+      
+          stream: true
+        }),
+        signal: abortControllerRef.current.signal
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to get AI response')
+      }
+
+      if (!response.body) {
+        throw new Error('No response body')
+      }
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let accumulatedMessage = ''
+
+      // Add initial streaming message
+      const streamingMessageId = Date.now().toString()
+      setMessages(prev => [...prev, {
+        id: streamingMessageId,
+        content: '',
+        isAI: true,
+        timestamp: new Date(),
+        isStreaming: true
+      }])
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value)
+        const lines = chunk.split('\n').filter(line => line.trim() !== '')
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6)
+            if (data === '[DONE]') continue
+
+            try {
+              const parsed = JSON.parse(data)
+              const content = parsed.choices[0]?.delta?.content || ''
+              if (content) {
+                accumulatedMessage += content
+                setStreamingMessage(accumulatedMessage)
+                
+                // Update the streaming message in the messages array
+                setMessages(prev => prev.map(msg => 
+                  msg.id === streamingMessageId 
+                    ? { ...msg, content: accumulatedMessage }
+                    : msg
+                ))
+              }
+            } catch (e) {
+              console.error('Error parsing streaming response:', e)
+            }
+          }
+        }
+      }
+
+      // Final update to remove streaming state
+      setMessages(prev => prev.map(msg => 
+        msg.id === streamingMessageId 
+          ? { ...msg, content: accumulatedMessage, isStreaming: false }
+          : msg
+      ))
+
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        console.log('Stream aborted')
+        return
+      }
+      setError('Sorry, I encountered an error. Please try again or contact customer support.')
+      console.error('AI Response Error:', err)
+      
+      // Remove the streaming message if there was an error
+      setMessages(prev => prev.filter(msg => !msg.isStreaming))
+    } finally {
+      setIsTyping(false)
+      setStreamingMessage('')
+      abortControllerRef.current = null
     }
-
-    setMessages(prev => [...prev, {
-      id: Date.now().toString(),
-      content: response,
-      isAI: true,
-      timestamp: new Date()
-    }])
-    setIsTyping(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,9 +176,12 @@ const ChatWidget = () => {
     setMessages(prev => [...prev, userMessage])
     setMessage('')
     
-    // Simulate AI response
-    await simulateAIResponse(message)
+    // Get AI response
+    await getAIResponse(message)
   }
+
+  // Update the message rendering to handle streaming and formatting
+ 
 
   return (
     <div className="fixed bottom-8 right-8 z-[100]">
@@ -133,7 +249,7 @@ const ChatWidget = () => {
                       {msg.isAI ? <Sparkles className="h-4 w-4" /> : '👤'}
                     </div>
                     <div className={`rounded-2xl ${msg.isAI ? 'rounded-tl-none bg-muted/20' : 'rounded-tr-none bg-brand-blue/10'} p-4 text-sm shadow-sm`}>
-                      <p className="leading-relaxed">{msg.content}</p>
+                      {<ChatGPTFormatter response={msg.content} />}
                       <span className="text-xs text-muted-foreground mt-1 block">
                         {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
@@ -141,6 +257,15 @@ const ChatWidget = () => {
                   </div>
                 </motion.div>
               ))}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-red-500 text-sm text-center p-2 bg-red-50 rounded-lg"
+                >
+                  {error}
+                </motion.div>
+              )}
               {isTyping && (
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -161,6 +286,7 @@ const ChatWidget = () => {
                   </div>
                 </motion.div>
               )}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
