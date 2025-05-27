@@ -181,7 +181,7 @@ export function DataTable<TData, TValue>({
                   value={(columnFilters.find((filter) => filter.id === column.id)?.value as string) || "all"}
                   onValueChange={(value) => handleFilter(column.id, value)}
                 >
-                  <SelectTrigger id={column.id} className="h-8 w-[180px]">
+                  <SelectTrigger id={column.id} className="h-8 min-w-full md:w-[180px]">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>

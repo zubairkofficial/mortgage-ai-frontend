@@ -39,11 +39,12 @@ import CompliancePage from './pages/roles/underwriting-manager/compliance/compli
 import AuditTrailPage from './pages/roles/underwriting-manager/audit-trail/audit-trail';
 import ReportsPage from './pages/roles/underwriting-manager/reports/reports';
 import AIAssistant from './pages/chat/ai-assistant';
-import OperationsSupport from './pages/roles/account-executive/operations/operations';
-import ComplianceMonitoring from './pages/roles/account-executive/compliance/compliance';
-import ReportsAnalytics from './pages/roles/account-executive/reports/reports';
 import BrokerNetworkOverview from './pages/roles/account-executive/broker-network/broker-network';
-import TrainingResources from './pages/roles/account-executive/training/training';
+import Transaction from './pages/roles/account-executive/transaction/transaction';
+// import OperationsSupport from './pages/roles/account-executive/operations/operations';
+// import ComplianceMonitoring from './pages/roles/account-executive/compliance/compliance';
+// import ReportsAnalytics from './pages/roles/account-executive/reports/reports';
+// import TrainingResources from './pages/roles/account-executive/training/training';
 const router = createBrowserRouter([
     {
         path: "/",
@@ -129,23 +130,29 @@ const router = createBrowserRouter([
             {
                 path: "brokers",
                 element: <BrokerNetworkOverview/>
-            }, 
-            {
-                path: "reports",
-                element: <ReportsAnalytics/>
             },
             {
-                path: "compliance",
-                element: <ComplianceMonitoring/>
-            },
-            {
-                path: "operations",
-                element: <OperationsSupport/>
-            },
-            {
-                path: "training",
-                element: <TrainingResources/>
-            }
+                path : "transactions",
+                element: <Transaction />
+            } 
+            // {
+            //     path: "reports",
+            //     element: <ReportsAnalytics/>
+            // },
+            // {
+            //     path: "compliance",
+            //     element: <ComplianceMonitoring/>
+            // },
+            // {
+            //     path: "operations",
+            //     element: <OperationsSupport/>
+            // },
+            // {
+            //     path: "training",
+            //     element: <TrainingResources/>
+            // }
+
+
         ]
     },
 
