@@ -141,8 +141,7 @@ function Transaction() {
             <TabsTrigger value="manual">Manual Transactions</TabsTrigger>
           </TabsList>
           <TabsContent value="online">
-            <Card>
-              <CardContent>
+            
                 <DataTable
                   columns={columns}
                   data={onlineTransactions}
@@ -153,12 +152,9 @@ function Transaction() {
                   actionButtonIcon={<Plus className="h-4 w-4" />}
                   onActionButtonClick={() => setDialogOpen(true)}
                 />
-              </CardContent>
-            </Card>
           </TabsContent>
           <TabsContent value="manual">
-            <Card>
-              <CardContent>
+            
                 <DataTable
                   columns={columns}
                   data={manualTransactions}
@@ -169,8 +165,6 @@ function Transaction() {
                   actionButtonIcon={<Plus className="h-4 w-4" />}
                   onActionButtonClick={() => setDialogOpen(true)}
                 />
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
         <DialogContent className="lg:min-w-3xl lg:min-h-2xl">
