@@ -289,7 +289,7 @@ function Transaction() {
             </form>
           )}
           {selectedForm === "manual" && (
-            <form className="space-y-4 max-h-[70vh] overflow-y-auto" onSubmit={handleManualSubmit}>
+            <form className="space-y-4 max-h-[70vh] w-[98%] px-2 overflow-y-auto" onSubmit={handleManualSubmit}>
               <CardTitle className="mb-2">Manual Payment Form</CardTitle>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
@@ -338,7 +338,7 @@ function Transaction() {
                   </>
                 )}
               </div>
-              <Button type="submit" className="w-full mt-2">Submit</Button>
+              <Button type="submit" className="w-full mt-2 ">Submit</Button>
             </form>
           )}
         </DialogContent>
