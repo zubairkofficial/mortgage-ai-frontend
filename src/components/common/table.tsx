@@ -141,7 +141,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4 px-6 py-6 border border-primary/20 rounded-2xl">
       {/* Table Header */}
-      <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
+      <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between  md:space-y-0">
         {(title || description) && (
           <div>
             {title && <h2 className="text-2xl font-bold tracking-tight">{title}</h2>}
@@ -276,7 +276,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <div className="text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length > 0 && (
             <p>
@@ -285,7 +285,7 @@ export function DataTable<TData, TValue>({
             </p>
           )}
         </div>
-        <div className="flex items-center space-x-6 lg:space-x-8">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-6 md:space-y-0 lg:space-x-8">
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Rows per page</p>
             <Select
@@ -306,11 +306,11 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+          <div className="flex w-full md:w-[100px] items-center justify-center text-sm font-medium">
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-center md:justify-start space-x-2">
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"

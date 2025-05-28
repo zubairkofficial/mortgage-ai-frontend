@@ -90,7 +90,7 @@ export function DashboardHeader({
         />
         <div className="flex items-center gap-2">
           <Building size={20} className="text-primary" />
-          <h1 className="text-base font-medium">{headerTitle}</h1>
+          <h1 className="text-base font-medium hidden md:block">{headerTitle}</h1>
         </div>
         <div className="ml-auto flex items-center gap-2">
           {actionButtons.map((button, index) => (
