@@ -19,7 +19,7 @@ export function MessageInput({ message, onMessageChange, onSend }: MessageInputP
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="border-t border-border p-3 bg-background">
+    <div className="border-t absolute bottom-0 min-w-full border-border p-3 bg-background">
       <div className="flex items-center gap-2">
         <TooltipProvider>
           <Tooltip>

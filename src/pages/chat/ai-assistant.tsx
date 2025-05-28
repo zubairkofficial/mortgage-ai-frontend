@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Sparkles, } from 'lucide-react';
 import { Message, User } from '@/components/layout/chat/types';
-import { MessageList } from '@/components/layout/chat/message-list';
 import { MessageInput } from '@/components/layout/chat/message-input';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/stores/userStore';
 import { UserRole } from '@/lib/users';
+import ChatBox from './components/chat-message-box';
 
 // Dummy AI responses
 const dummyResponses = [
@@ -49,7 +49,7 @@ export default function AIAssistant() {
 
   // Function to navigate to the appropriate dashboard based on user role
   const navigateToDashboard = () => {
-    if (!user) return;
+    if (!user) navigate("/login");
     
     switch (user.role) {
       case UserRole.BROKER:
@@ -115,7 +115,7 @@ export default function AIAssistant() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-[85vh] lg:min-h-[80vh]  bg-background text-foreground">
       {/* Header */}
       <div className="border-b border-border bg-background/95 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
@@ -149,8 +149,8 @@ export default function AIAssistant() {
 
       {/* Chat Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="@container/main flex flex-1 flex-col">
-          <MessageList 
+        <div className="@container/main flex flex-1 flex-col relative" >
+          <ChatBox 
             messages={aiMessages}
             isTyping={isTyping}
             typingUser={aiUser}

@@ -141,7 +141,6 @@ function Transaction() {
             <TabsTrigger value="manual">Manual Transactions</TabsTrigger>
           </TabsList>
           <TabsContent value="online">
-            
                 <DataTable
                   columns={columns}
                   data={onlineTransactions}
@@ -154,7 +153,6 @@ function Transaction() {
                 />
           </TabsContent>
           <TabsContent value="manual">
-            
                 <DataTable
                   columns={columns}
                   data={manualTransactions}
