@@ -149,7 +149,7 @@ export function MessageList({ messages, isTyping, typingUser }: MessageListProps
   };
 
   return (
-    <ScrollArea className=" bg-muted/30 max-h-[60%] overflow-y-scroll flex-1 p-6 mb-6 ">
+    <ScrollArea className="bg-muted/30 max-h-[60%] overflow-y-scroll flex-1 p-6 mb-6 ">
       <div>
         {/* Time Header */}
         <div className="text-center mb-6">

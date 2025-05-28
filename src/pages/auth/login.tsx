@@ -34,22 +34,22 @@ const Login = () => {
       // Redirect based on role
       switch (user.role) {
         case UserRole.BROKER:
-          navigate('/broker')
+          navigate('/broker/dashboard')
           break
         case UserRole.ACCOUNT_EXECUTIVE:
-          navigate('/account-executive')
+          navigate('/account-executive/dashboard')
           break
         case UserRole.UNDERWRITING_MANAGER:
-          navigate('/underwriting-manager')
+          navigate('/underwriting-manager/dashboard')
           break
         case UserRole.BRANCH_MANAGER:
-          navigate('/branch-manager')
+          navigate('/branch-manager/dashboard')
           break
         case UserRole.LENDER:
-          navigate('/lender')
+          navigate('/lender/dashboard')
           break
         default:
-          navigate('/broker')
+          navigate('/broker/dashboard')
       }
 
       toast.success(`Welcome back, ${user.name}!`)

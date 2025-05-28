@@ -19,7 +19,7 @@ export type NavItem = {
 export const lenderNavLinks: NavItem[] = [
   {
     title: "Dashboard",
-    url: "/lender",
+    url: "/lender/dashboard",
     icon: <BarChartIcon className="h-4 w-4" />,
   },
   {
@@ -49,7 +49,7 @@ export const lenderNavLinks: NavItem[] = [
 export const branchManagerNavLinks: NavItem[] = [
   {
     title: "Dashboard",
-    url: "/branch-manager",
+    url: "/branch-manager/dashboard",
     icon: <BarChartIcon className="h-4 w-4" />,
   },
   {
@@ -84,7 +84,7 @@ export const branchManagerNavLinks: NavItem[] = [
 export const accountExecutiveNavLinks: NavItem[] = [
   {
     title: "Dashboard",
-    url: "/account-executive",
+    url: "/account-executive/dashboard",
     icon: <BarChartIcon className="h-4 w-4" />,
   },
   {
@@ -123,7 +123,7 @@ export const accountExecutiveNavLinks: NavItem[] = [
 export const brokerNavLinks: NavItem[] = [
   {
     title: "Dashboard",
-    url: "/broker",
+    url: "/broker/dashboard",
     icon: <BarChartIcon className="h-4 w-4" />,
   },
   {
@@ -158,7 +158,7 @@ export const brokerNavLinks: NavItem[] = [
 export const underwritingManagerNavLinks: NavItem[] = [
   {
     title: "Dashboard",
-    url: "/underwriting-manager",
+    url: "/underwriting-manager/dashboard",
     icon: <BarChartIcon className="h-4 w-4" />,
   },
   {

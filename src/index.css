@@ -9,6 +9,7 @@
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(222, 47%, 11%);
   --card: hsl(0, 0%, 100%);
+  --success: hsl(120, 85%, 16%);
   --card-foreground: hsl(222, 47%, 11%);
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(222, 47%, 11%);
@@ -136,11 +137,13 @@
   --card-accent-border: var(--gradient-accent-border);
   --card-info-bg: var(--gradient-info-from);
   --card-info-border: var(--gradient-info-border);
+  --success: hsl(120, 74%, 41%);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-success : var(--success);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);

@@ -252,10 +252,10 @@ const ApplicationTable = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="p-4 border rounded-lg bg-blue-50 border-blue-200">
+            <div className="p-4 border rounded-lg border-primary">
               <div className="flex gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <AlertCircleIcon className="h-5 w-5 text-blue-600" />
+                <div className="p-2 bg-primary rounded-lg">
+                  <AlertCircleIcon className="h-5 w-5 text-primary-foreground " />
                 </div>
                 <div>
                   <h3 className="font-medium">Application Completeness Alert</h3>
@@ -267,17 +267,17 @@ const ApplicationTable = () => {
               </div>
             </div>
 
-            <div className="p-4 border rounded-lg bg-green-50 border-green-200">
+            <div className="p-4 border rounded-lg border-success">
               <div className="flex gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <CheckCircleIcon className="h-5 w-5 text-green-600" />
+                <div className=" p-2 bg-success rounded-lg">
+                  <CheckCircleIcon className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <div>
                   <h3 className="font-medium">Application Success Probability</h3>
                   <p className="text-sm text-muted-foreground mt-1">
                     Sarah Johnson's application (APP002) has a 92% chance of approval based on current documentation and lender criteria.
                   </p>
-                  <Button variant="link" className="p-0 mt-2 h-auto">View full analysis</Button>
+                  <Button variant="link" className="p-0 text-success/100 mt-2 h-auto">View full analysis</Button>
                 </div>
               </div>
             </div>

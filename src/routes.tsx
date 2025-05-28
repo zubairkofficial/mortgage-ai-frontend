@@ -73,7 +73,7 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: "",
+                path: "dashboard",
                 element: <BorrowerDashboard />
             },
             {
@@ -120,7 +120,7 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: "",
+                path: "dashboard",
                 element: <AccountExecutiveDashboard />
             },
             {
@@ -166,7 +166,7 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: "",
+                path: "dashboard",
                 element: <UnderwritingManagerDashboard />
             },
             {
@@ -204,7 +204,7 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: "",
+                path: "dashboard",
                 element: <BranchManagerDashboard />
             },
             {
@@ -249,7 +249,7 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: "",
+                path: "dashboard",
                 element: <LenderDashboard />
             },
             {

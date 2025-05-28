@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate , NavLink } from "react-router-dom";
 import { IconNode, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,22 +21,6 @@ export function NavMain({
   }[]
 }) {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Check if current path matches the item url
-  const isActive = (url: string) => {
-    // Handle role-specific dashboard URLs
-    if (url === location.pathname) {
-      return true;
-    }
-
-    // For nested routes, check if the current path starts with the url
-    // but exclude exact matches for parent routes
-    return url == '/' &&
-   
-      location.pathname.startsWith(url) &&
-      location.pathname !== url;
-  };
 
   const renderIcon = (icon: any, active: boolean) => {
     // If it's already a React element, render it with a wrapper
@@ -78,13 +62,21 @@ export function NavMain({
         </SidebarMenu>
         <SidebarMenu>
           {items && items.length > 0 && items.map((item) => {
-            const active = isActive(item.url);
             return (
               <SidebarMenuItem key={item.title} onClick={() => navigate(item.url)}>
-                <SidebarMenuButton tooltip={item.title} isActive={active}>
-                  {item.icon && renderIcon(item.icon, active)}
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
+                <NavLink
+                to={item.url}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-2 peer/menu-button w-full px-2 py-2 rounded-md transition-colors duration-200",
+                    isActive ? "bg-primary/10 text-primary font-semibold" : "hover:bg-sidebar-accent text-foreground"
+                  )
+                }
+                
+              >
+                {item.icon && renderIcon(item.icon, false)}
+                <span>{item.title}</span>
+              </NavLink>
               </SidebarMenuItem>
             );
           })}

@@ -157,10 +157,10 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col space-y-2 md:flex-row md:items-center md:gap-2 md:space-y-0">
+      <div className="flex flex-col space-y-2 md:flex-row  md:items-center md:gap-2 md:space-y-0">
         {searchKey && (
-          <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="relative min-w-8/12">
+            <Search className="absolute  left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={globalFilter ?? ""}
@@ -169,11 +169,10 @@ export function DataTable<TData, TValue>({
             />
           </div>
         )}
-
-        {filterableColumns.length > 0 && (
-          <div className="flex gap-2">
-            {filterableColumns.map((column) => (
-              <div key={column.id} className="flex items-center gap-1">
+        <div className="flex items-center w-full gap-2 justify-between">
+        {filterableColumns.length > 0 && 
+            filterableColumns.map((column) => (
+              <div key={column.id} className="flex gap-1 mr-3">
                 <Label htmlFor={column.id} className="whitespace-nowrap font-medium">
                   {column.title}:
                 </Label>
@@ -181,7 +180,7 @@ export function DataTable<TData, TValue>({
                   value={(columnFilters.find((filter) => filter.id === column.id)?.value as string) || "all"}
                   onValueChange={(value) => handleFilter(column.id, value)}
                 >
-                  <SelectTrigger id={column.id} className="h-8 min-w-full md:w-[180px]">
+                  <SelectTrigger id={column.id} className="h-8 min-w-full ">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -195,10 +194,7 @@ export function DataTable<TData, TValue>({
                 </Select>
               </div>
             ))}
-          </div>
-        )}
-
-        <div className="flex items-center gap-2 ml-auto">
+  
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="ml-auto h-8">

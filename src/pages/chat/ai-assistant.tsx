@@ -44,37 +44,8 @@ export default function AIAssistant() {
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [aiMessages, setAiMessages] = useState<Message[]>(aiUser.messages);
-  const navigate = useNavigate();
-  const user = useUser((state) => state.user);
 
-  // Function to navigate to the appropriate dashboard based on user role
-  const navigateToDashboard = () => {
-    if (!user) navigate("/login");
-    
-    switch (user.role) {
-      case UserRole.BROKER:
-        navigate("/broker");
-        break;
-      case UserRole.ACCOUNT_EXECUTIVE:
-        navigate("/account-executive");
-        break;
-      case UserRole.UNDERWRITING_MANAGER:
-        navigate("/underwriting-manager");
-        break;
-      case UserRole.BRANCH_MANAGER:
-        navigate("/branch-manager");
-        break;
-      case UserRole.LENDER:
-        navigate("/lender");
-        break;
-      case UserRole.ADMIN:
-        navigate("/admin");
-        break;
-      default:
-        navigate("/");
-        break;
-    }
-  };
+
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
