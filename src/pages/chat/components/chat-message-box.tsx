@@ -141,6 +141,16 @@ function ChatBox({messages , isTyping , typingUser}: MessageListProps)  {
                     message.isSender ? "bg-primary/10" : "bg-muted"
                   )}>
                     <p className="text-sm">{message.content.text}</p>
+                    {message.isStreaming && (
+                      <div className="flex items-center mt-2">
+                        <div className="flex">
+                          <div className="w-1 h-1 rounded-full bg-brand-blue animate-pulse mr-1"></div>
+                          <div className="w-1 h-1 rounded-full bg-brand-blue animate-pulse mr-1" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="w-1 h-1 rounded-full bg-brand-blue animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                        </div>
+                        <span className="text-xs text-muted-foreground ml-2">Generating...</span>
+                      </div>
+                    )}
                   </div>
                   <div className={cn(
                     "flex items-center mt-1",

@@ -146,7 +146,6 @@ const BrokerNetworkOverview: FC = () => {
                 id: "status",
                 title: "Status",
                 options: [
-                  { label: "All", value: "all" },
                   { label: "Active", value: "Active" },
                   { label: "Inactive", value: "Inactive" },
                 ],

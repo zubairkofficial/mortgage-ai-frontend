@@ -239,7 +239,7 @@ const TrainingResources: FC = () => {
                 id: "type",
                 title: "Type",
                 options: [
-                  { label: "All", value: "all" },
+               
                   { label: "Webinar", value: "Webinar" },
                   { label: "Workshop", value: "Workshop" },
                   { label: "One-on-One", value: "One-on-One" },
@@ -249,7 +249,6 @@ const TrainingResources: FC = () => {
                 id: "status",
                 title: "Status",
                 options: [
-                  { label: "All", value: "all" },
                   { label: "Scheduled", value: "Scheduled" },
                   { label: "In Progress", value: "In Progress" },
                   { label: "Completed", value: "Completed" },
@@ -278,7 +277,6 @@ const TrainingResources: FC = () => {
                 id: "type",
                 title: "Type",
                 options: [
-                  { label: "All", value: "all" },
                   { label: "PDF Guide", value: "PDF Guide" },
                   { label: "Checklist", value: "Checklist" },
                   { label: "Video", value: "Video" },
@@ -288,7 +286,6 @@ const TrainingResources: FC = () => {
                 id: "category",
                 title: "Category",
                 options: [
-                  { label: "All", value: "all" },
                   { label: "Process", value: "Process" },
                   { label: "Compliance", value: "Compliance" },
                   { label: "Sales", value: "Sales" },

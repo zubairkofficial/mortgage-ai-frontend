@@ -134,7 +134,11 @@ const router = createBrowserRouter([
             {
                 path : "transactions",
                 element: <Transaction />
-            } 
+            } ,
+            {
+                path: "ai-assistant",
+                element: <AIAssistant />
+            },
             // {
             //     path: "reports",
             //     element: <ReportsAnalytics/>

@@ -220,7 +220,7 @@ const ChatWidget = () => {
                 <div>
                   <h3 className="font-semibold text-lg">AI Assistant</h3>
                   <p className="text-xs text-muted-foreground">
-                    {isTyping ? 'Typing...' : 'Online • Ready to help'}
+                    {isTyping ? 'Typing...' : 'Online'}
                   </p>
                 </div>
               </div>

@@ -204,7 +204,6 @@ const OperationsSupport: FC = () => {
                 id: "priority",
                 title: "Priority",
                 options: [
-                  { label: "All", value: "all" },
                   { label: "High", value: "High" },
                   { label: "Medium", value: "Medium" },
                   { label: "Low", value: "Low" },
@@ -214,7 +213,6 @@ const OperationsSupport: FC = () => {
                 id: "status",
                 title: "Status",
                 options: [
-                  { label: "All", value: "all" },
                   { label: "Open", value: "Open" },
                   { label: "In Progress", value: "In Progress" },
                   { label: "Resolved", value: "Resolved" },

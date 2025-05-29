@@ -14,6 +14,7 @@ export interface Message {
   timestamp: string;
   isRead: boolean;
   isSender: boolean;
+  isStreaming?: boolean;
 }
 
 export interface User {

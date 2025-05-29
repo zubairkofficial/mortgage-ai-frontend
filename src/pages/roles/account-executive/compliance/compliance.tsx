@@ -204,7 +204,7 @@ const ComplianceMonitoring: FC = () => {
                 id: "severity",
                 title: "Severity",
                 options: [
-                  { label: "All", value: "all" },
+              
                   { label: "High", value: "High" },
                   { label: "Medium", value: "Medium" },
                   { label: "Low", value: "Low" },
@@ -214,7 +214,7 @@ const ComplianceMonitoring: FC = () => {
                 id: "status",
                 title: "Status",
                 options: [
-                  { label: "All", value: "all" },
+            
                   { label: "Open", value: "Open" },
                   { label: "In Progress", value: "In Progress" },
                   { label: "Resolved", value: "Resolved" },
@@ -224,7 +224,6 @@ const ComplianceMonitoring: FC = () => {
                 id: "type",
                 title: "Alert Type",
                 options: [
-                  { label: "All", value: "all" },
                   { label: "Documentation", value: "Documentation" },
                   { label: "Training", value: "Training" },
                   { label: "Policy", value: "Policy" },
