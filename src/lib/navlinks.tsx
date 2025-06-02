@@ -2,13 +2,10 @@ import {
   IconNode,
   Wallet,
 } from "lucide-react"
-import {AlertCircleIcon, BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, MessageSquareIcon, MailIcon, BookOpenIcon ,  FileIcon,   FileCheckIcon
-  
+import {AlertCircleIcon, BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, MessageSquareIcon, BookOpenIcon ,  FileIcon,  
  } from "lucide-react";
-import { ClipboardCheckIcon } from "lucide-react";
 import { UserRole } from "./users"
 import { FileCheck, History } from "lucide-react"
-import { Briefcase } from "lucide-react"
 
 export type NavItem = {
   title: string
@@ -183,6 +180,13 @@ export const underwritingManagerNavLinks: NavItem[] = [
   },
 ];
 
+export const borrowerNavLinks: NavItem[] = [
+  {
+    title: "Dashboard",
+    url: "/borrower/dashboard",
+    icon: <BarChartIcon className="h-4 w-4" />,
+  },
+]
 // User data to be used throughout the application
 export const mockUserData = {
   id: "1",

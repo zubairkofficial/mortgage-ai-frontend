@@ -12,7 +12,6 @@ import {
   createActionsColumn,
 } from "@/components/common/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
@@ -39,15 +38,12 @@ import {
   Award,
   Clock,
   Users,
-  Download,
   Upload,
-  CheckCircle2,
   AlertCircle,
   Plus,
-  Trash2,
-  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 // Mock data for training metrics
 const trainingMetrics = {
@@ -371,18 +367,15 @@ const TrainingCenter: FC = () => {
     createActionsColumn([
       {
         label: "View Materials",
-        onClick: (data) => handleViewMaterials(data),
-        icon: <Eye className="h-4 w-4" />,
+        onClick: (data: Course) => handleViewMaterials(data),
       },
       {
         label: "Edit Course",
-        onClick: (data) => console.log("Edit course", data),
-        icon: <FileText className="h-4 w-4" />,
+        onClick: (data: Course) => console.log("Edit course", data),
       },
       {
         label: "Delete Course",
-        onClick: (data) => handleDeleteCourse(data.id),
-        icon: <Trash2 className="h-4 w-4" />,
+        onClick: (data: Course) => handleDeleteCourse(data.id),
         variant: "destructive",
       },
     ]),

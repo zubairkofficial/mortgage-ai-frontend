@@ -40,7 +40,7 @@ const getTimeOfDay = () => {
   return "evening";
 };
 
-const BorrowerDashboard: FC = () => {
+const BrokerDashboard: FC = () => {
   const { user } = useAuth();
   const timeOfDay = getTimeOfDay();
   const navigate = useNavigate();   
@@ -229,4 +229,4 @@ const BorrowerDashboard: FC = () => {
   );
 };
 
-export default BorrowerDashboard;
+export default BrokerDashboard;

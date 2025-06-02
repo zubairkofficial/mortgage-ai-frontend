@@ -167,7 +167,7 @@ const AccountExecutiveDashboard: FC = () => {
             <CardTitle className="text-lg font-semibold">Broker Performance</CardTitle>
             <div className="flex items-center gap-2">
               <ChartBar size={18} className="text-primary" />
-              <span className="text-sm font-medium">2023 Monthly Loans</span>
+              <span className="text-sm font-medium">2025 Monthly Loans</span>
             </div>
           </div>
         </CardHeader>

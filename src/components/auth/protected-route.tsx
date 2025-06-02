@@ -44,6 +44,9 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
       case UserRole.BRANCH_MANAGER:
         redirectPath = "/branch-manager";
         break;
+      case UserRole.BORROWER:
+        redirectPath = "/borrower";
+        break;
     }
     
     return <Navigate to={redirectPath} replace />;
