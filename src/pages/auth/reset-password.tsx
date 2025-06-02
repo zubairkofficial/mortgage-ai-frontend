@@ -84,7 +84,6 @@ const ResetPassword = () => {
     }
     
     // In a real app, this would call an API endpoint with the token and new password
-    console.log('Resetting password with token:', token)
     setIsSubmitted(true)
     
     // Redirect to login after a delay

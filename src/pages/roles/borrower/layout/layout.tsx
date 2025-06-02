@@ -11,8 +11,6 @@ import { useUser } from "@/stores/userStore";
 const BorrowerLayout: FC = () => {
   // Get user from global state
   const user = useUser(state => state.user);
-  console.log(user)
-
   
   // Redirect if not authenticated or not a branch manager
   if (!user || user.role !== UserRole.BORROWER) {

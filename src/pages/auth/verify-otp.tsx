@@ -81,9 +81,7 @@ const VerifyOtp = () => {
 
   // Mock verification function
   const verifyOtp = (otpValue: string) => {
-    // In a real app, this would call an API endpoint
-    console.log('Verifying OTP:', otpValue)
-    
+    // In a real app, this would call an API endpoint    
     // Mock successful verification (in real app, this would check against API response)
     if (otpValue === '123456') { // Example OTP for testing
       setIsVerified(true)
@@ -118,7 +116,6 @@ const VerifyOtp = () => {
       setResendCountdown(60)
       setIsResending(false)
       setErrorMessage('')
-      console.log('Resending OTP to:', userEmail)
     }, 1000)
   }
 

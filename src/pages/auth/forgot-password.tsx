@@ -14,9 +14,6 @@ const ForgotPassword = () => {
       setErrorMessage('Please enter a valid email address.')
       return
     }
-    
-    // In a real app, this would call an API endpoint
-    console.log('Forgot password request for:', email)
     setIsSubmitted(true)
     setErrorMessage('')
   }

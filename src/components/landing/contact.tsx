@@ -17,7 +17,6 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Mock form submission
-    console.log('Form submitted:', formData)
     // Reset form
     setFormData({ name: '', email: '', company: '', message: '' })
     // Here you would typically call an API to handle the form submission

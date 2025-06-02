@@ -60,6 +60,34 @@ const steps = [
   },
 ];
 
+// Predefined data options for easier form filling
+const loanIdSuggestions = [
+  "LOAN-005",
+  "LOAN-006",
+  "LOAN-007",
+  "LOAN-008",
+  "LOAN-009",
+  "LOAN-010",
+];
+
+const assigneeSuggestions = [
+  "Sarah Lender",
+  "Mike Lender",
+  "Emily Lender",
+  "John Lender",
+  "David Compliance",
+  "Lisa Reviewer",
+];
+
+const borrowerSuggestions = [
+  "Alice Johnson",
+  "Michael Brown",
+  "Sarah Wilson",
+  "David Davis",
+  "Emma Martinez",
+  "James Anderson",
+];
+
 interface ComplianceFormProps {
   onSubmit: (check: ComplianceCheck) => void;
 }
@@ -135,21 +163,62 @@ export const ComplianceForm: FC<ComplianceFormProps> = ({ onSubmit }) => {
 
   // Handle form submission
   const handleSubmit = async () => {
+    // Validate all required fields
+    if (
+      !formData.loanId ||
+      !formData.borrower ||
+      !formData.assignedTo ||
+      !formData.checkType ||
+      !formData.dueDate
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     setIsProcessing(true);
 
     // Simulate API call delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
+    // Generate more realistic data
+    const currentDate = new Date();
+    const checkId = `LC-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+    const loanId = formData.loanId.startsWith("LOAN-")
+      ? formData.loanId
+      : `LOAN-${formData.loanId}`;
+
     const newCheck: ComplianceCheck = {
-      id: `LC-${Math.floor(Math.random() * 1000)
-        .toString()
-        .padStart(3, "0")}`,
-      ...formData,
+      id: checkId,
+      loanId: loanId,
+      borrower: formData.borrower,
+      checkType: formData.checkType,
       status: formData.issues.length > 0 ? "flagged" : "pending",
-      lastChecked: new Date().toISOString().split("T")[0],
+      issues: formData.issues,
+      dueDate: formData.dueDate,
+      lastChecked: currentDate.toISOString().split("T")[0],
+      assignedTo: formData.assignedTo,
+      riskLevel: formData.riskLevel,
     };
 
     onSubmit(newCheck);
+
+    // Reset form data
+    setFormData({
+      loanId: "",
+      borrower: "",
+      checkType: "",
+      issues: [],
+      dueDate: "",
+      assignedTo: "",
+      riskLevel: "low",
+    });
+
+    // Reset to first step
+    setCurrentStep(0);
+
+    // Show success message
+    toast.success("Compliance check created successfully!");
+
     setIsProcessing(false);
   };
 
@@ -188,9 +257,15 @@ export const ComplianceForm: FC<ComplianceFormProps> = ({ onSubmit }) => {
                 id="loanId"
                 value={formData.loanId}
                 onChange={(e) => updateFormData("loanId", e.target.value)}
-                placeholder="Enter loan ID"
+                placeholder={`e.g., ${loanIdSuggestions[0]}`}
+                list="loanIds"
                 required
               />
+              <datalist id="loanIds">
+                {loanIdSuggestions.map((id) => (
+                  <option key={id} value={id} />
+                ))}
+              </datalist>
             </div>
 
             <div className="space-y-2">
@@ -199,9 +274,15 @@ export const ComplianceForm: FC<ComplianceFormProps> = ({ onSubmit }) => {
                 id="borrower"
                 value={formData.borrower}
                 onChange={(e) => updateFormData("borrower", e.target.value)}
-                placeholder="Enter borrower name"
+                placeholder={`e.g., ${borrowerSuggestions[0]}`}
+                list="borrowers"
                 required
               />
+              <datalist id="borrowers">
+                {borrowerSuggestions.map((name) => (
+                  <option key={name} value={name} />
+                ))}
+              </datalist>
             </div>
 
             <div className="space-y-2">
@@ -210,9 +291,15 @@ export const ComplianceForm: FC<ComplianceFormProps> = ({ onSubmit }) => {
                 id="assignedTo"
                 value={formData.assignedTo}
                 onChange={(e) => updateFormData("assignedTo", e.target.value)}
-                placeholder="Enter assignee name"
+                placeholder={`e.g., ${assigneeSuggestions[0]}`}
+                list="assignees"
                 required
               />
+              <datalist id="assignees">
+                {assigneeSuggestions.map((name) => (
+                  <option key={name} value={name} />
+                ))}
+              </datalist>
             </div>
 
             <div className="space-y-2">

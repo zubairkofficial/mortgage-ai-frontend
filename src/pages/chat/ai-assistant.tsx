@@ -231,7 +231,6 @@ export default function AIAssistant() {
 
     } catch (err: any) {
       if (err.name === 'AbortError') {
-        console.log('Stream aborted')
         return
       }
       setError('Sorry, I encountered an error. Please try again or contact customer support.')

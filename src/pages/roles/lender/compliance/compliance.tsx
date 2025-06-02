@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   DataTable,
   createSortableColumn,
@@ -92,8 +92,15 @@ export default function Compliance() {
   );
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  // Debug effect to monitor data changes
+  useEffect(() => {
+  }, [complianceChecks]);
+
   const handleNewComplianceCheck = (check: ComplianceCheck) => {
-    setComplianceChecks((prev) => [...prev, check]);
+    setComplianceChecks((prev) => {
+      const updated = [...prev, check];
+      return updated;
+    });
     setIsFormOpen(false);
   };
 
@@ -135,66 +142,69 @@ export default function Compliance() {
     }
   };
 
-  const columns: ColumnDef<ComplianceCheck>[] = [
-    createSortableColumn("id", "Check ID"),
-    createSortableColumn("loanId", "Loan ID"),
-    createSortableColumn("borrower", "Borrower"),
-    createSortableColumn("checkType", "Check Type"),
-    {
-      accessorKey: "status",
-      header: "Status",
-      enableSorting: true,
-      cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
-        const status = row.getValue("status");
-        return getStatusBadge(status);
-      },
-    },
-    {
-      accessorKey: "riskLevel",
-      header: "Risk Level",
-      enableSorting: true,
-      cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
-        const riskLevel = row.getValue("riskLevel");
-        return getRiskLevelBadge(riskLevel);
-      },
-    },
-    {
-      accessorKey: "issues",
-      header: "Issues",
-      cell: ({ row }: { row: { getValue: (key: string) => string[] } }) => {
-        const issues = row.getValue("issues");
-        return issues.length > 0 ? (
-          <div className="space-y-1">
-            {issues.map((issue: string, index: number) => (
-              <div key={index} className="text-sm text-red-600">
-                • {issue}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <span className="text-sm text-green-600">No issues</span>
-        );
-      },
-    },
-    createSortableColumn("dueDate", "Due Date"),
-    createSortableColumn("lastChecked", "Last Checked"),
-    createSortableColumn("assignedTo", "Assigned To"),
-    createActionsColumn<ComplianceCheck>([
+  const columns: ColumnDef<ComplianceCheck>[] = useMemo(
+    () => [
+      createSortableColumn("id", "Check ID"),
+      createSortableColumn("loanId", "Loan ID"),
+      createSortableColumn("borrower", "Borrower"),
+      createSortableColumn("checkType", "Check Type"),
       {
-        label: "Review",
-        onClick: (check) => console.log("Review compliance:", check.id),
+        accessorKey: "status",
+        header: "Status",
+        enableSorting: true,
+        cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
+          const status = row.getValue("status");
+          return getStatusBadge(status);
+        },
       },
       {
-        label: "Update Status",
-        onClick: (check) => console.log("Update status:", check.id),
+        accessorKey: "riskLevel",
+        header: "Risk Level",
+        enableSorting: true,
+        cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
+          const riskLevel = row.getValue("riskLevel");
+          return getRiskLevelBadge(riskLevel);
+        },
       },
       {
-        label: "Flag Issues",
-        onClick: (check) => console.log("Flag issues:", check.id),
-        variant: "destructive",
+        accessorKey: "issues",
+        header: "Issues",
+        cell: ({ row }: { row: { getValue: (key: string) => string[] } }) => {
+          const issues = row.getValue("issues");
+          return issues.length > 0 ? (
+            <div className="space-y-1">
+              {issues.map((issue: string, index: number) => (
+                <div key={index} className="text-sm text-red-600">
+                  • {issue}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <span className="text-sm text-green-600">No issues</span>
+          );
+        },
       },
-    ]),
-  ];
+      createSortableColumn("dueDate", "Due Date"),
+      createSortableColumn("lastChecked", "Last Checked"),
+      createSortableColumn("assignedTo", "Assigned To"),
+      createActionsColumn<ComplianceCheck>([
+        {
+          label: "Review",
+          onClick: (check) => console.log("Review compliance:", check.id),
+        },
+        {
+          label: "Update Status",
+          onClick: (check) => console.log("Update status:", check.id),
+        },
+        {
+          label: "Flag Issues",
+          onClick: (check) => console.log("Flag issues:", check.id),
+          variant: "destructive",
+        },
+      ]),
+    ],
+    []
+  );
 
   const compliantCount = complianceChecks.filter(
     (check) => check.status === "compliant"
@@ -217,6 +227,11 @@ export default function Compliance() {
           <p className="text-muted-foreground">
             Monitor and manage compliance checks for lending operations
           </p>
+          {/* Debug info - remove in production */}
+          <div className="mt-2 text-xs text-gray-500">
+            Total checks: {complianceChecks.length} | Last updated:{" "}
+            {new Date().toLocaleTimeString()}
+          </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
@@ -292,9 +307,15 @@ export default function Compliance() {
         </Card>
       </div>
 
+      {/* Debug data being passed to table */}
+      <div className="text-xs text-gray-400 mb-2">
+        Debug: Passing {complianceChecks.length} items to DataTable
+      </div>
+
       <DataTable
+        key={`table-${complianceChecks.map((c) => c.id).join("-")}`}
         columns={columns}
-        data={complianceChecks}
+        data={[...complianceChecks]}
         searchKey="borrower"
       />
 
