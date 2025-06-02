@@ -1,11 +1,9 @@
-import { FC, useState } from "react";
 import { Role } from "./types";
 import { UserAvatar } from "./user-avatar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, PlusCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/components/theme/theme-provider";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/stores/userStore";
 import { UserRole } from "@/lib/users";
@@ -21,9 +19,7 @@ export function ChatSidebar({
   selectedRole,
   onRoleSelect,
 }: ChatSidebarProps) {
-  const { theme, setTheme } = useTheme();
 
-  const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const user = useUser((state) => state.user);
 

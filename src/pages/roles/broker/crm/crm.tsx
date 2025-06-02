@@ -1,5 +1,6 @@
 import { FC, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { toast } from "sonner";
 import { ArrowUpDown, RefreshCw, Settings, LinkIcon, Unlink, CheckCircle, AlertCircle, ExternalLink } from "lucide-react";
 
 // Define the type for integration status
@@ -51,9 +52,18 @@ const BrokerCRM: FC = () => {
   const handleConnectCRM = () => {
     // In a real application, this would open the OAuth flow or API key setup
     setSyncing(true);
+    
+    toast.info("Connecting to CRM", {
+      description: "Establishing connection to Go High Level...",
+    });
+    
     setTimeout(() => {
       setIntegrationStatus("connected");
       setSyncing(false);
+      
+      toast.success("Successfully Connected", {
+        description: "Your account is now linked to Go High Level CRM",
+      });
       
       // Add successful connection to logs
       const newLogEntry: SyncLogEntry = {
@@ -70,9 +80,18 @@ const BrokerCRM: FC = () => {
   
   const handleDisconnectCRM = () => {
     setSyncing(true);
+    
+    toast.info("Disconnecting from CRM", {
+      description: "Removing connection to Go High Level...",
+    });
+    
     setTimeout(() => {
       setIntegrationStatus("disconnected");
       setSyncing(false);
+      
+      toast.success("Successfully Disconnected", {
+        description: "Your account has been unlinked from Go High Level CRM",
+      });
       
       // Add disconnect to logs
       const newLogEntry: SyncLogEntry = {
@@ -88,7 +107,19 @@ const BrokerCRM: FC = () => {
   };
   
   const handleSyncData = (direction: "push" | "pull") => {
+    // Check if connected before proceeding
+    if (integrationStatus !== "connected") {
+      toast.error("Connection Required", {
+        description: "You need to connect to Go High Level CRM to sync data",
+      });
+      return;
+    }
+
     setSyncing(true);
+    
+    toast.info(`${direction === "push" ? "Pushing" : "Pulling"} Data`, {
+      description: `${direction === "push" ? "Sending" : "Retrieving"} data ${direction === "push" ? "to" : "from"} Go High Level CRM...`,
+    });
     
     // Simulate API call delay
     setTimeout(() => {
@@ -105,6 +136,17 @@ const BrokerCRM: FC = () => {
           ? `Successfully ${direction === "push" ? "pushed" : "pulled"} data ${direction === "push" ? "to" : "from"} Go High Level` 
           : `Failed to ${direction} data: ${direction === "push" ? "API error" : "Authentication expired"}`
       };
+      
+      // Show success or error toast
+      if (success) {
+        toast.success(`Data ${direction === "push" ? "Pushed" : "Pulled"} Successfully`, {
+          description: `Successfully ${direction === "push" ? "sent" : "retrieved"} data ${direction === "push" ? "to" : "from"} Go High Level CRM`,
+        });
+      } else {
+        toast.error(`Data ${direction === "push" ? "Push" : "Pull"} Failed`, {
+          description: newLogEntry.details,
+        });
+      }
       
       setSyncLogs([newLogEntry, ...syncLogs]);
     }, 2000);

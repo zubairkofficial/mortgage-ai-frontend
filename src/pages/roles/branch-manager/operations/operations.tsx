@@ -13,27 +13,16 @@ import {
 } from "@/components/common/table";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Clock,
-  AlertCircle,
-  CheckCircle2,
-  FileText,
-  ArrowUpRight,
-  ArrowDownRight,
-  Settings,
-  Plus,
-  AlertTriangle,
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -41,8 +30,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import {
+  Clock,
+  CheckCircle2,
+  FileText,
+  Play,
+  AlertTriangle,
+} from "lucide-react";
 
 // Mock data for operational metrics
 const operationalMetrics = {
@@ -50,11 +45,48 @@ const operationalMetrics = {
   pendingTasks: 28,
   completedToday: 32,
   averageProcessingTime: "2.8 days",
-  slaCompliance: 94,
-  workloadDistribution: 78,
 };
 
-// Mock data for active workflows
+// Predefined workflow templates that can be triggered
+const workflowTemplates = [
+  {
+    id: "loan-review",
+    name: "Loan Application Review",
+    description: "Complete review process for new loan applications",
+    estimatedDuration: "2-3 days",
+    tasks: 8,
+  },
+  {
+    id: "document-verification",
+    name: "Document Verification",
+    description: "Verify and validate customer documents",
+    estimatedDuration: "1-2 days",
+    tasks: 5,
+  },
+  {
+    id: "client-onboarding",
+    name: "Client Onboarding",
+    description: "Onboard new clients with complete setup",
+    estimatedDuration: "3-4 days",
+    tasks: 6,
+  },
+  {
+    id: "compliance-audit",
+    name: "Compliance Audit",
+    description: "Perform compliance check and audit procedures",
+    estimatedDuration: "1-2 days",
+    tasks: 4,
+  },
+  {
+    id: "risk-assessment",
+    name: "Risk Assessment",
+    description: "Evaluate and assess potential risks",
+    estimatedDuration: "2-3 days",
+    tasks: 7,
+  },
+];
+
+// Predefined active workflows (static data for the table)
 const activeWorkflows = [
   {
     id: 1,
@@ -98,67 +130,33 @@ const activeWorkflows = [
     },
     lastUpdated: "2024-03-15",
   },
-];
-
-// Mock data for pending tasks
-const pendingTasks = [
   {
-    id: 1,
-    title: "Review Loan Application #1234",
-    workflow: "Loan Application Review",
-    assignedTo: "John Doe",
-    priority: "High",
-    dueDate: "2024-03-20",
+    id: 4,
+    name: "Compliance Audit",
     status: "In Progress",
-    estimatedTime: "2 hours",
-  },
-  {
-    id: 2,
-    title: "Verify Client Documents",
-    workflow: "Document Verification",
-    assignedTo: "Sarah Miller",
+    assignedTo: "Emily Davis",
     priority: "Medium",
-    dueDate: "2024-03-22",
-    status: "Pending",
-    estimatedTime: "1 hour",
+    dueDate: "2024-03-25",
+    progress: 60,
+    tasks: {
+      total: 4,
+      completed: 2,
+    },
+    lastUpdated: "2024-03-15",
   },
   {
-    id: 3,
-    title: "Complete Client Onboarding",
-    workflow: "Client Onboarding",
-    assignedTo: "Robert Johnson",
-    priority: "High",
-    dueDate: "2024-03-18",
-    status: "At Risk",
-    estimatedTime: "3 hours",
-  },
-];
-
-// Mock data for SLA metrics
-const mockSlaMetrics = [
-  {
-    id: 1,
-    category: "Loan Processing",
-    target: "48 hours",
-    current: "42 hours",
-    compliance: 95,
-    trend: "up",
-  },
-  {
-    id: 2,
-    category: "Document Verification",
-    target: "24 hours",
-    current: "26 hours",
-    compliance: 88,
-    trend: "down",
-  },
-  {
-    id: 3,
-    category: "Client Onboarding",
-    target: "72 hours",
-    current: "65 hours",
-    compliance: 92,
-    trend: "up",
+    id: 5,
+    name: "Risk Assessment",
+    status: "Completed",
+    assignedTo: "Michael Brown",
+    priority: "Low",
+    dueDate: "2024-03-16",
+    progress: 100,
+    tasks: {
+      total: 7,
+      completed: 7,
+    },
+    lastUpdated: "2024-03-15",
   },
 ];
 
@@ -177,83 +175,19 @@ interface Workflow {
   lastUpdated: string;
 }
 
-interface Task {
-  id: number;
-  title: string;
-  workflow: string;
-  assignedTo: string;
-  priority: string;
-  dueDate: string;
-  status: string;
-  estimatedTime: string;
-}
-
-interface SLA {
-  id: number;
-  category: string;
-  target: string;
-  current: string;
-  compliance: number;
-  trend: "up" | "down";
-}
-
-interface WorkflowFormData {
+interface WorkflowTemplate {
+  id: string;
   name: string;
-  assignedTo: string;
-  priority: string;
-  dueDate: string;
   description: string;
-}
-
-interface TaskFormData {
-  title: string;
-  workflow: string;
-  assignedTo: string;
-  priority: string;
-  dueDate: string;
-  estimatedTime: string;
-  description: string;
-}
-
-interface SLAFormData {
-  category: string;
-  target: string;
-  description: string;
+  estimatedDuration: string;
+  tasks: number;
 }
 
 const OperationsDashboard: FC = () => {
-  // State for workflows
-  const [workflows, setWorkflows] = useState<Workflow[]>(activeWorkflows);
-  const [isWorkflowDialogOpen, setIsWorkflowDialogOpen] = useState(false);
-  const [workflowFormData, setWorkflowFormData] = useState<WorkflowFormData>({
-    name: "",
-    assignedTo: "",
-    priority: "",
-    dueDate: "",
-    description: "",
-  });
-
-  // State for tasks
-  const [tasks, setTasks] = useState<Task[]>(pendingTasks);
-  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
-  const [taskFormData, setTaskFormData] = useState<TaskFormData>({
-    title: "",
-    workflow: "",
-    assignedTo: "",
-    priority: "",
-    dueDate: "",
-    estimatedTime: "",
-    description: "",
-  });
-
-  // State for SLA
-  const [slaMetrics, setSlaMetrics] = useState<SLA[]>(mockSlaMetrics);
-  const [isSLADialogOpen, setIsSLADialogOpen] = useState(false);
-  const [slaFormData, setSlaFormData] = useState<SLAFormData>({
-    category: "",
-    target: "",
-    description: "",
-  });
+  const [workflows] = useState<Workflow[]>(activeWorkflows);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<string>("");
 
   const getStatusBadge = (status: string) => {
     const variants: Record<
@@ -271,7 +205,7 @@ const OperationsDashboard: FC = () => {
       }
     > = {
       "In Progress": { variant: "default", icon: Clock },
-      Pending: { variant: "secondary", icon: AlertCircle },
+      Pending: { variant: "secondary", icon: Clock },
       "At Risk": { variant: "destructive", icon: AlertTriangle },
       Completed: { variant: "success", icon: CheckCircle2 },
     };
@@ -341,170 +275,108 @@ const OperationsDashboard: FC = () => {
     ]),
   ];
 
-  const taskColumns = [
-    createSortableColumn("title", "Task Title"),
-    createSortableColumn("workflow", "Workflow"),
-    createSortableColumn("assignedTo", "Assigned To"),
-    createSortableColumn("priority", "Priority", (row) =>
-      getPriorityBadge(row.priority)
-    ),
-    createSortableColumn("dueDate", "Due Date", (row) => (
-      <span>{new Date(row.dueDate).toLocaleDateString()}</span>
-    )),
-    createSortableColumn("status", "Status", (row) =>
-      getStatusBadge(row.status)
-    ),
-    createSortableColumn("estimatedTime", "Estimated Time"),
-    createActionsColumn([
-      {
-        label: "Start Task",
-        onClick: (data) => console.log("Start task", data),
-      },
-      {
-        label: "Reassign",
-        onClick: (data) => console.log("Reassign task", data),
-      },
-      {
-        label: "Mark Complete",
-        onClick: (data) => console.log("Complete task", data),
-        //  variant: "success",
-      },
-    ]),
-  ];
+  const handleTriggerWorkflow = async () => {
+    if (!selectedWorkflow) {
+      toast.error("Please select a workflow to trigger.");
+      return;
+    }
 
-  const slaColumns = [
-    createSortableColumn("category", "Category"),
-    createSortableColumn("target", "Target SLA"),
-    createSortableColumn("current", "Current Average"),
-    createSortableColumn("compliance", "Compliance", (row) => (
-      <div className="flex items-center gap-2">
-        <Progress value={row.compliance} className="w-24" />
-        <span className="text-sm">{row.compliance}%</span>
-      </div>
-    )),
-    createSortableColumn("trend", "Trend", (row) => (
-      <div
-        className={`flex items-center gap-1 ${
-          row.trend === "up" ? "text-[var(--brand-teal)]" : "text-destructive"
-        }`}
-      >
-        {row.trend === "up" ? (
-          <ArrowUpRight className="h-4 w-4" />
-        ) : (
-          <ArrowDownRight className="h-4 w-4" />
-        )}
-        <span>vs last month</span>
-      </div>
-    )),
-  ];
-
-  // Workflow form handlers
-  const handleWorkflowInputChange = (
-    field: keyof WorkflowFormData,
-    value: string
-  ) => {
-    setWorkflowFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleWorkflowSubmit = () => {
-    const newWorkflow: Workflow = {
-      id: workflows.length + 1,
-      name: workflowFormData.name,
-      status: "Pending",
-      assignedTo: workflowFormData.assignedTo,
-      priority: workflowFormData.priority,
-      dueDate: workflowFormData.dueDate,
-      progress: 0,
-      tasks: {
-        total: 0,
-        completed: 0,
-      },
-      lastUpdated: new Date().toISOString().split("T")[0],
-    };
-
-    setWorkflows((prev) => [...prev, newWorkflow]);
-    setIsWorkflowDialogOpen(false);
-    setWorkflowFormData({
-      name: "",
-      assignedTo: "",
-      priority: "",
-      dueDate: "",
-      description: "",
-    });
-  };
-
-  // Task form handlers
-  const handleTaskInputChange = (field: keyof TaskFormData, value: string) => {
-    setTaskFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleTaskSubmit = () => {
-    const newTask: Task = {
-      id: tasks.length + 1,
-      title: taskFormData.title,
-      workflow: taskFormData.workflow,
-      assignedTo: taskFormData.assignedTo,
-      priority: taskFormData.priority,
-      dueDate: taskFormData.dueDate,
-      status: "Pending",
-      estimatedTime: taskFormData.estimatedTime,
-    };
-
-    setTasks((prev) => [...prev, newTask]);
-    setIsTaskDialogOpen(false);
-    setTaskFormData({
-      title: "",
-      workflow: "",
-      assignedTo: "",
-      priority: "",
-      dueDate: "",
-      estimatedTime: "",
-      description: "",
-    });
-  };
-
-  // SLA form handlers
-  const handleSLAInputChange = (field: keyof SLAFormData, value: string) => {
-    setSlaFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSLASubmit = () => {
-    const newSLA: SLA = {
-      id: slaMetrics.length + 1,
-      category: slaFormData.category,
-      target: slaFormData.target,
-      current: "0 hours",
-      compliance: 100,
-      trend: "up",
-    };
-
-    setSlaMetrics((prev) => [...prev, newSLA]);
-    setIsSLADialogOpen(false);
-    setSlaFormData({
-      category: "",
-      target: "",
-      description: "",
-    });
+    setIsProcessing(true);
+    
+    try {
+      // Simulate workflow processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const workflowTemplate = workflowTemplates.find(
+        template => template.id === selectedWorkflow
+      );
+      
+      if (workflowTemplate) {
+        toast.success("Workflow Triggered Successfully", {
+          description: `${workflowTemplate.name} has been initiated. Expected completion in ${workflowTemplate.estimatedDuration}.`,
+        });
+        
+        // Reset selection and close dialog
+        setSelectedWorkflow("");
+        setIsDialogOpen(false);
+      }
+    } catch (error) {
+      toast.error("Failed to trigger the workflow. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Operations Management
-        </h1>
-        <p className="text-muted-foreground">
-          Monitor workflows, track tasks, and manage operational efficiency
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Operations Management
+          </h1>
+          <p className="text-muted-foreground">
+            Monitor workflows and manage operational efficiency
+          </p>
+        </div>
+        
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button size="lg" className="flex items-center gap-2">
+              <Play className="h-4 w-4" />
+              Trigger Workflow
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Trigger Workflow</DialogTitle>
+              <DialogDescription>
+                Select a workflow template to trigger from the available options.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="workflow-select" className="text-sm font-medium">
+                  Available Workflows
+                </label>
+                <Select
+                  value={selectedWorkflow}
+                  onValueChange={setSelectedWorkflow}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a workflow to trigger" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {workflowTemplates.map((template) => (
+                      <SelectItem key={template.id} value={template.id}>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{template.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {template.description} • {template.tasks} tasks • {template.estimatedDuration}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsDialogOpen(false)}
+                disabled={isProcessing}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleTriggerWorkflow}
+                disabled={isProcessing || !selectedWorkflow}
+              >
+                {isProcessing ? "Triggering..." : "Trigger Workflow"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Operational Metrics */}
@@ -561,396 +433,58 @@ const OperationsDashboard: FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              SLA Compliance
+              Total Workflows
             </CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+            <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {operationalMetrics.slaCompliance}%
+              {workflows.length}
             </div>
-            <Progress
-              value={operationalMetrics.slaCompliance}
-              className="mt-2"
-            />
+            <p className="text-xs text-muted-foreground">
+              Currently tracked
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs defaultValue="workflows" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="workflows">Active Workflows</TabsTrigger>
-          <TabsTrigger value="tasks">Pending Tasks</TabsTrigger>
-          <TabsTrigger value="sla">SLA Metrics</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="workflows" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Active Workflows</CardTitle>
-              <CardDescription>
-                Monitor and manage ongoing operational workflows
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={workflowColumns}
-                data={workflows}
-                searchKey="name"
-                filterableColumns={[
-                  {
-                    id: "status",
-                    title: "Status",
-                    options: [
-                      { label: "In Progress", value: "In Progress" },
-                      { label: "Pending", value: "Pending" },
-                      { label: "At Risk", value: "At Risk" },
-                    ],
-                  },
-                  {
-                    id: "priority",
-                    title: "Priority",
-                    options: [
-                      { label: "High", value: "High" },
-                      { label: "Medium", value: "Medium" },
-                      { label: "Low", value: "Low" },
-                    ],
-                  },
-                ]}
-                actionButtonText="Create Workflow"
-                actionButtonIcon={<Plus className="mr-2 h-4 w-4" />}
-                onActionButtonClick={() => setIsWorkflowDialogOpen(true)}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="tasks" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pending Tasks</CardTitle>
-              <CardDescription>
-                Track and manage individual tasks across workflows
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={taskColumns}
-                data={tasks}
-                searchKey="title"
-                filterableColumns={[
-                  {
-                    id: "status",
-                    title: "Status",
-                    options: [
-                      { label: "In Progress", value: "In Progress" },
-                      { label: "Pending", value: "Pending" },
-                      { label: "At Risk", value: "At Risk" },
-                    ],
-                  },
-                  {
-                    id: "priority",
-                    title: "Priority",
-                    options: [
-                      { label: "High", value: "High" },
-                      { label: "Medium", value: "Medium" },
-                      { label: "Low", value: "Low" },
-                    ],
-                  },
-                ]}
-                actionButtonText="Create Task"
-                actionButtonIcon={<Plus className="mr-2 h-4 w-4" />}
-                onActionButtonClick={() => setIsTaskDialogOpen(true)}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="sla" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>SLA Metrics</CardTitle>
-              <CardDescription>
-                Monitor service level agreement compliance across operations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={slaColumns}
-                data={slaMetrics}
-                searchKey="category"
-                filterableColumns={[
-                  {
-                    id: "trend",
-                    title: "Trend",
-                    options: [
-                      { label: "Improving", value: "up" },
-                      { label: "Declining", value: "down" },
-                    ],
-                  },
-                ]}
-                actionButtonText="Configure SLAs"
-                actionButtonIcon={<Settings className="mr-2 h-4 w-4" />}
-                onActionButtonClick={() => setIsSLADialogOpen(true)}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Create Workflow Dialog */}
-      <Dialog
-        open={isWorkflowDialogOpen}
-        onOpenChange={setIsWorkflowDialogOpen}
-      >
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Create New Workflow</DialogTitle>
-            <DialogDescription>
-              Fill in the details to create a new operational workflow
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="workflow-name">Workflow Name</Label>
-              <Input
-                id="workflow-name"
-                value={workflowFormData.name}
-                onChange={(e) =>
-                  handleWorkflowInputChange("name", e.target.value)
-                }
-                placeholder="Enter workflow name"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="workflow-assigned">Assigned To</Label>
-              <Input
-                id="workflow-assigned"
-                value={workflowFormData.assignedTo}
-                onChange={(e) =>
-                  handleWorkflowInputChange("assignedTo", e.target.value)
-                }
-                placeholder="Enter assignee name"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="workflow-priority">Priority</Label>
-              <Select
-                value={workflowFormData.priority}
-                onValueChange={(value) =>
-                  handleWorkflowInputChange("priority", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="High">High</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="Low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="workflow-due">Due Date</Label>
-              <Input
-                id="workflow-due"
-                type="date"
-                value={workflowFormData.dueDate}
-                onChange={(e) =>
-                  handleWorkflowInputChange("dueDate", e.target.value)
-                }
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="workflow-description">Description</Label>
-              <Textarea
-                id="workflow-description"
-                value={workflowFormData.description}
-                onChange={(e) =>
-                  handleWorkflowInputChange("description", e.target.value)
-                }
-                placeholder="Enter workflow description"
-              />
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setIsWorkflowDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleWorkflowSubmit}>Create Workflow</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Create Task Dialog */}
-      <Dialog open={isTaskDialogOpen} onOpenChange={setIsTaskDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Create New Task</DialogTitle>
-            <DialogDescription>
-              Fill in the details to create a new task
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="task-title">Task Title</Label>
-              <Input
-                id="task-title"
-                value={taskFormData.title}
-                onChange={(e) => handleTaskInputChange("title", e.target.value)}
-                placeholder="Enter task title"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="task-workflow">Workflow</Label>
-              <Select
-                value={taskFormData.workflow}
-                onValueChange={(value) =>
-                  handleTaskInputChange("workflow", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select workflow" />
-                </SelectTrigger>
-                <SelectContent>
-                  {workflows.map((workflow) => (
-                    <SelectItem key={workflow.id} value={workflow.name}>
-                      {workflow.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="task-assigned">Assigned To</Label>
-              <Input
-                id="task-assigned"
-                value={taskFormData.assignedTo}
-                onChange={(e) =>
-                  handleTaskInputChange("assignedTo", e.target.value)
-                }
-                placeholder="Enter assignee name"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="task-priority">Priority</Label>
-              <Select
-                value={taskFormData.priority}
-                onValueChange={(value) =>
-                  handleTaskInputChange("priority", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="High">High</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="Low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="task-due">Due Date</Label>
-              <Input
-                id="task-due"
-                type="date"
-                value={taskFormData.dueDate}
-                onChange={(e) =>
-                  handleTaskInputChange("dueDate", e.target.value)
-                }
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="task-time">Estimated Time</Label>
-              <Input
-                id="task-time"
-                value={taskFormData.estimatedTime}
-                onChange={(e) =>
-                  handleTaskInputChange("estimatedTime", e.target.value)
-                }
-                placeholder="e.g., 2 hours"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="task-description">Description</Label>
-              <Textarea
-                id="task-description"
-                value={taskFormData.description}
-                onChange={(e) =>
-                  handleTaskInputChange("description", e.target.value)
-                }
-                placeholder="Enter task description"
-              />
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setIsTaskDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleTaskSubmit}>Create Task</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Configure SLA Dialog */}
-      <Dialog open={isSLADialogOpen} onOpenChange={setIsSLADialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Configure SLA</DialogTitle>
-            <DialogDescription>
-              Set up new service level agreement metrics
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="sla-category">Category</Label>
-              <Input
-                id="sla-category"
-                value={slaFormData.category}
-                onChange={(e) =>
-                  handleSLAInputChange("category", e.target.value)
-                }
-                placeholder="Enter category name"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="sla-target">Target Time</Label>
-              <Input
-                id="sla-target"
-                value={slaFormData.target}
-                onChange={(e) => handleSLAInputChange("target", e.target.value)}
-                placeholder="e.g., 48 hours"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="sla-description">Description</Label>
-              <Textarea
-                id="sla-description"
-                value={slaFormData.description}
-                onChange={(e) =>
-                  handleSLAInputChange("description", e.target.value)
-                }
-                placeholder="Enter SLA description"
-              />
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsSLADialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSLASubmit}>Configure SLA</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Workflows Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Active Workflows</CardTitle>
+          <CardDescription>
+            Monitor and manage ongoing operational workflows
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            columns={workflowColumns}
+            data={workflows}
+            searchKey="name"
+            filterableColumns={[
+              {
+                id: "status",
+                title: "Status",
+                options: [
+                  { label: "In Progress", value: "In Progress" },
+                  { label: "Pending", value: "Pending" },
+                  { label: "At Risk", value: "At Risk" },
+                  { label: "Completed", value: "Completed" },
+                ],
+              },
+              {
+                id: "priority",
+                title: "Priority",
+                options: [
+                  { label: "High", value: "High" },
+                  { label: "Medium", value: "Medium" },
+                  { label: "Low", value: "Low" },
+                ],
+              },
+            ]}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };
