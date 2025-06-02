@@ -102,7 +102,7 @@ const BranchManagerDashboard: FC = () => {
           </CardContent>
         </Card>
         
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/branch-manager/compliance")}>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/branch-manager/operations")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
             <ClipboardCheck size={32} className="text-primary mb-2" />
             <span className="text-sm font-medium text-center">Compliance</span>
@@ -251,7 +251,7 @@ const BranchManagerDashboard: FC = () => {
             </div>
             <button 
               className="w-full py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-              onClick={() => navigate("/branch-manager/compliance")}
+              onClick={() => navigate("/branch-manager/operations")}
             >
               View Compliance Dashboard
             </button>
@@ -358,7 +358,7 @@ const BranchManagerDashboard: FC = () => {
         <CardFooter className="justify-center">
           <button 
             className="text-primary hover:text-primary/80 font-medium text-sm flex items-center gap-1 hover:underline transition-colors"
-            onClick={() => navigate("/branch-manager/certifications")}
+            onClick={() => navigate("/branch-manager/training")}
           >
             View All Certifications
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
