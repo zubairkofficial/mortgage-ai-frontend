@@ -1,40 +1,71 @@
-import { FC } from "react";
-import { DataTable } from "@/components/common/table";
-import { createSortableColumn, createActionsColumn } from "@/components/common/table";
+import { useState } from "react";
+import {
+  DataTable,
+  createSortableColumn,
+  createActionsColumn,
+} from "@/components/common/table";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, CheckCircle2, XCircle, FileCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ComplianceForm } from "./compliance-form";
+import { ColumnDef } from "@tanstack/react-table";
 
-// Mock data for compliance checks
-const mockComplianceChecks = [
+// Types
+type ComplianceCheck = {
+  id: string;
+  loanId: string;
+  borrower: string;
+  checkType: string;
+  status: "compliant" | "flagged" | "pending";
+  issues: string[];
+  dueDate: string;
+  lastChecked: string;
+  assignedTo: string;
+};
+
+// Initial mock data
+const initialComplianceChecks: ComplianceCheck[] = [
   {
     id: "COMP-001",
     loanId: "LOAN-001",
     borrower: "John Smith",
     checkType: "Regulatory",
-    status: "flagged",
-    issues: ["Missing TILA disclosure", "Incomplete HMDA data"],
-    dueDate: "2024-03-20",
-    lastChecked: "2024-03-16",
-    assignedTo: "Sarah Johnson"
+    status: "compliant",
+    issues: [],
+    dueDate: "2024-03-15",
+    lastChecked: "2024-03-10",
+    assignedTo: "Sarah Johnson",
   },
   {
     id: "COMP-002",
     loanId: "LOAN-002",
-    borrower: "Sarah Johnson",
+    borrower: "Jane Doe",
     checkType: "Documentation",
-    status: "compliant",
-    issues: [],
-    dueDate: "2024-03-21",
-    lastChecked: "2024-03-15",
-    assignedTo: "Mike Brown"
+    status: "flagged",
+    issues: ["Missing income verification", "Incomplete property appraisal"],
+    dueDate: "2024-03-20",
+    lastChecked: "2024-03-11",
+    assignedTo: "Mike Wilson",
   },
-  // Add more mock data as needed
 ];
 
-const CompliancePage: FC = () => {
-  const columns = [
+export default function CompliancePage() {
+  const [complianceChecks, setComplianceChecks] = useState<ComplianceCheck[]>(
+    initialComplianceChecks
+  );
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const handleNewComplianceCheck = (check: ComplianceCheck) => {
+    setComplianceChecks((prev) => [...prev, check]);
+    setIsFormOpen(false);
+  };
+
+  const columns: ColumnDef<ComplianceCheck>[] = [
     createSortableColumn("id", "Check ID"),
     createSortableColumn("loanId", "Loan ID"),
     createSortableColumn("borrower", "Borrower"),
@@ -42,19 +73,20 @@ const CompliancePage: FC = () => {
     {
       accessorKey: "status",
       header: "Status",
-      cell: ({ row }: any) => {
+      enableSorting: true,
+      cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
         const status = row.getValue("status");
         return (
           <Badge
             variant={
               status === "compliant"
                 ? "success"
-                : status === "pending"
-                ? "secondary"
-                : "destructive"
+                : status === "flagged"
+                ? "destructive"
+                : "secondary"
             }
           >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {status}
           </Badge>
         );
       },
@@ -62,138 +94,99 @@ const CompliancePage: FC = () => {
     {
       accessorKey: "issues",
       header: "Issues",
-      cell: ({ row }: any) => {
-        const issues = row.getValue("issues") as string[];
+      cell: ({ row }: { row: { getValue: (key: string) => string[] } }) => {
+        const issues = row.getValue("issues");
         return issues.length > 0 ? (
-          <div className="flex flex-col gap-1">
-            {issues.map((issue, index) => (
-              <Badge key={index} variant="destructive" className="w-fit">
-                {issue}
-              </Badge>
+          <div className="space-y-1">
+            {issues.map((issue: string, index: number) => (
+              <div key={index} className="text-sm text-destructive">
+                • {issue}
+              </div>
             ))}
           </div>
         ) : (
-          <Badge variant="success">No Issues</Badge>
+          <span className="text-sm text-green-600">No issues</span>
         );
       },
     },
     createSortableColumn("dueDate", "Due Date"),
     createSortableColumn("lastChecked", "Last Checked"),
     createSortableColumn("assignedTo", "Assigned To"),
-    createActionsColumn([
+    createActionsColumn<ComplianceCheck>([
       {
-        label: "Review Compliance",
-        onClick: (data: any) => {
-          console.log("Review compliance for:", data.id);
-          // Implement compliance review logic
-        },
+        label: "Review",
+        onClick: (check) => console.log("Review compliance:", check.id),
       },
       {
         label: "Update Status",
-        onClick: (data: any) => {
-          console.log("Update status for:", data.id);
-          // Implement status update logic
-        },
+        onClick: (check) => console.log("Update status:", check.id),
       },
       {
         label: "Flag Issues",
-        onClick: (data: any) => {
-          console.log("Flag issues for:", data.id);
-          // Implement issue flagging logic
-        },
+        onClick: (check) => console.log("Flag issues:", check.id),
         variant: "destructive",
       },
     ]),
   ];
 
-  // Mock compliance statistics
-  const complianceStats = {
-    totalChecks: 150,
-    compliant: 120,
-    flagged: 25,
-    pending: 5,
-    averageResolutionTime: "2.5 days"
-  };
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Compliance Checks</h1>
+          <h1 className="text-2xl font-bold">Compliance Checks</h1>
           <p className="text-muted-foreground">
-            Review loan compliance against regulatory standards and flag inconsistencies
+            Manage and track compliance checks for loan applications
           </p>
         </div>
-        <Button>
-          <FileCheck className="mr-2 h-4 w-4" />
+        <Button onClick={() => setIsFormOpen(true)}>
           New Compliance Check
         </Button>
       </div>
 
       {/* Compliance Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Checks</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{complianceStats.totalChecks}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Compliant</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{complianceStats.compliant}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Flagged</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{complianceStats.flagged}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Resolution Time</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{complianceStats.averageResolutionTime}</div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-card rounded-lg p-4 border">
+          <h3 className="text-sm font-medium text-muted-foreground">
+            Total Checks
+          </h3>
+          <p className="text-2xl font-bold">{complianceChecks.length}</p>
+        </div>
+        <div className="bg-card rounded-lg p-4 border">
+          <h3 className="text-sm font-medium text-muted-foreground">
+            Compliant
+          </h3>
+          <p className="text-2xl font-bold text-green-600">
+            {
+              complianceChecks.filter((check) => check.status === "compliant")
+                .length
+            }
+          </p>
+        </div>
+        <div className="bg-card rounded-lg p-4 border">
+          <h3 className="text-sm font-medium text-muted-foreground">Flagged</h3>
+          <p className="text-2xl font-bold text-destructive">
+            {
+              complianceChecks.filter((check) => check.status === "flagged")
+                .length
+            }
+          </p>
+        </div>
       </div>
 
       <DataTable
         columns={columns}
-        data={mockComplianceChecks}
+        data={complianceChecks}
         searchKey="borrower"
-        title="Compliance Checks"
-        description="Monitor and manage loan compliance status"
-        filterableColumns={[
-          {
-            id: "status",
-            title: "Status",
-            options: [
-              { label: "Compliant", value: "compliant" },
-              { label: "Flagged", value: "flagged" },
-              { label: "Pending", value: "pending" },
-            ],
-          },
-          {
-            id: "checkType",
-            title: "Check Type",
-            options: [
-              { label: "Regulatory", value: "Regulatory" },
-              { label: "Documentation", value: "Documentation" },
-            ],
-          },
-        ]}
       />
+
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>New Compliance Check</DialogTitle>
+          </DialogHeader>
+          <ComplianceForm onSubmit={handleNewComplianceCheck} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
-
-export default CompliancePage; 
+}
