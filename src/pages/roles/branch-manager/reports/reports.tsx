@@ -1,29 +1,59 @@
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DataTable, createSortableColumn, createActionsColumn } from "@/components/common/table";
+import { FC, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  DataTable,
+  createSortableColumn,
+  createActionsColumn,
+} from "@/components/common/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Download, FileText, TrendingUp } from "lucide-react";
-import {  XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, LineChart as RechartsLineChart, Line, CartesianGrid } from 'recharts';
+import {
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  LineChart as RechartsLineChart,
+  Line,
+  CartesianGrid,
+} from "recharts";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Mock data for performance trends
 const performanceTrends = [
-  { month: 'Jan', loans: 45, revenue: 320000, conversion: 78 },
-  { month: 'Feb', loans: 52, revenue: 380000, conversion: 82 },
-  { month: 'Mar', loans: 48, revenue: 350000, conversion: 80 },
-  { month: 'Apr', loans: 60, revenue: 420000, conversion: 85 },
-  { month: 'May', loans: 55, revenue: 400000, conversion: 83 },
-  { month: 'Jun', loans: 65, revenue: 450000, conversion: 87 },
+  { month: "Jan", loans: 45, revenue: 320000, conversion: 78 },
+  { month: "Feb", loans: 52, revenue: 380000, conversion: 82 },
+  { month: "Mar", loans: 48, revenue: 350000, conversion: 80 },
+  { month: "Apr", loans: 60, revenue: 420000, conversion: 85 },
+  { month: "May", loans: 55, revenue: 400000, conversion: 83 },
+  { month: "Jun", loans: 65, revenue: 450000, conversion: 87 },
 ];
 
 // Mock data for loan distribution
 const loanDistribution = [
-  { type: 'Residential', value: 45, color: 'var(--brand-teal)' },
-  { type: 'Commercial', value: 25, color: 'var(--primary)' },
-  { type: 'Investment', value: 20, color: 'var(--amber-500)' },
-  { type: 'Refinance', value: 10, color: 'var(--purple-500)' },
+  { type: "Residential", value: 45, color: "var(--brand-teal)" },
+  { type: "Commercial", value: 25, color: "var(--primary)" },
+  { type: "Investment", value: 20, color: "var(--amber-500)" },
+  { type: "Refinance", value: 10, color: "var(--purple-500)" },
 ];
 
 // Mock data for broker performance
@@ -95,6 +125,118 @@ const savedReports = [
 ];
 
 const ReportsDashboard: FC = () => {
+  const [reportType, setReportType] = useState<string>("");
+  const [dateRange, setDateRange] = useState<string>("");
+  const [format, setFormat] = useState<string>("pdf");
+
+  const generatePerformanceReport = () => {
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(20);
+    doc.text("Performance Report", 14, 20);
+
+    // Add date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
+
+    // Add summary
+    doc.setFontSize(14);
+    doc.text("Summary", 14, 40);
+    doc.setFontSize(12);
+    doc.text(
+      `Total Loans: ${performanceTrends.reduce(
+        (acc, curr) => acc + curr.loans,
+        0
+      )}`,
+      14,
+      50
+    );
+    doc.text(
+      `Total Revenue: $${performanceTrends
+        .reduce((acc, curr) => acc + curr.revenue, 0)
+        .toLocaleString()}`,
+      14,
+      60
+    );
+    doc.text(
+      `Average Conversion Rate: ${(
+        performanceTrends.reduce((acc, curr) => acc + curr.conversion, 0) /
+        performanceTrends.length
+      ).toFixed(1)}%`,
+      14,
+      70
+    );
+
+    // Add performance trends table
+    autoTable(doc, {
+      startY: 80,
+      head: [["Month", "Loans", "Revenue", "Conversion Rate"]],
+      body: performanceTrends.map((trend) => [
+        trend.month,
+        trend.loans.toString(),
+        `$${trend.revenue.toLocaleString()}`,
+        `${trend.conversion}%`,
+      ]),
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    // Add loan distribution
+    doc.setFontSize(14);
+    doc.text("Loan Distribution", 14, doc.lastAutoTable.finalY + 20);
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 30,
+      head: [["Type", "Percentage"]],
+      body: loanDistribution.map((dist) => [dist.type, `${dist.value}%`]),
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    // Save the PDF
+    doc.save("performance-report.pdf");
+  };
+
+  const generateBrokerReport = () => {
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(20);
+    doc.text("Broker Performance Report", 14, 20);
+
+    // Add date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
+
+    // Add broker performance table
+    autoTable(doc, {
+      startY: 40,
+      head: [
+        [
+          "Broker",
+          "Position",
+          "Total Loans",
+          "Success Rate",
+          "Revenue",
+          "Client Satisfaction",
+        ],
+      ],
+      body: brokerPerformance.map((broker) => [
+        broker.broker,
+        broker.position,
+        broker.totalLoans.toString(),
+        `${broker.successRate}%`,
+        broker.revenue,
+        `${broker.clientSatisfaction}/5`,
+      ]),
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    // Save the PDF
+    doc.save("broker-performance-report.pdf");
+  };
+
   const brokerColumns = [
     createSortableColumn("broker", "Broker"),
     createSortableColumn("position", "Position"),
@@ -180,9 +322,12 @@ const ReportsDashboard: FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Reports & Analytics</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Reports & Analytics
+        </h1>
         <p className="text-muted-foreground">
-          Generate and manage reports, analyze performance metrics, and track key indicators
+          Generate and manage reports, analyze performance metrics, and track
+          key indicators
         </p>
       </div>
 
@@ -198,12 +343,14 @@ const ReportsDashboard: FC = () => {
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
               <label className="text-sm font-medium">Report Type</label>
-              <Select>
+              <Select value={reportType} onValueChange={setReportType}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select report type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="performance">Performance Report</SelectItem>
+                  <SelectItem value="performance">
+                    Performance Report
+                  </SelectItem>
                   <SelectItem value="broker">Broker Analysis</SelectItem>
                   <SelectItem value="loans">Loan Distribution</SelectItem>
                   <SelectItem value="compliance">Compliance Report</SelectItem>
@@ -212,7 +359,7 @@ const ReportsDashboard: FC = () => {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Date Range</label>
-              <Select>
+              <Select value={dateRange} onValueChange={setDateRange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select date range" />
                 </SelectTrigger>
@@ -228,7 +375,7 @@ const ReportsDashboard: FC = () => {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Format</label>
-              <Select>
+              <Select value={format} onValueChange={setFormat}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select format" />
                 </SelectTrigger>
@@ -241,7 +388,7 @@ const ReportsDashboard: FC = () => {
             </div>
           </div>
           <div className="flex justify-end mt-4">
-            <Button>
+            <Button onClick={generatePerformanceReport}>
               <FileText className="mr-2 h-4 w-4" />
               Generate Report
             </Button>
@@ -342,7 +489,6 @@ const ReportsDashboard: FC = () => {
                     id: "position",
                     title: "Position",
                     options: [
-                     
                       { label: "Senior Broker", value: "Senior Broker" },
                       { label: "Broker", value: "Broker" },
                       { label: "Junior Broker", value: "Junior Broker" },
@@ -351,7 +497,7 @@ const ReportsDashboard: FC = () => {
                 ]}
                 actionButtonText="Export Report"
                 actionButtonIcon={<Download className="mr-2 h-4 w-4" />}
-                onActionButtonClick={() => console.log("Export broker performance report")}
+                onActionButtonClick={generateBrokerReport}
               />
             </CardContent>
           </Card>
@@ -375,7 +521,6 @@ const ReportsDashboard: FC = () => {
                     id: "type",
                     title: "Type",
                     options: [
-                  
                       { label: "Performance", value: "Performance" },
                       { label: "Broker", value: "Broker" },
                       { label: "Loans", value: "Loans" },
@@ -385,7 +530,6 @@ const ReportsDashboard: FC = () => {
                     id: "schedule",
                     title: "Schedule",
                     options: [
-                  
                       { label: "Daily", value: "Daily" },
                       { label: "Weekly", value: "Weekly" },
                       { label: "Monthly", value: "Monthly" },
@@ -404,4 +548,4 @@ const ReportsDashboard: FC = () => {
   );
 };
 
-export default ReportsDashboard; 
+export default ReportsDashboard;

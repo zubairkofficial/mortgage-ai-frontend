@@ -1,11 +1,53 @@
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DataTable, createSortableColumn, createActionsColumn } from "@/components/common/table";
+import { FC, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  DataTable,
+  createSortableColumn,
+  createActionsColumn,
+} from "@/components/common/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Book, FileText, Video, Award, Clock, Users, Download, Play, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Book,
+  FileText,
+  Video,
+  Award,
+  Clock,
+  Users,
+  Download,
+  Play,
+  CheckCircle2,
+  AlertCircle,
+  Plus,
+} from "lucide-react";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Mock data for training metrics
 const trainingMetrics = {
@@ -18,7 +60,7 @@ const trainingMetrics = {
 };
 
 // Mock data for available courses
-const availableCourses = [
+const initialCourses = [
   {
     id: 1,
     title: "Advanced Loan Processing",
@@ -122,15 +164,141 @@ const trainingResources = [
   },
 ];
 
+interface Course {
+  id: number;
+  title: string;
+  category: string;
+  type: string;
+  duration: string;
+  level: string;
+  required: boolean;
+  enrolled: number;
+  completionRate: number;
+  lastUpdated: string;
+}
+
+interface CourseFormData {
+  title: string;
+  category: string;
+  type: string;
+  duration: string;
+  level: string;
+  required: boolean;
+}
+
+interface Resource {
+  id: number;
+  title: string;
+  type: string;
+  category: string;
+  size: string;
+  downloads: number;
+  lastUpdated: string;
+}
+
+interface ResourceFormData {
+  title: string;
+  type: string;
+  category: string;
+  size: string;
+}
+
 const TrainingCenter: FC = () => {
+  const [courses, setCourses] = useState<Course[]>(initialCourses);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formData, setFormData] = useState<CourseFormData>({
+    title: "",
+    category: "",
+    type: "",
+    duration: "",
+    level: "",
+    required: false,
+  });
+  const [resources, setResources] = useState<Resource[]>(trainingResources);
+  const [isResourceDialogOpen, setIsResourceDialogOpen] = useState(false);
+  const [resourceFormData, setResourceFormData] = useState<ResourceFormData>({
+    title: "",
+    type: "",
+    category: "",
+    size: "",
+  });
+
+  const handleInputChange = (
+    field: keyof CourseFormData,
+    value: string | boolean
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    const newCourse: Course = {
+      id: courses.length + 1,
+      ...formData,
+      enrolled: 0,
+      completionRate: 0,
+      lastUpdated: new Date().toISOString().split("T")[0],
+    };
+
+    setCourses((prev) => [...prev, newCourse]);
+    setIsDialogOpen(false);
+    setFormData({
+      title: "",
+      category: "",
+      type: "",
+      duration: "",
+      level: "",
+      required: false,
+    });
+  };
+
+  const handleResourceInputChange = (
+    field: keyof ResourceFormData,
+    value: string
+  ) => {
+    setResourceFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleResourceSubmit = () => {
+    const newResource: Resource = {
+      id: resources.length + 1,
+      ...resourceFormData,
+      downloads: 0,
+      lastUpdated: new Date().toISOString().split("T")[0],
+    };
+
+    setResources((prev) => [...prev, newResource]);
+    setIsResourceDialogOpen(false);
+    setResourceFormData({
+      title: "",
+      type: "",
+      category: "",
+      size: "",
+    });
+  };
+
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: "default" | "destructive" | "secondary" | "success", icon: any }> = {
+    const variants: Record<
+      string,
+      {
+        variant: "default" | "destructive" | "secondary" | "success";
+        icon: any;
+      }
+    > = {
       Compliant: { variant: "success", icon: CheckCircle2 },
       "At Risk": { variant: "secondary", icon: AlertCircle },
       "Non-Compliant": { variant: "destructive", icon: AlertCircle },
     };
 
-    const { variant, icon: Icon } = variants[status] || { variant: "default", icon: null };
+    const { variant, icon: Icon } = variants[status] || {
+      variant: "default",
+      icon: null,
+    };
 
     return (
       <Badge variant={variant} className="flex items-center gap-1">
@@ -147,11 +315,7 @@ const TrainingCenter: FC = () => {
       Advanced: "outline",
     };
 
-    return (
-      <Badge variant={variants[level] || "default"}>
-        {level}
-      </Badge>
-    );
+    return <Badge variant={variants[level] || "default"}>{level}</Badge>;
   };
 
   const coursesColumns = [
@@ -209,7 +373,9 @@ const TrainingCenter: FC = () => {
     createSortableColumn("requiredCourses", "Required Courses"),
     createSortableColumn("completedCourses", "Completed Courses", (row) => (
       <div className="flex items-center gap-2">
-        <span>{row.completedCourses}/{row.requiredCourses}</span>
+        <span>
+          {row.completedCourses}/{row.requiredCourses}
+        </span>
         <Progress
           value={(row.completedCourses / row.requiredCourses) * 100}
           className="w-24"
@@ -220,7 +386,9 @@ const TrainingCenter: FC = () => {
     createSortableColumn("nextDeadline", "Next Deadline", (row) => (
       <span>{new Date(row.nextDeadline).toLocaleDateString()}</span>
     )),
-    createSortableColumn("status", "Status", (row) => getStatusBadge(row.status)),
+    createSortableColumn("status", "Status", (row) =>
+      getStatusBadge(row.status)
+    ),
     createActionsColumn([
       {
         label: "View Progress",
@@ -265,6 +433,84 @@ const TrainingCenter: FC = () => {
     ]),
   ];
 
+  const handleGenerateReport = () => {
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(20);
+    doc.text("Training Progress Report", 14, 20);
+
+    // Add date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
+
+    // Add summary statistics
+    doc.setFontSize(14);
+    doc.text("Summary", 14, 45);
+    doc.setFontSize(12);
+    doc.text(`Total Team Members: ${brokerProgress.length}`, 14, 55);
+    doc.text(
+      `Compliant Members: ${
+        brokerProgress.filter((b) => b.status === "Compliant").length
+      }`,
+      14,
+      65
+    );
+    doc.text(
+      `At Risk Members: ${
+        brokerProgress.filter((b) => b.status === "At Risk").length
+      }`,
+      14,
+      75
+    );
+    doc.text(
+      `Non-Compliant Members: ${
+        brokerProgress.filter((b) => b.status === "Non-Compliant").length
+      }`,
+      14,
+      85
+    );
+
+    // Add broker progress table
+    const tableData = brokerProgress.map((broker) => [
+      broker.broker,
+      broker.position,
+      `${broker.completedCourses}/${broker.requiredCourses}`,
+      broker.inProgress.toString(),
+      new Date(broker.nextDeadline).toLocaleDateString(),
+      broker.status,
+    ]);
+
+    autoTable(doc, {
+      startY: 95,
+      head: [
+        [
+          "Broker",
+          "Position",
+          "Completed Courses",
+          "In Progress",
+          "Next Deadline",
+          "Status",
+        ],
+      ],
+      body: tableData,
+      theme: "grid",
+      headStyles: { fillColor: [41, 128, 185] },
+      styles: { fontSize: 10 },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 30 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 30 },
+        5: { cellWidth: 30 },
+      },
+    });
+
+    // Save the PDF
+    doc.save("training-progress-report.pdf");
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -282,7 +528,9 @@ const TrainingCenter: FC = () => {
             <Book className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{trainingMetrics.totalCourses}</div>
+            <div className="text-2xl font-bold">
+              {trainingMetrics.totalCourses}
+            </div>
             <p className="text-xs text-muted-foreground">
               {trainingMetrics.activeCourses} active courses
             </p>
@@ -291,11 +539,15 @@ const TrainingCenter: FC = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Course Completions</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Course Completions
+            </CardTitle>
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{trainingMetrics.completedCourses}</div>
+            <div className="text-2xl font-bold">
+              {trainingMetrics.completedCourses}
+            </div>
             <p className="text-xs text-muted-foreground">
               {trainingMetrics.inProgressCourses} in progress
             </p>
@@ -304,22 +556,33 @@ const TrainingCenter: FC = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Completion</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Average Completion
+            </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{trainingMetrics.averageCompletion}%</div>
-            <Progress value={trainingMetrics.averageCompletion} className="mt-2" />
+            <div className="text-2xl font-bold">
+              {trainingMetrics.averageCompletion}%
+            </div>
+            <Progress
+              value={trainingMetrics.averageCompletion}
+              className="mt-2"
+            />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Upcoming Deadlines</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Upcoming Deadlines
+            </CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{trainingMetrics.upcomingDeadlines}</div>
+            <div className="text-2xl font-bold">
+              {trainingMetrics.upcomingDeadlines}
+            </div>
             <p className="text-xs text-muted-foreground">
               Courses due this week
             </p>
@@ -346,14 +609,13 @@ const TrainingCenter: FC = () => {
             <CardContent>
               <DataTable
                 columns={coursesColumns}
-                data={availableCourses}
+                data={courses}
                 searchKey="title"
                 filterableColumns={[
                   {
                     id: "category",
                     title: "Category",
                     options: [
-                     
                       { label: "Technical", value: "Technical" },
                       { label: "Compliance", value: "Compliance" },
                       { label: "Soft Skills", value: "Soft Skills" },
@@ -363,7 +625,6 @@ const TrainingCenter: FC = () => {
                     id: "level",
                     title: "Level",
                     options: [
-                 
                       { label: "Beginner", value: "Beginner" },
                       { label: "Intermediate", value: "Intermediate" },
                       { label: "Advanced", value: "Advanced" },
@@ -371,7 +632,8 @@ const TrainingCenter: FC = () => {
                   },
                 ]}
                 actionButtonText="Add New Course"
-                onActionButtonClick={() => console.log("Add new course")}
+                actionButtonIcon={<Plus className="mr-2 h-4 w-4" />}
+                onActionButtonClick={() => setIsDialogOpen(true)}
               />
             </CardContent>
           </Card>
@@ -395,7 +657,6 @@ const TrainingCenter: FC = () => {
                     id: "status",
                     title: "Status",
                     options: [
-                   
                       { label: "Compliant", value: "Compliant" },
                       { label: "At Risk", value: "At Risk" },
                       { label: "Non-Compliant", value: "Non-Compliant" },
@@ -403,7 +664,8 @@ const TrainingCenter: FC = () => {
                   },
                 ]}
                 actionButtonText="Generate Report"
-                onActionButtonClick={() => console.log("Generate progress report")}
+                actionButtonIcon={<FileText className="mr-2 h-4 w-4" />}
+                onActionButtonClick={handleGenerateReport}
               />
             </CardContent>
           </Card>
@@ -420,14 +682,13 @@ const TrainingCenter: FC = () => {
             <CardContent>
               <DataTable
                 columns={resourcesColumns}
-                data={trainingResources}
+                data={resources}
                 searchKey="title"
                 filterableColumns={[
                   {
                     id: "type",
                     title: "Type",
                     options: [
-                   
                       { label: "PDF", value: "PDF" },
                       { label: "Video", value: "Video" },
                       { label: "Excel", value: "Excel" },
@@ -437,7 +698,6 @@ const TrainingCenter: FC = () => {
                     id: "category",
                     title: "Category",
                     options: [
-                     
                       { label: "Documentation", value: "Documentation" },
                       { label: "Compliance", value: "Compliance" },
                       { label: "Process", value: "Process" },
@@ -445,14 +705,195 @@ const TrainingCenter: FC = () => {
                   },
                 ]}
                 actionButtonText="Upload Resource"
-                onActionButtonClick={() => console.log("Upload new resource")}
+                actionButtonIcon={<FileText className="mr-2 h-4 w-4" />}
+                onActionButtonClick={() => setIsResourceDialogOpen(true)}
               />
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Add Course Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Add New Course</DialogTitle>
+            <DialogDescription>
+              Fill in the details to create a new training course
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">Course Title</Label>
+              <Input
+                id="title"
+                value={formData.title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+                placeholder="Enter course title"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="category">Category</Label>
+              <Select
+                value={formData.category}
+                onValueChange={(value) => handleInputChange("category", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Technical">Technical</SelectItem>
+                  <SelectItem value="Compliance">Compliance</SelectItem>
+                  <SelectItem value="Soft Skills">Soft Skills</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="type">Course Type</Label>
+              <Select
+                value={formData.type}
+                onValueChange={(value) => handleInputChange("type", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Video Course">Video Course</SelectItem>
+                  <SelectItem value="Documentation">Documentation</SelectItem>
+                  <SelectItem value="Interactive">Interactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="duration">Duration</Label>
+              <Input
+                id="duration"
+                value={formData.duration}
+                onChange={(e) => handleInputChange("duration", e.target.value)}
+                placeholder="e.g., 2h 30m"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="level">Level</Label>
+              <Select
+                value={formData.level}
+                onValueChange={(value) => handleInputChange("level", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Beginner">Beginner</SelectItem>
+                  <SelectItem value="Intermediate">Intermediate</SelectItem>
+                  <SelectItem value="Advanced">Advanced</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="required"
+                checked={formData.required}
+                onCheckedChange={(checked) =>
+                  handleInputChange("required", checked as boolean)
+                }
+              />
+              <Label htmlFor="required">Required Course</Label>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>Add Course</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Resource Dialog */}
+      <Dialog
+        open={isResourceDialogOpen}
+        onOpenChange={setIsResourceDialogOpen}
+      >
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Upload New Resource</DialogTitle>
+            <DialogDescription>
+              Fill in the details to add a new learning resource
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="resource-title">Resource Title</Label>
+              <Input
+                id="resource-title"
+                value={resourceFormData.title}
+                onChange={(e) =>
+                  handleResourceInputChange("title", e.target.value)
+                }
+                placeholder="Enter resource title"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="resource-type">Resource Type</Label>
+              <Select
+                value={resourceFormData.type}
+                onValueChange={(value) =>
+                  handleResourceInputChange("type", value)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PDF">PDF</SelectItem>
+                  <SelectItem value="Video">Video</SelectItem>
+                  <SelectItem value="Excel">Excel</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="resource-category">Category</Label>
+              <Select
+                value={resourceFormData.category}
+                onValueChange={(value) =>
+                  handleResourceInputChange("category", value)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Documentation">Documentation</SelectItem>
+                  <SelectItem value="Compliance">Compliance</SelectItem>
+                  <SelectItem value="Process">Process</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="resource-size">File Size</Label>
+              <Input
+                id="resource-size"
+                value={resourceFormData.size}
+                onChange={(e) =>
+                  handleResourceInputChange("size", e.target.value)
+                }
+                placeholder="e.g., 2.4 MB"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsResourceDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleResourceSubmit}>Upload Resource</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
-export default TrainingCenter; 
+export default TrainingCenter;
