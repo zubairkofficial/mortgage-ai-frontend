@@ -41,10 +41,10 @@ import ReportsPage from './pages/roles/underwriting-manager/reports/reports';
 import AIAssistant from './pages/chat/ai-assistant';
 import BrokerNetworkOverview from './pages/roles/account-executive/broker-network/broker-network';
 import Transaction from './pages/roles/account-executive/transaction/transaction';
-// import OperationsSupport from './pages/roles/account-executive/operations/operations';
-// import ComplianceMonitoring from './pages/roles/account-executive/compliance/compliance';
-// import ReportsAnalytics from './pages/roles/account-executive/reports/reports';
-// import TrainingResources from './pages/roles/account-executive/training/training';
+import OperationsSupport from './pages/roles/account-executive/operations/operations';
+import ComplianceMonitoring from './pages/roles/account-executive/compliance/compliance';
+import ReportsAnalytics from './pages/roles/account-executive/reports/reports';
+import TrainingResources from './pages/roles/account-executive/training/training';
 const router = createBrowserRouter([
     {
         path: "/",
@@ -147,10 +147,10 @@ const router = createBrowserRouter([
             //     path: "compliance",
             //     element: <ComplianceMonitoring/>
             // },
-            // {
-            //     path: "operations",
-            //     element: <OperationsSupport/>
-            // },
+            {
+                path: "operations",
+                element: <OperationsSupport/>
+            },
             // {
             //     path: "training",
             //     element: <TrainingResources/>
