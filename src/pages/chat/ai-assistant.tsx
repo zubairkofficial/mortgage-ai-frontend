@@ -3,7 +3,7 @@ import { Sparkles, } from 'lucide-react';
 import { Message } from '@/components/layout/chat/types';
 import { MessageInput } from '@/components/layout/chat/message-input';
 import { motion } from 'framer-motion';
-import { User, useUser } from '@/stores/userStore';
+import { useUser } from '@/stores/userStore';
 import { UserRole } from '@/lib/users';
 import ChatBox from './components/chat-message-box';
 

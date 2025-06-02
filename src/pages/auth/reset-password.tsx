@@ -16,8 +16,7 @@ const ResetPassword = () => {
 
   // Mock token validation - in a real app, this would validate the token from the URL
   // const { token } = useParams()
-  const token = 'mock-token' // This would come from URL params in a real app
-  
+   
   const isValidToken = true // In a real app, we would validate this token
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -307,11 +307,6 @@ export default function Compliance() {
         </Card>
       </div>
 
-      {/* Debug data being passed to table */}
-      <div className="text-xs text-gray-400 mb-2">
-        Debug: Passing {complianceChecks.length} items to DataTable
-      </div>
-
       <DataTable
         key={`table-${complianceChecks.map((c) => c.id).join("-")}`}
         columns={columns}

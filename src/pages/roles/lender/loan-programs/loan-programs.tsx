@@ -199,12 +199,6 @@ const LoanPrograms: FC = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Debug info */}
-      <div className="text-xs text-gray-400">
-        Debug: Showing {loanPrograms.length} loan programs | Last updated:{" "}
-        {new Date().toLocaleTimeString()}
-      </div>
-
       <DataTable
         key={`programs-${loanPrograms.map((p) => p.id).join("-")}`}
         columns={columns}
