@@ -5,10 +5,9 @@ import {
   createActionsColumn,
 } from "@/components/common/table";
 import { Button } from "@/components/ui/button";
-import { FileText, Bell, Filter } from "lucide-react";
+import { FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { ColumnDef } from "@tanstack/react-table";
@@ -23,17 +22,6 @@ type Report = {
   status: "ready" | "processing" | "error";
   format: string;
   size: string;
-};
-
-type Alert = {
-  id: string;
-  loanId: string;
-  type: string;
-  severity: "high" | "medium" | "low";
-  description: string;
-  detectedAt: string;
-  status: "active" | "pending" | "resolved";
-  assignedTo: string;
 };
 
 // Mock data for reports
@@ -58,29 +46,25 @@ const mockReports: Report[] = [
     format: "Excel",
     size: "1.8 MB",
   },
-];
-
-// Mock data for AI alerts
-const mockAlerts: Alert[] = [
   {
-    id: "ALERT-001",
-    loanId: "LOAN-001",
-    type: "Compliance Risk",
-    severity: "high",
-    description: "Potential TILA violation detected in loan documentation",
-    detectedAt: "2024-03-16 15:30:00",
-    status: "active",
-    assignedTo: "Mike Brown",
+    id: "REP-003",
+    title: "Quarterly Risk Assessment",
+    type: "Risk Assessment",
+    generatedBy: "Mike Brown",
+    date: "2024-03-14",
+    status: "ready",
+    format: "PDF",
+    size: "3.1 MB",
   },
   {
-    id: "ALERT-002",
-    loanId: "LOAN-002",
-    type: "Document Anomaly",
-    severity: "medium",
-    description: "Inconsistent income documentation detected",
-    detectedAt: "2024-03-16 14:15:00",
-    status: "resolved",
-    assignedTo: "Sarah Johnson",
+    id: "REP-004",
+    title: "Loan Portfolio Analysis",
+    type: "Portfolio",
+    generatedBy: "System",
+    date: "2024-03-13",
+    status: "processing",
+    format: "Excel",
+    size: "0 MB",
   },
 ];
 
@@ -113,10 +97,11 @@ const ReportsPage: FC = () => {
 
     // Create table for statistics
     const statsData = [
-      ["Total Checks", "45"],
-      ["Compliant", "38"],
-      ["Flagged", "7"],
-      ["Average Response Time", "2.3 hours"],
+      ["Total Loans Processed", "156"],
+      ["Compliant Loans", "142"],
+      ["Flagged for Review", "14"],
+      ["Average Processing Time", "4.2 hours"],
+      ["Approval Rate", "91%"],
     ];
 
     autoTable(doc, {
@@ -127,29 +112,18 @@ const ReportsPage: FC = () => {
       headStyles: { fillColor: [41, 128, 185] },
     });
 
-    // Add recent alerts
+    // Add compliance summary
+    const docWithTable = doc as jsPDF & { lastAutoTable: { finalY: number } };
     doc.setFontSize(16);
-    doc.text("Recent Alerts", 20, (doc as any).lastAutoTable.finalY + 20);
+    doc.text("Compliance Summary", 20, docWithTable.lastAutoTable.finalY + 20);
 
-    // Create table for alerts
-    const alertsData = mockAlerts.map((alert) => [
-      alert.id,
-      alert.loanId,
-      alert.type,
-      alert.severity,
-      alert.description,
-      alert.status,
-    ]);
-
-    autoTable(doc, {
-      startY: (doc as any).lastAutoTable.finalY + 30,
-      head: [
-        ["Alert ID", "Loan ID", "Type", "Severity", "Description", "Status"],
-      ],
-      body: alertsData,
-      theme: "grid",
-      headStyles: { fillColor: [41, 128, 185] },
-    });
+    doc.setFontSize(12);
+    doc.text(
+      "All processed loans have been reviewed for regulatory compliance including TILA, RESPA, and fair lending requirements.",
+      20,
+      docWithTable.lastAutoTable.finalY + 35,
+      { maxWidth: 170 }
+    );
 
     // Save the PDF
     doc.save("compliance-report.pdf");
@@ -201,98 +175,28 @@ const ReportsPage: FC = () => {
     ]),
   ];
 
-  const alertColumns: ColumnDef<Alert>[] = [
-    createSortableColumn("id", "Alert ID"),
-    createSortableColumn("loanId", "Loan ID"),
-    createSortableColumn("type", "Alert Type"),
-    {
-      accessorKey: "severity",
-      header: "Severity",
-      cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
-        const severity = row.getValue("severity");
-        return (
-          <Badge
-            variant={
-              severity === "high"
-                ? "destructive"
-                : severity === "medium"
-                ? "secondary"
-                : "default"
-            }
-          >
-            {severity.charAt(0).toUpperCase() + severity.slice(1)}
-          </Badge>
-        );
-      },
-    },
-    createSortableColumn("description", "Description"),
-    createSortableColumn("detectedAt", "Detected At"),
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
-        const status = row.getValue("status");
-        return (
-          <Badge
-            variant={
-              status === "active"
-                ? "destructive"
-                : status === "pending"
-                ? "secondary"
-                : "success"
-            }
-          >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </Badge>
-        );
-      },
-    },
-    createSortableColumn("assignedTo", "Assigned To"),
-    createActionsColumn<Alert>([
-      {
-        label: "Review",
-        onClick: (data: Alert) => {
-          console.log("Review alert:", data.id);
-          // Implement review logic
-        },
-      },
-      {
-        label: "Resolve",
-        onClick: (data: Alert) => {
-          console.log("Resolve alert:", data.id);
-          // Implement resolve logic
-        },
-      },
-    ]),
-  ];
-
   // Mock statistics
   const stats = {
-    totalReports: 45,
-    activeAlerts: 8,
-    resolvedAlerts: 32,
-    averageResponseTime: "2.3 hours",
+    totalReports: mockReports.length,
+    readyReports: mockReports.filter((r) => r.status === "ready").length,
+    processingReports: mockReports.filter((r) => r.status === "processing")
+      .length,
+    totalSize: "12.3 MB",
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Reports & Alerts
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
           <p className="text-muted-foreground">
-            Generate compliance reports and monitor AI-driven alerts
+            Generate and manage compliance reports
           </p>
         </div>
         <div className="flex gap-2">
           <Button onClick={generateReport}>
             <FileText className="mr-2 h-4 w-4" />
             Generate Report
-          </Button>
-          <Button variant="outline">
-            <Filter className="mr-2 h-4 w-4" />
-            Filter Alerts
           </Button>
         </div>
       </div>
@@ -309,111 +213,63 @@ const ReportsPage: FC = () => {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {stats.activeAlerts}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              Resolved Alerts
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Ready</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {stats.resolvedAlerts}
+              {stats.readyReports}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              Avg. Response Time
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Processing</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.averageResponseTime}
+            <div className="text-2xl font-bold text-blue-600">
+              {stats.processingReports}
             </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Size</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalSize}</div>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="reports" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="reports" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            Reports
-          </TabsTrigger>
-          <TabsTrigger value="alerts" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
-            AI Alerts
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="reports">
-          <DataTable
-            columns={reportColumns}
-            data={mockReports}
-            searchKey="title"
-            title="Generated Reports"
-            description="Access and manage compliance reports"
-            filterableColumns={[
-              {
-                id: "type",
-                title: "Report Type",
-                options: [
-                  { label: "Compliance", value: "Compliance" },
-                  { label: "Validation", value: "Validation" },
-                ],
-              },
-              {
-                id: "status",
-                title: "Status",
-                options: [
-                  { label: "Ready", value: "ready" },
-                  { label: "Processing", value: "processing" },
-                ],
-              },
-            ]}
-          />
-        </TabsContent>
-
-        <TabsContent value="alerts">
-          <DataTable
-            columns={alertColumns}
-            data={mockAlerts}
-            searchKey="loanId"
-            title="AI Alerts"
-            description="Monitor AI-driven alerts for suspicious or non-compliant files"
-            filterableColumns={[
-              {
-                id: "severity",
-                title: "Severity",
-                options: [
-                  { label: "High", value: "high" },
-                  { label: "Medium", value: "medium" },
-                  { label: "Low", value: "low" },
-                ],
-              },
-              {
-                id: "status",
-                title: "Status",
-                options: [
-                  { label: "All", value: "all" },
-                  { label: "Active", value: "active" },
-                  { label: "Pending", value: "pending" },
-                  { label: "Resolved", value: "resolved" },
-                ],
-              },
-            ]}
-          />
-        </TabsContent>
-      </Tabs>
+      {/* Reports Table */}
+      <DataTable
+        columns={reportColumns}
+        data={mockReports}
+        searchKey="title"
+        title="Generated Reports"
+        description="Access and manage compliance reports"
+        filterableColumns={[
+          {
+            id: "type",
+            title: "Report Type",
+            options: [
+              { label: "Compliance", value: "Compliance" },
+              { label: "Validation", value: "Validation" },
+              { label: "Risk Assessment", value: "Risk Assessment" },
+              { label: "Portfolio", value: "Portfolio" },
+            ],
+          },
+          {
+            id: "status",
+            title: "Status",
+            options: [
+              { label: "Ready", value: "ready" },
+              { label: "Processing", value: "processing" },
+              { label: "Error", value: "error" },
+            ],
+          },
+        ]}
+      />
     </div>
   );
 };

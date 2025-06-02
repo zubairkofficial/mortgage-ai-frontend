@@ -12,6 +12,7 @@ import {
   createActionsColumn,
 } from "@/components/common/table";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,9 +23,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -32,400 +30,253 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
 import {
-  BookOpen,
-  Users,
-  FileText,
-  Upload,
-  GraduationCap,
   Clock,
+  AlertCircle,
+  CheckCircle2,
+  FileText,
+  AlertTriangle,
+  Play,
+  LucideIcon,
 } from "lucide-react";
 
-// Mock data for training metrics
-const trainingMetrics = {
-  totalCourses: 12,
-  activeEnrollments: 85,
-  completedCourses: 34,
-  averageCompletionTime: "4.2 days",
+// Mock data for operational metrics
+const operationalMetrics = {
+  activeWorkflows: 45,
+  pendingTasks: 28,
+  completedToday: 32,
+  averageProcessingTime: "2.8 days",
+  slaCompliance: 94,
+  workloadDistribution: 78,
 };
 
-// Mock data for training resources/courses
-const trainingResources = [
+// Mock workflow templates for triggering
+const workflowTemplates = [
   {
-    id: 1,
-    title: "Financial Risk Assessment Fundamentals",
-    category: "Risk Management",
-    difficulty: "Intermediate",
-    duration: "2 hours",
-    enrollments: 25,
-    completions: 18,
-    rating: 4.8,
-    instructor: "Dr. Sarah Johnson",
-    uploadDate: "2024-03-01",
-    status: "Active",
-    materials: ["PDF Guide", "Video Lectures", "Practice Tests"],
+    id: "loan-review",
+    name: "Loan Application Review",
+    estimatedTime: "2-3 hours",
   },
   {
-    id: 2,
-    title: "Loan Processing Best Practices",
-    category: "Operations",
-    difficulty: "Beginner",
-    duration: "1.5 hours",
-    enrollments: 32,
-    completions: 28,
-    rating: 4.6,
-    instructor: "Michael Brown",
-    uploadDate: "2024-02-28",
-    status: "Active",
-    materials: ["Video Course", "Handbook"],
+    id: "doc-verification",
+    name: "Document Verification",
+    estimatedTime: "1-2 hours",
   },
   {
-    id: 3,
-    title: "Compliance and Regulatory Updates 2024",
-    category: "Compliance",
-    difficulty: "Advanced",
-    duration: "3 hours",
-    enrollments: 15,
-    completions: 8,
-    rating: 4.9,
-    instructor: "Emily Davis",
-    uploadDate: "2024-03-10",
-    status: "Active",
-    materials: ["Document Library", "Interactive Modules"],
+    id: "client-onboarding",
+    name: "Client Onboarding",
+    estimatedTime: "3-4 hours",
   },
+  { id: "credit-check", name: "Credit Assessment", estimatedTime: "1 hour" },
   {
-    id: 4,
-    title: "Customer Service Excellence",
-    category: "Soft Skills",
-    difficulty: "Beginner",
-    duration: "1 hour",
-    enrollments: 42,
-    completions: 35,
-    rating: 4.5,
-    instructor: "Robert Wilson",
-    uploadDate: "2024-02-20",
-    status: "Active",
-    materials: ["Video Training", "Role-play Scenarios"],
-  },
-  {
-    id: 5,
-    title: "Anti-Money Laundering (AML) Training",
-    category: "Compliance",
-    difficulty: "Intermediate",
-    duration: "2.5 hours",
-    enrollments: 28,
-    completions: 22,
-    rating: 4.7,
-    instructor: "Lisa Anderson",
-    uploadDate: "2024-03-05",
-    status: "Active",
-    materials: ["E-learning Module", "Case Studies", "Assessment Quiz"],
+    id: "compliance-review",
+    name: "Compliance Review",
+    estimatedTime: "2 hours",
   },
 ];
 
-interface TrainingResource {
-  id: number;
-  title: string;
-  category: string;
-  difficulty: string;
-  duration: string;
-  enrollments: number;
-  completions: number;
-  rating: number;
-  instructor: string;
-  uploadDate: string;
-  status: string;
-  materials: string[];
-}
+const OperationsDashboard: FC = () => {
+  const [activeWorkflows, setActiveWorkflows] = useState([
+    {
+      id: 1,
+      name: "Loan Application Review",
+      status: "In Progress",
+      assignedTo: "John Doe",
+      priority: "High",
+      dueDate: "2024-03-20",
+      progress: 75,
+      tasks: {
+        total: 8,
+        completed: 6,
+      },
+      lastUpdated: "2024-03-15",
+    },
+    {
+      id: 2,
+      name: "Document Verification",
+      status: "Pending",
+      assignedTo: "Sarah Miller",
+      priority: "Medium",
+      dueDate: "2024-03-22",
+      progress: 30,
+      tasks: {
+        total: 5,
+        completed: 1,
+      },
+      lastUpdated: "2024-03-15",
+    },
+    {
+      id: 3,
+      name: "Client Onboarding",
+      status: "At Risk",
+      assignedTo: "Robert Johnson",
+      priority: "High",
+      dueDate: "2024-03-18",
+      progress: 45,
+      tasks: {
+        total: 6,
+        completed: 3,
+      },
+      lastUpdated: "2024-03-15",
+    },
+  ]);
 
-const TrainingResourcesDashboard: FC = () => {
-  const [resources, setResources] = useState<TrainingResource[]>(trainingResources);
-  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadForm, setUploadForm] = useState({
-    title: "",
-    category: "",
-    difficulty: "",
-    duration: "",
-    instructor: "",
-    description: "",
-    materials: null as File | null,
-  });
-
-  const getDifficultyBadge = (difficulty: string) => {
-    const variants: Record<string, "default" | "destructive" | "secondary"> = {
-      Beginner: "secondary",
-      Intermediate: "default",
-      Advanced: "destructive",
-    };
-
-    return <Badge variant={variants[difficulty] || "default"}>{difficulty}</Badge>;
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "destructive" | "secondary"> = {
-      Active: "default",
-      Draft: "secondary",
-      Archived: "destructive",
+    const variants: Record<
+      string,
+      {
+        variant:
+          | "default"
+          | "destructive"
+          | "outline"
+          | "secondary"
+          | "success"
+          | null
+          | undefined;
+        icon: LucideIcon | null;
+      }
+    > = {
+      "In Progress": { variant: "default", icon: Clock },
+      Pending: { variant: "secondary", icon: AlertCircle },
+      "At Risk": { variant: "destructive", icon: AlertTriangle },
+      Completed: { variant: "success", icon: CheckCircle2 },
     };
 
-    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
+    const { variant, icon: Icon } = variants[status] || {
+      variant: "default",
+      icon: null,
+    };
+
+    return (
+      <Badge variant={variant} className="flex items-center gap-1">
+        {Icon && <Icon className="h-3 w-3" />}
+        {status}
+      </Badge>
+    );
   };
 
-  const resourceColumns = [
-    createSortableColumn("title", "Course Title"),
-    createSortableColumn("category", "Category"),
-    createSortableColumn("difficulty", "Difficulty", (row) =>
-      getDifficultyBadge(row.difficulty)
-    ),
-    createSortableColumn("duration", "Duration"),
-    createSortableColumn("instructor", "Instructor"),
-    createSortableColumn("enrollments", "Enrollments"),
-    createSortableColumn("completions", "Completions"),
-    createSortableColumn("rating", "Rating", (row) => (
-      <div className="flex items-center gap-1">
-        <span>⭐</span>
-        <span>{row.rating}</span>
-      </div>
-    )),
-    createSortableColumn("uploadDate", "Upload Date", (row) => (
-      <span>{new Date(row.uploadDate).toLocaleDateString()}</span>
-    )),
+  const getPriorityBadge = (priority: string) => {
+    const variants: Record<string, "default" | "destructive" | "secondary"> = {
+      High: "destructive",
+      Medium: "secondary",
+      Low: "default",
+    };
+
+    return <Badge variant={variants[priority] || "default"}>{priority}</Badge>;
+  };
+
+  const handleTriggerWorkflow = () => {
+    if (!selectedTemplate) return;
+
+    const template = workflowTemplates.find((t) => t.id === selectedTemplate);
+    if (!template) return;
+
+    const newWorkflow = {
+      id: Math.max(...activeWorkflows.map((w) => w.id)) + 1,
+      name: template.name,
+      status: "Pending",
+      assignedTo: "Unassigned",
+      priority: "Medium",
+      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0], // 3 days from now
+      progress: 0,
+      tasks: {
+        total: Math.floor(Math.random() * 8) + 3, // Random between 3-10 tasks
+        completed: 0,
+      },
+      lastUpdated: new Date().toISOString().split("T")[0],
+    };
+
+    setActiveWorkflows((prev) => [...prev, newWorkflow]);
+    setIsModalOpen(false);
+    setSelectedTemplate("");
+  };
+
+  const workflowColumns = [
+    createSortableColumn("name", "Workflow Name"),
     createSortableColumn("status", "Status", (row) =>
       getStatusBadge(row.status)
     ),
+    createSortableColumn("assignedTo", "Assigned To"),
+    createSortableColumn("priority", "Priority", (row) =>
+      getPriorityBadge(row.priority)
+    ),
+    createSortableColumn("dueDate", "Due Date", (row) => (
+      <span>{new Date(row.dueDate).toLocaleDateString()}</span>
+    )),
+    createSortableColumn("progress", "Progress", (row) => (
+      <div className="flex items-center gap-2">
+        <Progress value={row.progress} className="w-24" />
+        <span className="text-sm">{row.progress}%</span>
+      </div>
+    )),
+    createSortableColumn("tasks", "Tasks", (row) => (
+      <span>
+        {row.tasks.completed}/{row.tasks.total}
+      </span>
+    )),
+    createSortableColumn("lastUpdated", "Last Updated", (row) => (
+      <span>{new Date(row.lastUpdated).toLocaleDateString()}</span>
+    )),
     createActionsColumn([
       {
         label: "View Details",
-        onClick: (data) => console.log("View course details", data),
+        onClick: (data) => console.log("View workflow details", data),
       },
       {
-        label: "Edit Course",
-        onClick: (data) => console.log("Edit course", data),
+        label: "Update Status",
+        onClick: (data) => console.log("Update workflow status", data),
       },
       {
-        label: "Manage Enrollments",
-        onClick: (data) => console.log("Manage enrollments", data),
-      },
-      {
-        label: "Download Materials",
-        onClick: (data) => console.log("Download materials", data),
+        label: "Reassign",
+        onClick: (data) => console.log("Reassign workflow", data),
       },
     ]),
   ];
 
-  const handleUploadCourse = async () => {
-    if (!uploadForm.title || !uploadForm.category || !uploadForm.difficulty) {
-      toast.error("Please fill in all required fields.");
-      return;
-    }
-
-    setIsUploading(true);
-    
-    try {
-      // Simulate file upload and course creation
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const newResource: TrainingResource = {
-        id: resources.length + 1,
-        title: uploadForm.title,
-        category: uploadForm.category,
-        difficulty: uploadForm.difficulty,
-        duration: uploadForm.duration,
-        enrollments: 0,
-        completions: 0,
-        rating: 0,
-        instructor: uploadForm.instructor,
-        uploadDate: new Date().toISOString().split('T')[0],
-        status: "Active",
-        materials: uploadForm.materials ? [uploadForm.materials.name] : [],
-      };
-      
-      setResources(prev => [...prev, newResource]);
-      
-      toast.success("Course Uploaded Successfully", {
-        description: `${uploadForm.title} has been added to the training resources.`,
-      });
-      
-      // Reset form and close dialog
-      setUploadForm({
-        title: "",
-        category: "",
-        difficulty: "",
-        duration: "",
-        instructor: "",
-        description: "",
-        materials: null,
-      });
-      setIsUploadDialogOpen(false);
-    } catch (error) {
-      toast.error("Failed to upload the course. Please try again.");
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploadForm(prev => ({ ...prev, materials: file }));
-    }
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Training Resources
-          </h1>
-          <p className="text-muted-foreground">
-            Manage and upload training courses and materials
-          </p>
-        </div>
-        
-        <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="lg" className="flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              Upload Course
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Upload Training Course</DialogTitle>
-              <DialogDescription>
-                Add a new training course with materials for your team.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Course Title *</Label>
-                <Input
-                  id="title"
-                  value={uploadForm.title}
-                  onChange={(e) => setUploadForm(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Enter course title"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="category">Category *</Label>
-                <Select
-                  value={uploadForm.category}
-                  onValueChange={(value) => setUploadForm(prev => ({ ...prev, category: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Risk Management">Risk Management</SelectItem>
-                    <SelectItem value="Operations">Operations</SelectItem>
-                    <SelectItem value="Compliance">Compliance</SelectItem>
-                    <SelectItem value="Soft Skills">Soft Skills</SelectItem>
-                    <SelectItem value="Technology">Technology</SelectItem>
-                  </SelectContent>
-                </Select>
-                        </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="difficulty">Difficulty Level *</Label>
-                <Select
-                  value={uploadForm.difficulty}
-                  onValueChange={(value) => setUploadForm(prev => ({ ...prev, difficulty: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Beginner">Beginner</SelectItem>
-                    <SelectItem value="Intermediate">Intermediate</SelectItem>
-                    <SelectItem value="Advanced">Advanced</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="duration">Duration</Label>
-                  <Input
-                    id="duration"
-                    value={uploadForm.duration}
-                    onChange={(e) => setUploadForm(prev => ({ ...prev, duration: e.target.value }))}
-                    placeholder="e.g., 2 hours"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="instructor">Instructor</Label>
-                  <Input
-                    id="instructor"
-                    value={uploadForm.instructor}
-                    onChange={(e) => setUploadForm(prev => ({ ...prev, instructor: e.target.value }))}
-                    placeholder="Instructor name"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={uploadForm.description}
-                  onChange={(e) => setUploadForm(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Course description..."
-                  rows={3}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="materials">Course Materials</Label>
-                <Input
-                  id="materials"
-                  type="file"
-                  onChange={handleFileChange}
-                  accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.mp4,.avi"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Supported formats: PDF, DOC, PPT, ZIP, MP4, AVI
-                </p>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setIsUploadDialogOpen(false)}
-                disabled={isUploading}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleUploadCourse}
-                disabled={isUploading}
-              >
-                {isUploading ? "Uploading..." : "Upload Course"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Operations Management
+        </h1>
+        <p className="text-muted-foreground">
+          Monitor workflows, track tasks, and manage operational efficiency
+        </p>
       </div>
 
-      {/* Training Metrics */}
+      {/* Operational Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Courses
+              Active Workflows
             </CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{activeWorkflows.length}</div>
+            <p className="text-xs text-muted-foreground">Currently running</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Completed Today
+            </CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {trainingMetrics.totalCourses}
+              {operationalMetrics.completedToday}
             </div>
             <p className="text-xs text-muted-foreground">
-              Available training courses
+              Across all workflows
             </p>
           </CardContent>
         </Card>
@@ -433,94 +284,129 @@ const TrainingResourcesDashboard: FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Enrollments
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {trainingMetrics.activeEnrollments}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Currently enrolled users
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Completed Courses
-            </CardTitle>
-            <GraduationCap className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {trainingMetrics.completedCourses}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Total completions
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Avg. Completion Time
+              Avg. Processing Time
             </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {trainingMetrics.averageCompletionTime}
+              {operationalMetrics.averageProcessingTime}
             </div>
-            <p className="text-xs text-muted-foreground">Per course</p>
+            <p className="text-xs text-muted-foreground">Per workflow</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {operationalMetrics.slaCompliance}%
+            </div>
+            <Progress
+              value={operationalMetrics.slaCompliance}
+              className="mt-2"
+            />
           </CardContent>
         </Card>
       </div>
 
-      {/* Training Resources Table */}
+      {/* Workflows Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Training Courses</CardTitle>
-          <CardDescription>
-            Manage all training courses and educational resources
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Active Workflows</CardTitle>
+              <CardDescription>
+                Monitor and manage ongoing operational workflows
+              </CardDescription>
+            </div>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Play className="mr-2 h-4 w-4" />
+                  Trigger Workflow
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Trigger New Workflow</DialogTitle>
+                  <DialogDescription>
+                    Select a workflow template to start a new workflow instance.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="workflow-template"
+                      className="text-sm font-medium"
+                    >
+                      Workflow Template
+                    </label>
+                    <Select
+                      value={selectedTemplate}
+                      onValueChange={setSelectedTemplate}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a workflow template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {workflowTemplates.map((template) => (
+                          <SelectItem key={template.id} value={template.id}>
+                            <div className="flex flex-col">
+                              <span>{template.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                Est. time: {template.estimatedTime}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleTriggerWorkflow}
+                    disabled={!selectedTemplate}
+                  >
+                    Start Workflow
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </CardHeader>
         <CardContent>
           <DataTable
-            columns={resourceColumns}
-            data={resources}
-            searchKey="title"
+            columns={workflowColumns}
+            data={activeWorkflows}
+            searchKey="name"
             filterableColumns={[
-              {
-                id: "category",
-                title: "Category",
-                options: [
-                  { label: "Risk Management", value: "Risk Management" },
-                  { label: "Operations", value: "Operations" },
-                  { label: "Compliance", value: "Compliance" },
-                  { label: "Soft Skills", value: "Soft Skills" },
-                  { label: "Technology", value: "Technology" },
-                ],
-              },
-              {
-                id: "difficulty",
-                title: "Difficulty",
-                options: [
-                  { label: "Beginner", value: "Beginner" },
-                  { label: "Intermediate", value: "Intermediate" },
-                  { label: "Advanced", value: "Advanced" },
-                ],
-              },
               {
                 id: "status",
                 title: "Status",
                 options: [
-                  { label: "Active", value: "Active" },
-                  { label: "Draft", value: "Draft" },
-                  { label: "Archived", value: "Archived" },
+                  { label: "In Progress", value: "In Progress" },
+                  { label: "Pending", value: "Pending" },
+                  { label: "At Risk", value: "At Risk" },
+                ],
+              },
+              {
+                id: "priority",
+                title: "Priority",
+                options: [
+                  { label: "High", value: "High" },
+                  { label: "Medium", value: "Medium" },
+                  { label: "Low", value: "Low" },
                 ],
               },
             ]}
@@ -531,4 +417,4 @@ const TrainingResourcesDashboard: FC = () => {
   );
 };
 
-export default TrainingResourcesDashboard;
+export default OperationsDashboard;

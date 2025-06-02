@@ -3,7 +3,7 @@ import {
   IconNode,
   Wallet,
 } from "lucide-react"
-import {AlertCircleIcon, BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, MessageSquareIcon, BookOpenIcon ,  FileIcon, ClipboardCheckIcon
+import {AlertCircleIcon, BuildingIcon, UsersIcon, ActivityIcon, BarChartIcon, FileTextIcon, MessageSquareIcon, BookOpenIcon ,  FileIcon
  } from "lucide-react";
 import { UserRole } from "./users"
 import { FileCheck, History } from "lucide-react"
@@ -175,7 +175,7 @@ export const underwritingManagerNavLinks: NavItem[] = [
     icon: <History className="h-4 w-4" />,
   },
   {
-    title: "Reports & Alerts",
+    title: "Reports",
     url: "/underwriting-manager/reports",
     icon: <FileTextIcon className="h-4 w-4" />,
   },
