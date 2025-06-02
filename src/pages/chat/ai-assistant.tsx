@@ -3,7 +3,6 @@ import { Sparkles, } from 'lucide-react';
 import { Message, User } from '@/components/layout/chat/types';
 import { MessageInput } from '@/components/layout/chat/message-input';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/stores/userStore';
 import { UserRole } from '@/lib/users';
 import ChatBox from './components/chat-message-box';
@@ -61,6 +60,19 @@ const getSystemPrompt = (role: UserRole): string => {
       - Market analysis and trends
       - Regulatory compliance
       - Partnership and broker relationships`;
+      
+    case UserRole.BORROWER:
+      return `${basePrompt} You are specifically assisting a borrower. Help them with:
+      - Understanding loan application processes and requirements
+      - Explaining different loan products and their benefits
+      - Guidance on improving credit scores and financial standing
+      - Documentation preparation and submission
+      - Application status updates and next steps
+      - Interest rates, terms, and payment calculations
+      - Pre-approval and qualification requirements
+      - Answering questions about loan terms and conditions
+      - Tips for a successful loan application
+      - Understanding closing processes and procedures`;
       
     case UserRole.ADMIN:
       return `${basePrompt} You are specifically assisting an admin user. Help them with:
