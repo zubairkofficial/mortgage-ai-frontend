@@ -14,17 +14,16 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -41,13 +40,14 @@ import {
   Clock,
   Users,
   Download,
-  Play,
+  Upload,
   CheckCircle2,
   AlertCircle,
   Plus,
+  Trash2,
+  Eye,
 } from "lucide-react";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+import { toast } from "sonner";
 
 // Mock data for training metrics
 const trainingMetrics = {
@@ -59,114 +59,11 @@ const trainingMetrics = {
   upcomingDeadlines: 5,
 };
 
-// Mock data for available courses
-const initialCourses = [
-  {
-    id: 1,
-    title: "Advanced Loan Processing",
-    category: "Technical",
-    type: "Video Course",
-    duration: "2h 30m",
-    level: "Advanced",
-    required: true,
-    enrolled: 12,
-    completionRate: 85,
-    lastUpdated: "2024-03-01",
-  },
-  {
-    id: 2,
-    title: "Compliance Regulations 2024",
-    category: "Compliance",
-    type: "Documentation",
-    duration: "1h 45m",
-    level: "Intermediate",
-    required: true,
-    enrolled: 15,
-    completionRate: 92,
-    lastUpdated: "2024-02-15",
-  },
-  {
-    id: 3,
-    title: "Client Communication Skills",
-    category: "Soft Skills",
-    type: "Interactive",
-    duration: "3h 00m",
-    level: "Beginner",
-    required: false,
-    enrolled: 8,
-    completionRate: 78,
-    lastUpdated: "2024-03-10",
-  },
-];
-
-// Mock data for broker progress
-const brokerProgress = [
-  {
-    id: 1,
-    broker: "John Doe",
-    position: "Senior Broker",
-    requiredCourses: 8,
-    completedCourses: 8,
-    inProgress: 0,
-    nextDeadline: "2024-04-15",
-    status: "Compliant",
-  },
-  {
-    id: 2,
-    broker: "Sarah Miller",
-    position: "Broker",
-    requiredCourses: 8,
-    completedCourses: 6,
-    inProgress: 2,
-    nextDeadline: "2024-03-25",
-    status: "At Risk",
-  },
-  {
-    id: 3,
-    broker: "Robert Johnson",
-    position: "Junior Broker",
-    requiredCourses: 8,
-    completedCourses: 4,
-    inProgress: 3,
-    nextDeadline: "2024-03-20",
-    status: "Non-Compliant",
-  },
-];
-
-// Mock data for training resources
-const trainingResources = [
-  {
-    id: 1,
-    title: "Loan Processing Guide 2024",
-    type: "PDF",
-    category: "Documentation",
-    size: "2.4 MB",
-    downloads: 45,
-    lastUpdated: "2024-03-01",
-  },
-  {
-    id: 2,
-    title: "Compliance Checklist",
-    type: "Excel",
-    category: "Compliance",
-    size: "1.2 MB",
-    downloads: 38,
-    lastUpdated: "2024-02-15",
-  },
-  {
-    id: 3,
-    title: "Client Onboarding Process",
-    type: "Video",
-    category: "Process",
-    size: "45 MB",
-    downloads: 28,
-    lastUpdated: "2024-03-10",
-  },
-];
-
+// Enhanced course interface with materials
 interface Course {
   id: number;
   title: string;
+  description: string;
   category: string;
   type: string;
   duration: string;
@@ -174,58 +71,141 @@ interface Course {
   required: boolean;
   enrolled: number;
   completionRate: number;
+  instructor: string;
+  materials: UploadedFile[];
   lastUpdated: string;
+  status: string;
+}
+
+interface UploadedFile {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  uploadDate: string;
 }
 
 interface CourseFormData {
   title: string;
+  description: string;
   category: string;
   type: string;
   duration: string;
   level: string;
   required: boolean;
+  instructor: string;
+  materials: File[];
 }
 
-interface Resource {
-  id: number;
-  title: string;
-  type: string;
-  category: string;
-  size: string;
-  downloads: number;
-  lastUpdated: string;
-}
-
-interface ResourceFormData {
-  title: string;
-  type: string;
-  category: string;
-  size: string;
-}
+// Enhanced mock data with materials
+const initialCourses: Course[] = [
+  {
+    id: 1,
+    title: "Advanced Loan Processing",
+    description: "Comprehensive guide to advanced loan processing techniques and best practices",
+    category: "Technical",
+    type: "Video Course",
+    duration: "2h 30m",
+    level: "Advanced",
+    required: true,
+    enrolled: 12,
+    completionRate: 85,
+    instructor: "John Smith",
+    materials: [
+      {
+        id: "1",
+        name: "loan_processing_guide.pdf",
+        type: "PDF",
+        size: "2.4 MB",
+        uploadDate: "2024-03-01",
+      },
+      {
+        id: "2",
+        name: "loan_forms_template.xlsx",
+        type: "Excel",
+        size: "1.2 MB",
+        uploadDate: "2024-03-01",
+      },
+    ],
+    lastUpdated: "2024-03-01",
+    status: "Active",
+  },
+  {
+    id: 2,
+    title: "Compliance Regulations 2024",
+    description: "Updated compliance regulations and procedures for 2024",
+    category: "Compliance",
+    type: "Documentation",
+    duration: "1h 45m",
+    level: "Intermediate",
+    required: true,
+    enrolled: 15,
+    completionRate: 92,
+    instructor: "Sarah Johnson",
+    materials: [
+      {
+        id: "3",
+        name: "compliance_manual_2024.pdf",
+        type: "PDF",
+        size: "5.8 MB",
+        uploadDate: "2024-02-15",
+      },
+    ],
+    lastUpdated: "2024-02-15",
+    status: "Active",
+  },
+  {
+    id: 3,
+    title: "Client Communication Skills",
+    description: "Improve your client communication and relationship building skills",
+    category: "Soft Skills",
+    type: "Interactive",
+    duration: "3h 00m",
+    level: "Beginner",
+    required: false,
+    enrolled: 8,
+    completionRate: 78,
+    instructor: "Michael Brown",
+    materials: [
+      {
+        id: "4",
+        name: "communication_handbook.pdf",
+        type: "PDF",
+        size: "1.9 MB",
+        uploadDate: "2024-03-10",
+      },
+      {
+        id: "5",
+        name: "communication_training_video.mp4",
+        type: "Video",
+        size: "45 MB",
+        uploadDate: "2024-03-10",
+      },
+    ],
+    lastUpdated: "2024-03-10",
+    status: "Active",
+  },
+];
 
 const TrainingCenter: FC = () => {
   const [courses, setCourses] = useState<Course[]>(initialCourses);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState<CourseFormData>({
     title: "",
+    description: "",
     category: "",
     type: "",
     duration: "",
     level: "",
     required: false,
-  });
-  const [resources, setResources] = useState<Resource[]>(trainingResources);
-  const [isResourceDialogOpen, setIsResourceDialogOpen] = useState(false);
-  const [resourceFormData, setResourceFormData] = useState<ResourceFormData>({
-    title: "",
-    type: "",
-    category: "",
-    size: "",
+    instructor: "",
+    materials: [],
   });
 
   const handleInputChange = (
     field: keyof CourseFormData,
-    value: string | boolean
+    value: string | boolean | File[]
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -233,89 +213,114 @@ const TrainingCenter: FC = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    const newCourse: Course = {
-      id: courses.length + 1,
-      ...formData,
-      enrolled: 0,
-      completionRate: 0,
-      lastUpdated: new Date().toISOString().split("T")[0],
-    };
-
-    setCourses((prev) => [...prev, newCourse]);
-    setIsDialogOpen(false);
-    setFormData({
-      title: "",
-      category: "",
-      type: "",
-      duration: "",
-      level: "",
-      required: false,
-    });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    handleInputChange("materials", files);
   };
 
-  const handleResourceInputChange = (
-    field: keyof ResourceFormData,
-    value: string
-  ) => {
-    setResourceFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  const handleResourceSubmit = () => {
-    const newResource: Resource = {
-      id: resources.length + 1,
-      ...resourceFormData,
-      downloads: 0,
-      lastUpdated: new Date().toISOString().split("T")[0],
-    };
+  const handleSubmit = async () => {
+    if (!formData.title || !formData.category || !formData.type) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
 
-    setResources((prev) => [...prev, newResource]);
-    setIsResourceDialogOpen(false);
-    setResourceFormData({
-      title: "",
-      type: "",
-      category: "",
-      size: "",
-    });
+    setIsUploading(true);
+
+    try {
+      // Simulate file upload process
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Convert uploaded files to UploadedFile format
+      const uploadedMaterials: UploadedFile[] = formData.materials.map(
+        (file, index) => ({
+          id: `${Date.now()}-${index}`,
+          name: file.name,
+          type: file.type.includes("pdf") ? "PDF" : 
+                file.type.includes("video") ? "Video" :
+                file.type.includes("excel") || file.type.includes("spreadsheet") ? "Excel" :
+                "Document",
+          size: formatFileSize(file.size),
+          uploadDate: new Date().toISOString().split("T")[0],
+        })
+      );
+
+      const newCourse: Course = {
+        id: courses.length + 1,
+        ...formData,
+        materials: uploadedMaterials,
+        enrolled: 0,
+        completionRate: 0,
+        lastUpdated: new Date().toISOString().split("T")[0],
+        status: "Active",
+      };
+
+      setCourses((prev) => [...prev, newCourse]);
+      setIsDialogOpen(false);
+      setFormData({
+        title: "",
+        description: "",
+        category: "",
+        type: "",
+        duration: "",
+        level: "",
+        required: false,
+        instructor: "",
+        materials: [],
+      });
+
+      toast.success("Course created successfully!");
+    } catch (error) {
+      toast.error("Failed to create course");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<
-      string,
-      {
-        variant: "default" | "destructive" | "secondary" | "success";
-        icon: any;
-      }
-    > = {
-      Compliant: { variant: "success", icon: CheckCircle2 },
-      "At Risk": { variant: "secondary", icon: AlertCircle },
-      "Non-Compliant": { variant: "destructive", icon: AlertCircle },
-    };
-
-    const { variant, icon: Icon } = variants[status] || {
-      variant: "default",
-      icon: null,
+    const statusColors = {
+      Active: "bg-green-100 text-green-800",
+      Draft: "bg-yellow-100 text-yellow-800",
+      Archived: "bg-gray-100 text-gray-800",
     };
 
     return (
-      <Badge variant={variant} className="flex items-center gap-1">
-        {Icon && <Icon className="h-3 w-3" />}
+      <Badge className={statusColors[status as keyof typeof statusColors]}>
         {status}
       </Badge>
     );
   };
 
   const getLevelBadge = (level: string) => {
-    const variants: Record<string, "default" | "secondary" | "outline"> = {
-      Beginner: "default",
-      Intermediate: "secondary",
-      Advanced: "outline",
+    const levelColors = {
+      Beginner: "bg-blue-100 text-blue-800",
+      Intermediate: "bg-orange-100 text-orange-800",
+      Advanced: "bg-red-100 text-red-800",
     };
 
-    return <Badge variant={variants[level] || "default"}>{level}</Badge>;
+    return (
+      <Badge className={levelColors[level as keyof typeof levelColors]}>
+        {level}
+      </Badge>
+    );
+  };
+
+  const handleDeleteCourse = (courseId: number) => {
+    setCourses((prev) => prev.filter((course) => course.id !== courseId));
+    toast.success("Course deleted successfully");
+  };
+
+  const handleViewMaterials = (course: Course) => {
+    console.log("View materials for course:", course);
+    // Here you would implement a modal or page to view/download materials
+    toast.info(`Viewing materials for: ${course.title}`);
   };
 
   const coursesColumns = [
@@ -345,6 +350,7 @@ const TrainingCenter: FC = () => {
         {row.required ? "Required" : "Optional"}
       </Badge>
     )),
+    createSortableColumn("instructor", "Instructor"),
     createSortableColumn("enrolled", "Enrolled"),
     createSortableColumn("completionRate", "Completion Rate", (row) => (
       <div className="flex items-center gap-2">
@@ -352,171 +358,42 @@ const TrainingCenter: FC = () => {
         <span className="text-sm">{row.completionRate}%</span>
       </div>
     )),
+    createSortableColumn("materials", "Materials", (row) => (
+      <div className="flex items-center gap-2">
+        <FileText className="h-4 w-4 text-muted-foreground" />
+        <span>{row.materials.length} files</span>
+      </div>
+    )),
+    createSortableColumn("status", "Status", (row) => getStatusBadge(row.status)),
     createSortableColumn("lastUpdated", "Last Updated", (row) => (
       <span>{new Date(row.lastUpdated).toLocaleDateString()}</span>
     )),
     createActionsColumn([
       {
-        label: "View Course",
-        onClick: (data) => console.log("View course", data),
+        label: "View Materials",
+        onClick: (data) => handleViewMaterials(data),
+        icon: <Eye className="h-4 w-4" />,
       },
       {
-        label: "Assign to Team",
-        onClick: (data) => console.log("Assign course", data),
+        label: "Edit Course",
+        onClick: (data) => console.log("Edit course", data),
+        icon: <FileText className="h-4 w-4" />,
+      },
+      {
+        label: "Delete Course",
+        onClick: (data) => handleDeleteCourse(data.id),
+        icon: <Trash2 className="h-4 w-4" />,
+        variant: "destructive",
       },
     ]),
   ];
-
-  const progressColumns = [
-    createSortableColumn("broker", "Broker"),
-    createSortableColumn("position", "Position"),
-    createSortableColumn("requiredCourses", "Required Courses"),
-    createSortableColumn("completedCourses", "Completed Courses", (row) => (
-      <div className="flex items-center gap-2">
-        <span>
-          {row.completedCourses}/{row.requiredCourses}
-        </span>
-        <Progress
-          value={(row.completedCourses / row.requiredCourses) * 100}
-          className="w-24"
-        />
-      </div>
-    )),
-    createSortableColumn("inProgress", "In Progress"),
-    createSortableColumn("nextDeadline", "Next Deadline", (row) => (
-      <span>{new Date(row.nextDeadline).toLocaleDateString()}</span>
-    )),
-    createSortableColumn("status", "Status", (row) =>
-      getStatusBadge(row.status)
-    ),
-    createActionsColumn([
-      {
-        label: "View Progress",
-        onClick: (data) => console.log("View progress", data),
-      },
-      {
-        label: "Assign Courses",
-        onClick: (data) => console.log("Assign courses", data),
-      },
-    ]),
-  ];
-
-  const resourcesColumns = [
-    createSortableColumn("title", "Resource Title"),
-    createSortableColumn("type", "Type", (row) => (
-      <div className="flex items-center gap-2">
-        {row.type === "PDF" ? (
-          <FileText className="h-4 w-4 text-primary" />
-        ) : row.type === "Video" ? (
-          <Video className="h-4 w-4 text-primary" />
-        ) : (
-          <FileText className="h-4 w-4 text-primary" />
-        )}
-        <span>{row.type}</span>
-      </div>
-    )),
-    createSortableColumn("category", "Category"),
-    createSortableColumn("size", "Size"),
-    createSortableColumn("downloads", "Downloads"),
-    createSortableColumn("lastUpdated", "Last Updated", (row) => (
-      <span>{new Date(row.lastUpdated).toLocaleDateString()}</span>
-    )),
-    createActionsColumn([
-      {
-        label: "Download",
-        onClick: (data) => console.log("Download resource", data),
-      },
-      {
-        label: "Share",
-        onClick: (data) => console.log("Share resource", data),
-      },
-    ]),
-  ];
-
-  const handleGenerateReport = () => {
-    const doc = new jsPDF();
-
-    // Add title
-    doc.setFontSize(20);
-    doc.text("Training Progress Report", 14, 20);
-
-    // Add date
-    doc.setFontSize(12);
-    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
-
-    // Add summary statistics
-    doc.setFontSize(14);
-    doc.text("Summary", 14, 45);
-    doc.setFontSize(12);
-    doc.text(`Total Team Members: ${brokerProgress.length}`, 14, 55);
-    doc.text(
-      `Compliant Members: ${
-        brokerProgress.filter((b) => b.status === "Compliant").length
-      }`,
-      14,
-      65
-    );
-    doc.text(
-      `At Risk Members: ${
-        brokerProgress.filter((b) => b.status === "At Risk").length
-      }`,
-      14,
-      75
-    );
-    doc.text(
-      `Non-Compliant Members: ${
-        brokerProgress.filter((b) => b.status === "Non-Compliant").length
-      }`,
-      14,
-      85
-    );
-
-    // Add broker progress table
-    const tableData = brokerProgress.map((broker) => [
-      broker.broker,
-      broker.position,
-      `${broker.completedCourses}/${broker.requiredCourses}`,
-      broker.inProgress.toString(),
-      new Date(broker.nextDeadline).toLocaleDateString(),
-      broker.status,
-    ]);
-
-    autoTable(doc, {
-      startY: 95,
-      head: [
-        [
-          "Broker",
-          "Position",
-          "Completed Courses",
-          "In Progress",
-          "Next Deadline",
-          "Status",
-        ],
-      ],
-      body: tableData,
-      theme: "grid",
-      headStyles: { fillColor: [41, 128, 185] },
-      styles: { fontSize: 10 },
-      columnStyles: {
-        0: { cellWidth: 40 },
-        1: { cellWidth: 30 },
-        2: { cellWidth: 30 },
-        3: { cellWidth: 25 },
-        4: { cellWidth: 30 },
-        5: { cellWidth: 30 },
-      },
-    });
-
-    // Save the PDF
-    doc.save("training-progress-report.pdf");
-  };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Training Center</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Training Management</h1>
         <p className="text-muted-foreground">
-          Manage training courses, track progress, and access learning resources
+          Manage training courses and upload learning materials
         </p>
       </div>
 
@@ -590,141 +467,67 @@ const TrainingCenter: FC = () => {
         </Card>
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs defaultValue="courses" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="courses">Available Courses</TabsTrigger>
-          <TabsTrigger value="progress">Training Progress</TabsTrigger>
-          <TabsTrigger value="resources">Learning Resources</TabsTrigger>
-        </TabsList>
+      {/* Main Course Management Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Course Management</CardTitle>
+          <CardDescription>
+            Create, manage, and upload materials for training courses
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            columns={coursesColumns}
+            data={courses}
+            searchKey="title"
+            filterableColumns={[
+              {
+                id: "category",
+                title: "Category",
+                options: [
+                  { label: "Technical", value: "Technical" },
+                  { label: "Compliance", value: "Compliance" },
+                  { label: "Soft Skills", value: "Soft Skills" },
+                ],
+              },
+              {
+                id: "level",
+                title: "Level",
+                options: [
+                  { label: "Beginner", value: "Beginner" },
+                  { label: "Intermediate", value: "Intermediate" },
+                  { label: "Advanced", value: "Advanced" },
+                ],
+              },
+              {
+                id: "status",
+                title: "Status",
+                options: [
+                  { label: "Active", value: "Active" },
+                  { label: "Draft", value: "Draft" },
+                  { label: "Archived", value: "Archived" },
+                ],
+              },
+            ]}
+            actionButtonText="Add New Course"
+            actionButtonIcon={<Plus className="mr-2 h-4 w-4" />}
+            onActionButtonClick={() => setIsDialogOpen(true)}
+          />
+        </CardContent>
+      </Card>
 
-        <TabsContent value="courses" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Available Courses</CardTitle>
-              <CardDescription>
-                Browse and manage training courses for your team
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={coursesColumns}
-                data={courses}
-                searchKey="title"
-                filterableColumns={[
-                  {
-                    id: "category",
-                    title: "Category",
-                    options: [
-                      { label: "Technical", value: "Technical" },
-                      { label: "Compliance", value: "Compliance" },
-                      { label: "Soft Skills", value: "Soft Skills" },
-                    ],
-                  },
-                  {
-                    id: "level",
-                    title: "Level",
-                    options: [
-                      { label: "Beginner", value: "Beginner" },
-                      { label: "Intermediate", value: "Intermediate" },
-                      { label: "Advanced", value: "Advanced" },
-                    ],
-                  },
-                ]}
-                actionButtonText="Add New Course"
-                actionButtonIcon={<Plus className="mr-2 h-4 w-4" />}
-                onActionButtonClick={() => setIsDialogOpen(true)}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="progress" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Training Progress</CardTitle>
-              <CardDescription>
-                Monitor individual and team training completion
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={progressColumns}
-                data={brokerProgress}
-                searchKey="broker"
-                filterableColumns={[
-                  {
-                    id: "status",
-                    title: "Status",
-                    options: [
-                      { label: "Compliant", value: "Compliant" },
-                      { label: "At Risk", value: "At Risk" },
-                      { label: "Non-Compliant", value: "Non-Compliant" },
-                    ],
-                  },
-                ]}
-                actionButtonText="Generate Report"
-                actionButtonIcon={<FileText className="mr-2 h-4 w-4" />}
-                onActionButtonClick={handleGenerateReport}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="resources" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Learning Resources</CardTitle>
-              <CardDescription>
-                Access training materials and documentation
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={resourcesColumns}
-                data={resources}
-                searchKey="title"
-                filterableColumns={[
-                  {
-                    id: "type",
-                    title: "Type",
-                    options: [
-                      { label: "PDF", value: "PDF" },
-                      { label: "Video", value: "Video" },
-                      { label: "Excel", value: "Excel" },
-                    ],
-                  },
-                  {
-                    id: "category",
-                    title: "Category",
-                    options: [
-                      { label: "Documentation", value: "Documentation" },
-                      { label: "Compliance", value: "Compliance" },
-                      { label: "Process", value: "Process" },
-                    ],
-                  },
-                ]}
-                actionButtonText="Upload Resource"
-                actionButtonIcon={<FileText className="mr-2 h-4 w-4" />}
-                onActionButtonClick={() => setIsResourceDialogOpen(true)}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Add Course Dialog */}
+      {/* Add Course Dialog with File Upload */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Course</DialogTitle>
             <DialogDescription>
-              Fill in the details to create a new training course
+              Create a new training course and upload materials like PDFs, videos, and documents
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="title">Course Title</Label>
+              <Label htmlFor="title">Course Title *</Label>
               <Input
                 id="title"
                 value={formData.title}
@@ -732,63 +535,96 @@ const TrainingCenter: FC = () => {
                 placeholder="Enter course title"
               />
             </div>
+
             <div className="grid gap-2">
-              <Label htmlFor="category">Category</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => handleInputChange("category", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Technical">Technical</SelectItem>
-                  <SelectItem value="Compliance">Compliance</SelectItem>
-                  <SelectItem value="Soft Skills">Soft Skills</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="type">Course Type</Label>
-              <Select
-                value={formData.type}
-                onValueChange={(value) => handleInputChange("type", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Video Course">Video Course</SelectItem>
-                  <SelectItem value="Documentation">Documentation</SelectItem>
-                  <SelectItem value="Interactive">Interactive</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="duration">Duration</Label>
-              <Input
-                id="duration"
-                value={formData.duration}
-                onChange={(e) => handleInputChange("duration", e.target.value)}
-                placeholder="e.g., 2h 30m"
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange("description", e.target.value)}
+                placeholder="Enter course description"
+                rows={3}
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="level">Level</Label>
-              <Select
-                value={formData.level}
-                onValueChange={(value) => handleInputChange("level", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Beginner">Beginner</SelectItem>
-                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                  <SelectItem value="Advanced">Advanced</SelectItem>
-                </SelectContent>
-              </Select>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="category">Category *</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => handleInputChange("category", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Technical">Technical</SelectItem>
+                    <SelectItem value="Compliance">Compliance</SelectItem>
+                    <SelectItem value="Soft Skills">Soft Skills</SelectItem>
+                    <SelectItem value="Risk Management">Risk Management</SelectItem>
+                    <SelectItem value="Operations">Operations</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="type">Course Type *</Label>
+                <Select
+                  value={formData.type}
+                  onValueChange={(value) => handleInputChange("type", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Video Course">Video Course</SelectItem>
+                    <SelectItem value="Documentation">Documentation</SelectItem>
+                    <SelectItem value="Interactive">Interactive</SelectItem>
+                    <SelectItem value="E-Learning">E-Learning</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="duration">Duration</Label>
+                <Input
+                  id="duration"
+                  value={formData.duration}
+                  onChange={(e) => handleInputChange("duration", e.target.value)}
+                  placeholder="e.g., 2h 30m"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="level">Level</Label>
+                <Select
+                  value={formData.level}
+                  onValueChange={(value) => handleInputChange("level", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Beginner">Beginner</SelectItem>
+                    <SelectItem value="Intermediate">Intermediate</SelectItem>
+                    <SelectItem value="Advanced">Advanced</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="instructor">Instructor</Label>
+              <Input
+                id="instructor"
+                value={formData.instructor}
+                onChange={(e) => handleInputChange("instructor", e.target.value)}
+                placeholder="Enter instructor name"
+              />
+            </div>
+
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="required"
@@ -799,96 +635,59 @@ const TrainingCenter: FC = () => {
               />
               <Label htmlFor="required">Required Course</Label>
             </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit}>Add Course</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Add Resource Dialog */}
-      <Dialog
-        open={isResourceDialogOpen}
-        onOpenChange={setIsResourceDialogOpen}
-      >
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Upload New Resource</DialogTitle>
-            <DialogDescription>
-              Fill in the details to add a new learning resource
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="resource-title">Resource Title</Label>
+              <Label htmlFor="materials">Course Materials</Label>
               <Input
-                id="resource-title"
-                value={resourceFormData.title}
-                onChange={(e) =>
-                  handleResourceInputChange("title", e.target.value)
-                }
-                placeholder="Enter resource title"
+                id="materials"
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.xlsx,.xls,.mp4,.avi,.mov,.zip"
+                className="cursor-pointer"
               />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="resource-type">Resource Type</Label>
-              <Select
-                value={resourceFormData.type}
-                onValueChange={(value) =>
-                  handleResourceInputChange("type", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PDF">PDF</SelectItem>
-                  <SelectItem value="Video">Video</SelectItem>
-                  <SelectItem value="Excel">Excel</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="resource-category">Category</Label>
-              <Select
-                value={resourceFormData.category}
-                onValueChange={(value) =>
-                  handleResourceInputChange("category", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Documentation">Documentation</SelectItem>
-                  <SelectItem value="Compliance">Compliance</SelectItem>
-                  <SelectItem value="Process">Process</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="resource-size">File Size</Label>
-              <Input
-                id="resource-size"
-                value={resourceFormData.size}
-                onChange={(e) =>
-                  handleResourceInputChange("size", e.target.value)
-                }
-                placeholder="e.g., 2.4 MB"
-              />
+              <p className="text-xs text-muted-foreground">
+                Supported formats: PDF, DOC, PPT, Excel, MP4, AVI, ZIP (Multiple files allowed)
+              </p>
+              {formData.materials.length > 0 && (
+                <div className="mt-2 space-y-2">
+                  <p className="text-sm font-medium">Selected files:</p>
+                  {formData.materials.map((file, index) => (
+                    <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <FileText className="h-4 w-4" />
+                      <span>{file.name}</span>
+                      <span>({formatFileSize(file.size)})</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setIsResourceDialogOpen(false)}
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDialogOpen(false)}
+              disabled={isUploading}
             >
               Cancel
             </Button>
-            <Button onClick={handleResourceSubmit}>Upload Resource</Button>
+            <Button 
+              onClick={handleSubmit} 
+              disabled={isUploading}
+              className="min-w-[120px]"
+            >
+              {isUploading ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-foreground" />
+                  Uploading...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Upload className="h-4 w-4" />
+                  Create Course
+                </div>
+              )}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

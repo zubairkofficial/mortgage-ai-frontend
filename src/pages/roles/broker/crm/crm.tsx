@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowUpDown, RefreshCw, Settings, LinkIcon, Unlink, CheckCircle, AlertCircle, ExternalLink } from "lucide-react";
+import { ArrowUpDown, RefreshCw, LinkIcon, Unlink, CheckCircle, AlertCircle, ExternalLink } from "lucide-react";
 
 // Define the type for integration status
 type IntegrationStatus = "connected" | "disconnected" | "pending";

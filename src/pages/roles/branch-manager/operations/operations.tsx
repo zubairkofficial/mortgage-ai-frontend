@@ -12,7 +12,6 @@ import {
   createActionsColumn,
 } from "@/components/common/table";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,6 +22,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -32,278 +34,242 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
-  Clock,
-  CheckCircle2,
+  BookOpen,
+  Users,
   FileText,
-  Play,
-  AlertTriangle,
+  Upload,
+  GraduationCap,
+  Clock,
 } from "lucide-react";
 
-// Mock data for operational metrics
-const operationalMetrics = {
-  activeWorkflows: 45,
-  pendingTasks: 28,
-  completedToday: 32,
-  averageProcessingTime: "2.8 days",
+// Mock data for training metrics
+const trainingMetrics = {
+  totalCourses: 12,
+  activeEnrollments: 85,
+  completedCourses: 34,
+  averageCompletionTime: "4.2 days",
 };
 
-// Predefined workflow templates that can be triggered
-const workflowTemplates = [
-  {
-    id: "loan-review",
-    name: "Loan Application Review",
-    description: "Complete review process for new loan applications",
-    estimatedDuration: "2-3 days",
-    tasks: 8,
-  },
-  {
-    id: "document-verification",
-    name: "Document Verification",
-    description: "Verify and validate customer documents",
-    estimatedDuration: "1-2 days",
-    tasks: 5,
-  },
-  {
-    id: "client-onboarding",
-    name: "Client Onboarding",
-    description: "Onboard new clients with complete setup",
-    estimatedDuration: "3-4 days",
-    tasks: 6,
-  },
-  {
-    id: "compliance-audit",
-    name: "Compliance Audit",
-    description: "Perform compliance check and audit procedures",
-    estimatedDuration: "1-2 days",
-    tasks: 4,
-  },
-  {
-    id: "risk-assessment",
-    name: "Risk Assessment",
-    description: "Evaluate and assess potential risks",
-    estimatedDuration: "2-3 days",
-    tasks: 7,
-  },
-];
-
-// Predefined active workflows (static data for the table)
-const activeWorkflows = [
+// Mock data for training resources/courses
+const trainingResources = [
   {
     id: 1,
-    name: "Loan Application Review",
-    status: "In Progress",
-    assignedTo: "John Doe",
-    priority: "High",
-    dueDate: "2024-03-20",
-    progress: 75,
-    tasks: {
-      total: 8,
-      completed: 6,
-    },
-    lastUpdated: "2024-03-15",
+    title: "Financial Risk Assessment Fundamentals",
+    category: "Risk Management",
+    difficulty: "Intermediate",
+    duration: "2 hours",
+    enrollments: 25,
+    completions: 18,
+    rating: 4.8,
+    instructor: "Dr. Sarah Johnson",
+    uploadDate: "2024-03-01",
+    status: "Active",
+    materials: ["PDF Guide", "Video Lectures", "Practice Tests"],
   },
   {
     id: 2,
-    name: "Document Verification",
-    status: "Pending",
-    assignedTo: "Sarah Miller",
-    priority: "Medium",
-    dueDate: "2024-03-22",
-    progress: 30,
-    tasks: {
-      total: 5,
-      completed: 1,
-    },
-    lastUpdated: "2024-03-15",
+    title: "Loan Processing Best Practices",
+    category: "Operations",
+    difficulty: "Beginner",
+    duration: "1.5 hours",
+    enrollments: 32,
+    completions: 28,
+    rating: 4.6,
+    instructor: "Michael Brown",
+    uploadDate: "2024-02-28",
+    status: "Active",
+    materials: ["Video Course", "Handbook"],
   },
   {
     id: 3,
-    name: "Client Onboarding",
-    status: "At Risk",
-    assignedTo: "Robert Johnson",
-    priority: "High",
-    dueDate: "2024-03-18",
-    progress: 45,
-    tasks: {
-      total: 6,
-      completed: 3,
-    },
-    lastUpdated: "2024-03-15",
+    title: "Compliance and Regulatory Updates 2024",
+    category: "Compliance",
+    difficulty: "Advanced",
+    duration: "3 hours",
+    enrollments: 15,
+    completions: 8,
+    rating: 4.9,
+    instructor: "Emily Davis",
+    uploadDate: "2024-03-10",
+    status: "Active",
+    materials: ["Document Library", "Interactive Modules"],
   },
   {
     id: 4,
-    name: "Compliance Audit",
-    status: "In Progress",
-    assignedTo: "Emily Davis",
-    priority: "Medium",
-    dueDate: "2024-03-25",
-    progress: 60,
-    tasks: {
-      total: 4,
-      completed: 2,
-    },
-    lastUpdated: "2024-03-15",
+    title: "Customer Service Excellence",
+    category: "Soft Skills",
+    difficulty: "Beginner",
+    duration: "1 hour",
+    enrollments: 42,
+    completions: 35,
+    rating: 4.5,
+    instructor: "Robert Wilson",
+    uploadDate: "2024-02-20",
+    status: "Active",
+    materials: ["Video Training", "Role-play Scenarios"],
   },
   {
     id: 5,
-    name: "Risk Assessment",
-    status: "Completed",
-    assignedTo: "Michael Brown",
-    priority: "Low",
-    dueDate: "2024-03-16",
-    progress: 100,
-    tasks: {
-      total: 7,
-      completed: 7,
-    },
-    lastUpdated: "2024-03-15",
+    title: "Anti-Money Laundering (AML) Training",
+    category: "Compliance",
+    difficulty: "Intermediate",
+    duration: "2.5 hours",
+    enrollments: 28,
+    completions: 22,
+    rating: 4.7,
+    instructor: "Lisa Anderson",
+    uploadDate: "2024-03-05",
+    status: "Active",
+    materials: ["E-learning Module", "Case Studies", "Assessment Quiz"],
   },
 ];
 
-interface Workflow {
+interface TrainingResource {
   id: number;
-  name: string;
+  title: string;
+  category: string;
+  difficulty: string;
+  duration: string;
+  enrollments: number;
+  completions: number;
+  rating: number;
+  instructor: string;
+  uploadDate: string;
   status: string;
-  assignedTo: string;
-  priority: string;
-  dueDate: string;
-  progress: number;
-  tasks: {
-    total: number;
-    completed: number;
+  materials: string[];
+}
+
+const TrainingResourcesDashboard: FC = () => {
+  const [resources, setResources] = useState<TrainingResource[]>(trainingResources);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadForm, setUploadForm] = useState({
+    title: "",
+    category: "",
+    difficulty: "",
+    duration: "",
+    instructor: "",
+    description: "",
+    materials: null as File | null,
+  });
+
+  const getDifficultyBadge = (difficulty: string) => {
+    const variants: Record<string, "default" | "destructive" | "secondary"> = {
+      Beginner: "secondary",
+      Intermediate: "default",
+      Advanced: "destructive",
+    };
+
+    return <Badge variant={variants[difficulty] || "default"}>{difficulty}</Badge>;
   };
-  lastUpdated: string;
-}
-
-interface WorkflowTemplate {
-  id: string;
-  name: string;
-  description: string;
-  estimatedDuration: string;
-  tasks: number;
-}
-
-const OperationsDashboard: FC = () => {
-  const [workflows] = useState<Workflow[]>(activeWorkflows);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedWorkflow, setSelectedWorkflow] = useState<string>("");
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<
-      string,
-      {
-        variant:
-          | "default"
-          | "destructive"
-          | "outline"
-          | "secondary"
-          | "success"
-          | null
-          | undefined;
-        icon: any;
-      }
-    > = {
-      "In Progress": { variant: "default", icon: Clock },
-      Pending: { variant: "secondary", icon: Clock },
-      "At Risk": { variant: "destructive", icon: AlertTriangle },
-      Completed: { variant: "success", icon: CheckCircle2 },
-    };
-
-    const { variant, icon: Icon } = variants[status] || {
-      variant: "default",
-      icon: null,
-    };
-
-    return (
-      <Badge variant={variant} className="flex items-center gap-1">
-        {Icon && <Icon className="h-3 w-3" />}
-        {status}
-      </Badge>
-    );
-  };
-
-  const getPriorityBadge = (priority: string) => {
     const variants: Record<string, "default" | "destructive" | "secondary"> = {
-      High: "destructive",
-      Medium: "secondary",
-      Low: "default",
+      Active: "default",
+      Draft: "secondary",
+      Archived: "destructive",
     };
 
-    return <Badge variant={variants[priority] || "default"}>{priority}</Badge>;
+    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
   };
 
-  const workflowColumns = [
-    createSortableColumn("name", "Workflow Name"),
+  const resourceColumns = [
+    createSortableColumn("title", "Course Title"),
+    createSortableColumn("category", "Category"),
+    createSortableColumn("difficulty", "Difficulty", (row) =>
+      getDifficultyBadge(row.difficulty)
+    ),
+    createSortableColumn("duration", "Duration"),
+    createSortableColumn("instructor", "Instructor"),
+    createSortableColumn("enrollments", "Enrollments"),
+    createSortableColumn("completions", "Completions"),
+    createSortableColumn("rating", "Rating", (row) => (
+      <div className="flex items-center gap-1">
+        <span>⭐</span>
+        <span>{row.rating}</span>
+      </div>
+    )),
+    createSortableColumn("uploadDate", "Upload Date", (row) => (
+      <span>{new Date(row.uploadDate).toLocaleDateString()}</span>
+    )),
     createSortableColumn("status", "Status", (row) =>
       getStatusBadge(row.status)
     ),
-    createSortableColumn("assignedTo", "Assigned To"),
-    createSortableColumn("priority", "Priority", (row) =>
-      getPriorityBadge(row.priority)
-    ),
-    createSortableColumn("dueDate", "Due Date", (row) => (
-      <span>{new Date(row.dueDate).toLocaleDateString()}</span>
-    )),
-    createSortableColumn("progress", "Progress", (row) => (
-      <div className="flex items-center gap-2">
-        <Progress value={row.progress} className="w-24" />
-        <span className="text-sm">{row.progress}%</span>
-      </div>
-    )),
-    createSortableColumn("tasks", "Tasks", (row) => (
-      <span>
-        {row.tasks.completed}/{row.tasks.total}
-      </span>
-    )),
-    createSortableColumn("lastUpdated", "Last Updated", (row) => (
-      <span>{new Date(row.lastUpdated).toLocaleDateString()}</span>
-    )),
     createActionsColumn([
       {
         label: "View Details",
-        onClick: (data) => console.log("View workflow details", data),
+        onClick: (data) => console.log("View course details", data),
       },
       {
-        label: "Update Status",
-        onClick: (data) => console.log("Update workflow status", data),
+        label: "Edit Course",
+        onClick: (data) => console.log("Edit course", data),
       },
       {
-        label: "Reassign",
-        onClick: (data) => console.log("Reassign workflow", data),
+        label: "Manage Enrollments",
+        onClick: (data) => console.log("Manage enrollments", data),
+      },
+      {
+        label: "Download Materials",
+        onClick: (data) => console.log("Download materials", data),
       },
     ]),
   ];
 
-  const handleTriggerWorkflow = async () => {
-    if (!selectedWorkflow) {
-      toast.error("Please select a workflow to trigger.");
+  const handleUploadCourse = async () => {
+    if (!uploadForm.title || !uploadForm.category || !uploadForm.difficulty) {
+      toast.error("Please fill in all required fields.");
       return;
     }
 
-    setIsProcessing(true);
+    setIsUploading(true);
     
     try {
-      // Simulate workflow processing
+      // Simulate file upload and course creation
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const workflowTemplate = workflowTemplates.find(
-        template => template.id === selectedWorkflow
-      );
+      const newResource: TrainingResource = {
+        id: resources.length + 1,
+        title: uploadForm.title,
+        category: uploadForm.category,
+        difficulty: uploadForm.difficulty,
+        duration: uploadForm.duration,
+        enrollments: 0,
+        completions: 0,
+        rating: 0,
+        instructor: uploadForm.instructor,
+        uploadDate: new Date().toISOString().split('T')[0],
+        status: "Active",
+        materials: uploadForm.materials ? [uploadForm.materials.name] : [],
+      };
       
-      if (workflowTemplate) {
-        toast.success("Workflow Triggered Successfully", {
-          description: `${workflowTemplate.name} has been initiated. Expected completion in ${workflowTemplate.estimatedDuration}.`,
-        });
-        
-        // Reset selection and close dialog
-        setSelectedWorkflow("");
-        setIsDialogOpen(false);
-      }
+      setResources(prev => [...prev, newResource]);
+      
+      toast.success("Course Uploaded Successfully", {
+        description: `${uploadForm.title} has been added to the training resources.`,
+      });
+      
+      // Reset form and close dialog
+      setUploadForm({
+        title: "",
+        category: "",
+        difficulty: "",
+        duration: "",
+        instructor: "",
+        description: "",
+        materials: null,
+      });
+      setIsUploadDialogOpen(false);
     } catch (error) {
-      toast.error("Failed to trigger the workflow. Please try again.");
+      toast.error("Failed to upload the course. Please try again.");
     } finally {
-      setIsProcessing(false);
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadForm(prev => ({ ...prev, materials: file }));
     }
   };
 
@@ -312,88 +278,154 @@ const OperationsDashboard: FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Operations Management
+            Training Resources
           </h1>
           <p className="text-muted-foreground">
-            Monitor workflows and manage operational efficiency
+            Manage and upload training courses and materials
           </p>
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
           <DialogTrigger asChild>
             <Button size="lg" className="flex items-center gap-2">
-              <Play className="h-4 w-4" />
-              Trigger Workflow
+              <Upload className="h-4 w-4" />
+              Upload Course
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Trigger Workflow</DialogTitle>
+              <DialogTitle>Upload Training Course</DialogTitle>
               <DialogDescription>
-                Select a workflow template to trigger from the available options.
+                Add a new training course with materials for your team.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
-                <label htmlFor="workflow-select" className="text-sm font-medium">
-                  Available Workflows
-                </label>
+                <Label htmlFor="title">Course Title *</Label>
+                <Input
+                  id="title"
+                  value={uploadForm.title}
+                  onChange={(e) => setUploadForm(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Enter course title"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="category">Category *</Label>
                 <Select
-                  value={selectedWorkflow}
-                  onValueChange={setSelectedWorkflow}
+                  value={uploadForm.category}
+                  onValueChange={(value) => setUploadForm(prev => ({ ...prev, category: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a workflow to trigger" />
+                    <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {workflowTemplates.map((template) => (
-                      <SelectItem key={template.id} value={template.id}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{template.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {template.description} • {template.tasks} tasks • {template.estimatedDuration}
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="Risk Management">Risk Management</SelectItem>
+                    <SelectItem value="Operations">Operations</SelectItem>
+                    <SelectItem value="Compliance">Compliance</SelectItem>
+                    <SelectItem value="Soft Skills">Soft Skills</SelectItem>
+                    <SelectItem value="Technology">Technology</SelectItem>
                   </SelectContent>
                 </Select>
+                        </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="difficulty">Difficulty Level *</Label>
+                <Select
+                  value={uploadForm.difficulty}
+                  onValueChange={(value) => setUploadForm(prev => ({ ...prev, difficulty: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Beginner">Beginner</SelectItem>
+                    <SelectItem value="Intermediate">Intermediate</SelectItem>
+                    <SelectItem value="Advanced">Advanced</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="duration">Duration</Label>
+                  <Input
+                    id="duration"
+                    value={uploadForm.duration}
+                    onChange={(e) => setUploadForm(prev => ({ ...prev, duration: e.target.value }))}
+                    placeholder="e.g., 2 hours"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="instructor">Instructor</Label>
+                  <Input
+                    id="instructor"
+                    value={uploadForm.instructor}
+                    onChange={(e) => setUploadForm(prev => ({ ...prev, instructor: e.target.value }))}
+                    placeholder="Instructor name"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={uploadForm.description}
+                  onChange={(e) => setUploadForm(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Course description..."
+                  rows={3}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="materials">Course Materials</Label>
+                <Input
+                  id="materials"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.mp4,.avi"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Supported formats: PDF, DOC, PPT, ZIP, MP4, AVI
+                </p>
               </div>
             </div>
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setIsDialogOpen(false)}
-                disabled={isProcessing}
+                onClick={() => setIsUploadDialogOpen(false)}
+                disabled={isUploading}
               >
                 Cancel
               </Button>
               <Button
-                onClick={handleTriggerWorkflow}
-                disabled={isProcessing || !selectedWorkflow}
+                onClick={handleUploadCourse}
+                disabled={isUploading}
               >
-                {isProcessing ? "Triggering..." : "Trigger Workflow"}
+                {isUploading ? "Uploading..." : "Upload Course"}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Operational Metrics */}
+      {/* Training Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Workflows
+              Total Courses
             </CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {operationalMetrics.activeWorkflows}
+              {trainingMetrics.totalCourses}
             </div>
             <p className="text-xs text-muted-foreground">
-              {operationalMetrics.pendingTasks} pending tasks
+              Available training courses
             </p>
           </CardContent>
         </Card>
@@ -401,16 +433,16 @@ const OperationsDashboard: FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Completed Today
+              Active Enrollments
             </CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {operationalMetrics.completedToday}
+              {trainingMetrics.activeEnrollments}
             </div>
             <p className="text-xs text-muted-foreground">
-              Across all workflows
+              Currently enrolled users
             </p>
           </CardContent>
         </Card>
@@ -418,67 +450,77 @@ const OperationsDashboard: FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Avg. Processing Time
+              Completed Courses
+            </CardTitle>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {trainingMetrics.completedCourses}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total completions
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Avg. Completion Time
             </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {operationalMetrics.averageProcessingTime}
+              {trainingMetrics.averageCompletionTime}
             </div>
-            <p className="text-xs text-muted-foreground">Per workflow</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Workflows
-            </CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {workflows.length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Currently tracked
-            </p>
+            <p className="text-xs text-muted-foreground">Per course</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Workflows Table */}
+      {/* Training Resources Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Active Workflows</CardTitle>
+          <CardTitle>Training Courses</CardTitle>
           <CardDescription>
-            Monitor and manage ongoing operational workflows
+            Manage all training courses and educational resources
           </CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable
-            columns={workflowColumns}
-            data={workflows}
-            searchKey="name"
+            columns={resourceColumns}
+            data={resources}
+            searchKey="title"
             filterableColumns={[
+              {
+                id: "category",
+                title: "Category",
+                options: [
+                  { label: "Risk Management", value: "Risk Management" },
+                  { label: "Operations", value: "Operations" },
+                  { label: "Compliance", value: "Compliance" },
+                  { label: "Soft Skills", value: "Soft Skills" },
+                  { label: "Technology", value: "Technology" },
+                ],
+              },
+              {
+                id: "difficulty",
+                title: "Difficulty",
+                options: [
+                  { label: "Beginner", value: "Beginner" },
+                  { label: "Intermediate", value: "Intermediate" },
+                  { label: "Advanced", value: "Advanced" },
+                ],
+              },
               {
                 id: "status",
                 title: "Status",
                 options: [
-                  { label: "In Progress", value: "In Progress" },
-                  { label: "Pending", value: "Pending" },
-                  { label: "At Risk", value: "At Risk" },
-                  { label: "Completed", value: "Completed" },
-                ],
-              },
-              {
-                id: "priority",
-                title: "Priority",
-                options: [
-                  { label: "High", value: "High" },
-                  { label: "Medium", value: "Medium" },
-                  { label: "Low", value: "Low" },
+                  { label: "Active", value: "Active" },
+                  { label: "Draft", value: "Draft" },
+                  { label: "Archived", value: "Archived" },
                 ],
               },
             ]}
@@ -489,4 +531,4 @@ const OperationsDashboard: FC = () => {
   );
 };
 
-export default OperationsDashboard;
+export default TrainingResourcesDashboard;
