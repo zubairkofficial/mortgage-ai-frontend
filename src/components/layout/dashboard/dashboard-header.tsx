@@ -14,7 +14,7 @@ interface ActionButton {
   mobileHidden?: boolean
 }
 
-type UserTypeProps = "broker" | "account_executive" | "underwriting_manager" | "branch_manager" | "admin";
+type UserTypeProps = "broker" | "account_executive" | "underwriting_manager" | "branch_manager" | "admin" | "borrower" | "lender";
 
 // Map user role to a display name
 const getRoleDisplayName = (userType: UserTypeProps): string => {
@@ -29,6 +29,10 @@ const getRoleDisplayName = (userType: UserTypeProps): string => {
       return 'Branch Manager Portal';
     case 'admin':
       return 'Admin Portal';
+    case 'borrower':
+      return 'Borrower Portal';
+    case 'lender':
+      return 'Lender Portal';
     default:
       return 'Dashboard';
   }

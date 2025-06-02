@@ -48,6 +48,9 @@ const Login = () => {
         case UserRole.LENDER:
           navigate('/lender/dashboard')
           break
+        case UserRole.BORROWER:
+          navigate('/borrower/dashboard')
+          break
         default:
           navigate('/broker/dashboard')
       }
@@ -78,6 +81,9 @@ const Login = () => {
         break
       case UserRole.LENDER:
         email = 'lender@example.com'
+        break
+      case UserRole.BORROWER:
+        email = 'borrower@example.com'
         break
     }
 
@@ -321,6 +327,13 @@ const Login = () => {
                 className="p-2 border rounded hover:bg-secondary transition-colors"
               >
                 Lender Portal
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDemoLogin(UserRole.BORROWER)}
+                className="p-2 border rounded hover:bg-secondary transition-colors"
+              >
+                Borrower Portal
               </button>
             </div>
           </div>

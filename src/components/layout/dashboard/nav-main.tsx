@@ -10,6 +10,8 @@ import {
 import { useNavigate , NavLink } from "react-router-dom";
 import { IconNode, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UserRole } from "@/lib/users";
+import { useUser } from "@/stores/userStore";
 
 export function NavMain({
   items = [],
@@ -21,8 +23,8 @@ export function NavMain({
   }[]
 }) {
   const navigate = useNavigate();
-
-  const renderIcon = (icon: any, active: boolean) => {
+  const user = useUser(state => state.user);
+  const renderIcon = (icon: IconNode | React.ReactNode, active: boolean) => {
     // If it's already a React element, render it with a wrapper
     if (React.isValidElement(icon)) {
       return (
@@ -47,9 +49,10 @@ export function NavMain({
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
-        <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
+        {user && user.role !== UserRole.LENDER && (
+          <SidebarMenu>
+            <SidebarMenuItem className="flex items-center gap-2">
+              <SidebarMenuButton
               tooltip="Messenger"
               onClick={() => navigate("/chat")}
               className="bg-primary justify-center flex text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
@@ -60,6 +63,7 @@ export function NavMain({
 
           </SidebarMenuItem>
         </SidebarMenu>
+        )}
         <SidebarMenu>
           {items && items.length > 0 && items.map((item) => {
             return (
