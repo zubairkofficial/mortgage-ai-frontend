@@ -6,91 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { FileIcon, CheckCircleIcon, XCircleIcon, AlertCircleIcon, FileTextIcon } from "lucide-react";
 import { DataTable, createSortableColumn, createActionsColumn } from "@/components/common/table";
 import { useNavigate } from 'react-router-dom';
-
-// Define application type
-interface Application {
-  id: string;
-  borrowerName: string;
-  submissionDate: string;
-  loanAmount: string;
-  status: string;
-  completeness: number;
-  stage: string;
-  lender: string | null;
-  lastUpdated: string;
-  missingDocuments: string[];
-}
+import { useApplicationStore, Application } from '@/stores/applicationStore';
 
 type TabType = "all" | "active" | "completed" | "rejected" | "drafts";
 
 const ApplicationTable = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("active");
-  // Mock applications data
-  const applications: Application[] = [
-    {
-      id: "APP001",
-      borrowerName: "John Smith",
-      submissionDate: "2023-05-10",
-      loanAmount: "$350,000",
-      status: "In Progress",
-      completeness: 75,
-      stage: "Document Collection",
-      lender: "FirstBank Lending",
-      lastUpdated: "2023-05-15",
-      missingDocuments: ["Bank Statements", "Employment Verification"]
-    },
-    {
-      id: "APP002",
-      borrowerName: "Sarah Johnson",
-      submissionDate: "2023-05-05",
-      loanAmount: "$420,000",
-      status: "Under Review",
-      completeness: 90,
-      stage: "Underwriting",
-      lender: "HomeLoans Inc.",
-      lastUpdated: "2023-05-14",
-      missingDocuments: ["Property Appraisal"]
-    },
-    {
-      id: "APP003",
-      borrowerName: "Michael Davis",
-      submissionDate: "2023-04-28",
-      loanAmount: "$275,000",
-      status: "Approved",
-      completeness: 100,
-      stage: "Closing",
-      lender: "FirstBank Lending",
-      lastUpdated: "2023-05-12",
-      missingDocuments: []
-    },
-    {
-      id: "APP004",
-      borrowerName: "Emma Wilson",
-      submissionDate: "2023-05-01",
-      loanAmount: "$380,000",
-      status: "Rejected",
-      completeness: 85,
-      stage: "N/A",
-      lender: "Secure Mortgage Co.",
-      lastUpdated: "2023-05-11",
-      missingDocuments: []
-    },
-    {
-      id: "APP005",
-      borrowerName: "Robert Brown",
-      submissionDate: "2023-05-12",
-      loanAmount: "$550,000",
-      status: "Draft",
-      completeness: 40,
-      stage: "Pre-Qualification",
-      lender: null,
-      lastUpdated: "2023-05-12",
-      missingDocuments: ["Income Verification", "Credit Report", "Property Details", "Down Payment Proof"]
-    }
-  ];
-
-
+  
+  // Use applications from Zustand store
+  const applications = useApplicationStore(state => state.applications);
 
   const getStatusBadgeClass = (status: string): string => {
     switch (status) {
@@ -104,6 +29,8 @@ const ApplicationTable = () => {
         return "bg-red-100 text-red-800";
       case "Draft":
         return "bg-gray-100 text-gray-800";
+      case "Initial Review":
+        return "bg-orange-100 text-orange-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -119,6 +46,8 @@ const ApplicationTable = () => {
         return <FileTextIcon className="h-4 w-4 text-purple-500" />;
       case "Closing":
         return <CheckCircleIcon className="h-4 w-4 text-green-500" />;
+      case "Initial Review":
+        return <AlertCircleIcon className="h-4 w-4 text-orange-500" />;
       case "N/A":
         return <XCircleIcon className="h-4 w-4 text-red-500" />;
       default:
@@ -126,7 +55,7 @@ const ApplicationTable = () => {
     }
   };
 
-  // Define columns for the DataTable
+  // Define columns for the DataTable (removed completeness column)
   const columns = useMemo(() => [
     createSortableColumn("id", "ID"),
     createSortableColumn("borrowerName", "Borrower"),
@@ -158,28 +87,6 @@ const ApplicationTable = () => {
           <div className="flex items-center gap-1">
             {getStageIcon(stage)}
             <span>{stage}</span>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "completeness",
-      header: "Completeness",
-      cell: ({ row }) => {
-        const completeness = (row.original as Application).completeness;
-        return (
-          <div className="flex items-center">
-            <span className="mr-2">{completeness}%</span>
-            <div className="w-16 bg-gray-200 rounded-full h-2">
-              <div
-                className={`h-2 rounded-full ${completeness >= 90 ? 'bg-green-600' :
-                  completeness >= 70 ? 'bg-blue-600' :
-                    completeness >= 40 ? 'bg-yellow-600' :
-                      'bg-red-600'
-                  }`}
-                style={{ width: `${completeness}%` }}
-              />
-            </div>
           </div>
         );
       },
@@ -226,7 +133,8 @@ const ApplicationTable = () => {
               { label: "Under Review", value: "Under Review" },
               { label: "Approved", value: "Approved" },
               { label: "Rejected", value: "Rejected" },
-              { label: "Draft", value: "Draft" }
+              { label: "Draft", value: "Draft" },
+              { label: "Initial Review", value: "Initial Review" }
             ]
           },
           {
@@ -258,9 +166,9 @@ const ApplicationTable = () => {
                   <AlertCircleIcon className="h-5 w-5 text-primary-foreground " />
                 </div>
                 <div>
-                  <h3 className="font-medium">Application Completeness Alert</h3>
+                  <h3 className="font-medium">Missing Documents Alert</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Robert Brown's application (APP005) is only 40% complete. Critical documents are missing that may delay processing.
+                    Robert Brown's application (APP005) is missing critical documents that may delay processing.
                   </p>
                   <Button variant="link" className="p-0 mt-2 h-auto">Send reminder</Button>
                 </div>

@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
+import { useApplicationStore } from '@/stores/applicationStore';
+import { toast } from 'sonner';
 
 // Types for the form data
 type FormData = {
@@ -43,19 +45,11 @@ const steps = [
   { id: 'step5', title: 'Review', description: 'Review and submit' },
 ];
 
-// AI Processing Response Types
-type AIResponse = {
-  status: 'success' | 'rejection' | 'missing_info' | 'no_lender';
-  message: string;
-  details?: string;
-  suggestedLenders?: string[];
-};
-
 export default function BrokerBorrowerForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [aiResponse, setAiResponse] = useState<AIResponse | null>(null);
   const navigate = useNavigate();
+  const applicationStore = useApplicationStore();
 
   const [formData, setFormData] = useState<FormData>({
     loanType: '',
@@ -167,47 +161,24 @@ export default function BrokerBorrowerForm() {
     }
   };
 
-  // Simulate AI processing
-  const simulateAIProcessing = async () => {
-    setIsProcessing(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock AI response
-    const mockResponses: AIResponse[] = [
-      {
-        status: 'success',
-        message: 'Application approved!',
-        details: 'Based on the borrower profile and requirements, we have found suitable lenders.',
-        suggestedLenders: ['Lender A', 'Lender B', 'Lender C']
-      },
-      {
-        status: 'rejection',
-        message: 'Application rejected',
-        details: 'The borrower profile does not meet the minimum requirements.'
-      },
-      {
-        status: 'missing_info',
-        message: 'Additional information required',
-        details: 'Please provide additional documentation for income verification.'
-      },
-      {
-        status: 'no_lender',
-        message: 'No suitable lenders found',
-        details: 'Based on the current criteria, no lenders are available for this application.'
-      }
-    ];
-    
-    // Randomly select a response for demo purposes
-    const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-    setAiResponse(response);
-    setIsProcessing(false);
-  };
-
   // Handle form submission
   const handleSubmit = async () => {
-    await simulateAIProcessing();
+    // Add the application to the table
+    const newApplication = applicationStore.addApplication(formData);
+    
+    // Show a brief success message
+    setIsProcessing(true);
+    
+    // Simulate a brief processing delay for UX
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    setIsProcessing(false);
+    
+    // Show success notification
+    toast.success('Application submitted successfully!');
+    
+    // Redirect to applications table
+    navigate('/broker/application');
   };
 
   // Get step icon component based on current state
@@ -231,88 +202,6 @@ export default function BrokerBorrowerForm() {
         </div>
       );
     }
-  };
-
-  // Render AI processing response
-  const renderAIResponse = () => {
-    if (!aiResponse) return null;
-
-    const responseStyles = {
-      success: 'bg-[var(--brand-teal)]/10 text-[var(--brand-teal)] border-[var(--brand-teal)]/20',
-      rejection: 'bg-destructive/10 text-destructive border-destructive/20',
-      missing_info: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-      no_lender: 'bg-muted text-muted-foreground border-border'
-    };
-
-    return (
-      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-card p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
-          <div className={`p-4 rounded-lg border ${responseStyles[aiResponse.status]}`}>
-            <h3 className="text-xl font-semibold mb-2">{aiResponse.message}</h3>
-            <p className="text-sm mb-4">{aiResponse.details}</p>
-            
-            {aiResponse.suggestedLenders && (
-              <div className="mt-4">
-                <h4 className="font-medium mb-2">Suggested Lenders:</h4>
-                <ul className="space-y-2">
-                  {aiResponse.suggestedLenders.map((lender, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <CheckIcon className="h-4 w-4" />
-                      <span>{lender}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-          
-          <div className="mt-6 flex justify-end gap-4">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setAiResponse(null);
-                navigate('/broker/applications');
-              }}
-            >
-              View Applications
-            </Button>
-            <Button
-              onClick={() => {
-                setAiResponse(null);
-                setCurrentStep(0);
-                setFormData({
-                  loanType: '',
-                  borrowerDetails: {
-                    fullName: '',
-                    email: '',
-                    phone: '',
-                    address: '',
-                    creditScore: '',
-                    annualIncome: '',
-                    employmentStatus: '',
-                  },
-                  loanDetails: {
-                    amount: '',
-                    purpose: '',
-                    term: '',
-                    collateral: '',
-                  },
-                  documents: {
-                    incomeProof: false,
-                    identityProof: false,
-                    addressProof: false,
-                    creditReport: false,
-                  },
-                  applicationComplete: false,
-                });
-              }}
-            >
-              New Application
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   // Render the current step content
@@ -660,7 +549,7 @@ export default function BrokerBorrowerForm() {
             {isProcessing ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing
+                Submitting
               </>
             ) : currentStep === 4 ? 'Submit' : 'Next Step'}
           </Button>
@@ -733,9 +622,6 @@ export default function BrokerBorrowerForm() {
           </div>
         </div>
       </div>
-
-      {/* AI Processing Response Modal */}
-      {renderAIResponse()}
     </div>
   );
 }

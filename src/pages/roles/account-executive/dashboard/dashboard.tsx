@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Calendar, Users, Building, ArrowUpRight, ArrowDownRight, ChartBar, ClipboardCheck, Briefcase,  MessageCircle } from "lucide-react";
+import { Calendar, Users, Building, ArrowUpRight, ArrowDownRight, ChartBar, ClipboardCheck, Briefcase, MessageCircle, CreditCard, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -81,7 +81,7 @@ const AccountExecutiveDashboard: FC = () => {
       </Card>
 
       {/* Feature Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
         <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/brokers")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
             <Users size={32} className="text-primary mb-2" />
@@ -89,26 +89,20 @@ const AccountExecutiveDashboard: FC = () => {
           </CardContent>
         </Card>
         
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/branches")}>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/transactions")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <Building size={32} className="text-primary mb-2" />
-            <span className="text-sm font-medium text-center">Branch Network</span>
+            <CreditCard size={32} className="text-primary mb-2" />
+            <span className="text-sm font-medium text-center">Transactions</span>
           </CardContent>
         </Card>
         
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/performance")}>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/operations")}>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <ChartBar size={32} className="text-primary mb-2" />
-            <span className="text-sm font-medium text-center">Performance Metrics</span>
+            <Settings size={32} className="text-primary mb-2" />
+            <span className="text-sm font-medium text-center">Operations</span>
           </CardContent>
         </Card>
-        
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/account-executive/compliance")}>
-          <CardContent className="flex flex-col items-center justify-center p-6">
-            <ClipboardCheck size={32} className="text-primary mb-2" />
-            <span className="text-sm font-medium text-center">CRM Compliance</span>
-          </CardContent>
-        </Card>
+
       </div>
 
       {/* Stats Cards */}
@@ -238,7 +232,7 @@ const AccountExecutiveDashboard: FC = () => {
             </div>
             <button 
               className="w-full py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-              onClick={() => navigate("/account-executive/communications")}
+              onClick={() => navigate("/chat")}
             >
               Communications Hub
             </button>
