@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,7 +12,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 import {
   ChevronDown,
   ChevronLeft,
@@ -22,9 +22,9 @@ import {
   MoreHorizontal,
   LayoutDashboard,
   Search,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -32,16 +32,16 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -49,25 +49,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  searchKey?: string
-  title?: string
-  description?: string
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  searchKey?: string;
+  title?: string;
+  description?: string;
   filterableColumns?: {
-    id: string
-    title: string
+    id: string;
+    title: string;
     options: {
-      label: string
-      value: string
-    }[]
-  }[]
-  actionButtonText?: string
-  actionButtonIcon?: React.ReactNode
-  onActionButtonClick?: () => void
+      label: string;
+      value: string;
+    }[];
+  }[];
+  actionButtonText?: string;
+  actionButtonIcon?: React.ReactNode;
+  onActionButtonClick?: () => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -81,15 +81,18 @@ export function DataTable<TData, TValue>({
   actionButtonIcon,
   onActionButtonClick,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [globalFilter, setGlobalFilter] = React.useState<string>("")
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState<string>("");
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
-  })
+  });
 
   const table = useReactTable({
     data,
@@ -115,28 +118,28 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   const handleFilter = React.useCallback((id: string, value: string) => {
-    setColumnFilters(prev => {
+    setColumnFilters((prev) => {
       if (!value || value === "all") {
-        return prev.filter(filter => filter.id !== id)
+        return prev.filter((filter) => filter.id !== id);
       }
 
-      const exists = prev.find(filter => filter.id === id)
+      const exists = prev.find((filter) => filter.id === id);
 
       if (exists) {
-        return prev.map(filter => {
+        return prev.map((filter) => {
           if (filter.id === id) {
-            return { id, value }
+            return { id, value };
           }
-          return filter
-        })
+          return filter;
+        });
       }
 
-      return [...prev, { id, value }]
-    })
-  }, [])
+      return [...prev, { id, value }];
+    });
+  }, []);
 
   return (
     <div className="space-y-4 px-6 py-6 border border-primary/20 rounded-2xl">
@@ -144,8 +147,12 @@ export function DataTable<TData, TValue>({
       <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between  md:space-y-0">
         {(title || description) && (
           <div>
-            {title && <h2 className="text-2xl font-bold tracking-tight">{title}</h2>}
-            {description && <p className="text-muted-foreground">{description}</p>}
+            {title && (
+              <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+            )}
+            {description && (
+              <p className="text-muted-foreground">{description}</p>
+            )}
           </div>
         )}
         {actionButtonText && (
@@ -157,30 +164,33 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col space-y-2 md:flex-row  md:items-center md:gap-2 md:space-y-0">
+      <div className="flex flex-col  space-y-2 md:flex-row md:space-y-0  md:items-center md:gap-2 ">
         {searchKey && (
-          <div className="relative min-w-8/12">
+          <div className="relative min-w-4/12 ">
             <Search className="absolute  left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={globalFilter ?? ""}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="pl-8"
+              className="pl-8 min-w-full"
             />
           </div>
         )}
-        <div className="flex items-center w-full gap-2 justify-between">
-        {filterableColumns.length > 0 && 
+        <div className="flex items-center w-full justify-end gap-1  ">
+          {filterableColumns.length > 0 &&
             filterableColumns.map((column) => (
-              <div key={column.id} className="flex gap-1 mr-3">
-                <Label htmlFor={column.id} className="whitespace-nowrap font-medium">
+              <div key={column.id} className="flex w-1/3 gap-1">
+                <Label htmlFor={column.id} className=" font-medium text-xs">
                   {column.title}:
                 </Label>
                 <Select
-                  value={(columnFilters.find((filter) => filter.id === column.id)?.value as string) || "all"}
+                  value={
+                    (columnFilters.find((filter) => filter.id === column.id)
+                      ?.value as string) || "all"
+                  }
                   onValueChange={(value) => handleFilter(column.id, value)}
                 >
-                  <SelectTrigger id={column.id} className="h-8 min-w-full ">
+                  <SelectTrigger id={column.id} className=" w-2/3 text-xs ">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -194,10 +204,10 @@ export function DataTable<TData, TValue>({
                 </Select>
               </div>
             ))}
-  
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="ml-auto h-8">
+              <Button variant="outline" size="sm" className="h-8">
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 View
                 <ChevronDown className="ml-1 h-4 w-4" />
@@ -213,11 +223,13 @@ export function DataTable<TData, TValue>({
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  )
+                  );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -225,7 +237,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -252,7 +264,10 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -287,7 +302,7 @@ export function DataTable<TData, TValue>({
             <Select
               value={`${table.getState().pagination.pageSize}`}
               onValueChange={(value) => {
-                table.setPageSize(Number(value))
+                table.setPageSize(Number(value));
               }}
             >
               <SelectTrigger className="h-8 w-[70px]">
@@ -347,7 +362,7 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Helper function to create column definition with sorting capability
@@ -368,12 +383,12 @@ export function createSortableColumn<TData, TValue>(
           {header}
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
     cell: cell
       ? ({ row }) => cell(row.original)
       : ({ row }) => <div>{String(row.getValue(accessorKey) || "")}</div>,
-  }
+  };
 }
 
 // Helper function to create actions column
@@ -401,10 +416,16 @@ export function createActionsColumn<TData>(
           <DropdownMenuContent align="end" className="w-[160px]">
             {actions.map((action, index) => (
               <React.Fragment key={action.label}>
-                {index > 0 && index === actions.length - 1 && <DropdownMenuSeparator />}
+                {index > 0 && index === actions.length - 1 && (
+                  <DropdownMenuSeparator />
+                )}
                 <DropdownMenuItem
                   onClick={() => action.onClick(row.original)}
-                  className={action.variant === "destructive" ? "text-destructive focus:text-destructive" : ""}
+                  className={
+                    action.variant === "destructive"
+                      ? "text-destructive focus:text-destructive"
+                      : ""
+                  }
                 >
                   {action.label}
                 </DropdownMenuItem>
@@ -412,7 +433,7 @@ export function createActionsColumn<TData>(
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
-  }
+  };
 }

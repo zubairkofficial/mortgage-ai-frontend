@@ -37,22 +37,22 @@ export function ChatSidebar({ users, selectedUser, onUserSelect }: ChatSidebarPr
     
     switch (user.role) {
       case UserRole.BROKER:
-        navigate("/broker");
+        navigate("/broker/dashboard");
         break;
       case UserRole.ACCOUNT_EXECUTIVE:
-        navigate("/account-executive");
+        navigate("/account-executive/dashboard");
         break;
       case UserRole.UNDERWRITING_MANAGER:
-        navigate("/underwriting-manager");
+        navigate("/underwriting-manager/dashboard");
         break;
       case UserRole.BRANCH_MANAGER:
-        navigate("/branch-manager");
+        navigate("/branch-manager/dashboard");
         break;
       case UserRole.LENDER:
-        navigate("/lender");
+        navigate("/lender/dashboard");
         break;
       case UserRole.ADMIN:
-        navigate("/admin");
+        navigate("/admin/dashboard");
         break;
       default:
         navigate("/");
