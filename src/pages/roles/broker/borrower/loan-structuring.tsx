@@ -69,7 +69,6 @@ export default function LoanStructuringPage() {
   // Generate loan options based on input parameters
   const generateLoanOptions = (): LoanOption[] => {
     const downPayment = propertyValue - loanAmount;
-    const ltvRatio = (loanAmount / propertyValue) * 100;
     
     const options: LoanOption[] = [];
 
