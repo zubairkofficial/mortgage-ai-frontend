@@ -1,14 +1,43 @@
 import { FC } from "react";
 import { DataTable } from "@/components/common/table";
-import { createSortableColumn, createActionsColumn } from "@/components/common/table";
+import {
+  createSortableColumn,
+  createActionsColumn,
+} from "@/components/common/table";
 import { Button } from "@/components/ui/button";
-import { FileText, AlertCircle, Download, Bell, Filter } from "lucide-react";
+import { FileText, Bell, Filter } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { ColumnDef } from "@tanstack/react-table";
+
+// Types
+type Report = {
+  id: string;
+  title: string;
+  type: string;
+  generatedBy: string;
+  date: string;
+  status: "ready" | "processing" | "error";
+  format: string;
+  size: string;
+};
+
+type Alert = {
+  id: string;
+  loanId: string;
+  type: string;
+  severity: "high" | "medium" | "low";
+  description: string;
+  detectedAt: string;
+  status: "active" | "pending" | "resolved";
+  assignedTo: string;
+};
 
 // Mock data for reports
-const mockReports = [
+const mockReports: Report[] = [
   {
     id: "REP-001",
     title: "Monthly Compliance Report",
@@ -17,7 +46,7 @@ const mockReports = [
     date: "2024-03-16",
     status: "ready",
     format: "PDF",
-    size: "2.4 MB"
+    size: "2.4 MB",
   },
   {
     id: "REP-002",
@@ -27,13 +56,12 @@ const mockReports = [
     date: "2024-03-15",
     status: "ready",
     format: "Excel",
-    size: "1.8 MB"
+    size: "1.8 MB",
   },
-  // Add more mock data as needed
 ];
 
 // Mock data for AI alerts
-const mockAlerts = [
+const mockAlerts: Alert[] = [
   {
     id: "ALERT-001",
     loanId: "LOAN-001",
@@ -42,7 +70,7 @@ const mockAlerts = [
     description: "Potential TILA violation detected in loan documentation",
     detectedAt: "2024-03-16 15:30:00",
     status: "active",
-    assignedTo: "Mike Brown"
+    assignedTo: "Mike Brown",
   },
   {
     id: "ALERT-002",
@@ -52,13 +80,82 @@ const mockAlerts = [
     description: "Inconsistent income documentation detected",
     detectedAt: "2024-03-16 14:15:00",
     status: "resolved",
-    assignedTo: "Sarah Johnson"
+    assignedTo: "Sarah Johnson",
   },
-  // Add more mock data as needed
 ];
 
 const ReportsPage: FC = () => {
-  const reportColumns = [
+  const generateReport = () => {
+    // Create new PDF document
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(20);
+    doc.text("Monthly Compliance Report", 20, 20);
+
+    // Add date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 30);
+
+    // Add summary section
+    doc.setFontSize(16);
+    doc.text("Summary", 20, 45);
+    doc.setFontSize(12);
+    doc.text(
+      "This report contains a comprehensive analysis of compliance checks and validations performed during the current month.",
+      20,
+      55
+    );
+
+    // Add statistics
+    doc.setFontSize(16);
+    doc.text("Statistics", 20, 75);
+
+    // Create table for statistics
+    const statsData = [
+      ["Total Checks", "45"],
+      ["Compliant", "38"],
+      ["Flagged", "7"],
+      ["Average Response Time", "2.3 hours"],
+    ];
+
+    autoTable(doc, {
+      startY: 85,
+      head: [["Metric", "Value"]],
+      body: statsData,
+      theme: "grid",
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    // Add recent alerts
+    doc.setFontSize(16);
+    doc.text("Recent Alerts", 20, (doc as any).lastAutoTable.finalY + 20);
+
+    // Create table for alerts
+    const alertsData = mockAlerts.map((alert) => [
+      alert.id,
+      alert.loanId,
+      alert.type,
+      alert.severity,
+      alert.description,
+      alert.status,
+    ]);
+
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY + 30,
+      head: [
+        ["Alert ID", "Loan ID", "Type", "Severity", "Description", "Status"],
+      ],
+      body: alertsData,
+      theme: "grid",
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    // Save the PDF
+    doc.save("compliance-report.pdf");
+  };
+
+  const reportColumns: ColumnDef<Report>[] = [
     createSortableColumn("id", "Report ID"),
     createSortableColumn("title", "Title"),
     createSortableColumn("type", "Type"),
@@ -67,7 +164,7 @@ const ReportsPage: FC = () => {
     {
       accessorKey: "status",
       header: "Status",
-      cell: ({ row }: any) => {
+      cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
         const status = row.getValue("status");
         return (
           <Badge
@@ -86,17 +183,17 @@ const ReportsPage: FC = () => {
     },
     createSortableColumn("format", "Format"),
     createSortableColumn("size", "Size"),
-    createActionsColumn([
+    createActionsColumn<Report>([
       {
         label: "Download",
-        onClick: (data: any) => {
+        onClick: (data: Report) => {
           console.log("Download report:", data.id);
           // Implement download logic
         },
       },
       {
         label: "Share",
-        onClick: (data: any) => {
+        onClick: (data: Report) => {
           console.log("Share report:", data.id);
           // Implement share logic
         },
@@ -104,14 +201,14 @@ const ReportsPage: FC = () => {
     ]),
   ];
 
-  const alertColumns = [
+  const alertColumns: ColumnDef<Alert>[] = [
     createSortableColumn("id", "Alert ID"),
     createSortableColumn("loanId", "Loan ID"),
     createSortableColumn("type", "Alert Type"),
     {
       accessorKey: "severity",
       header: "Severity",
-      cell: ({ row }: any) => {
+      cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
         const severity = row.getValue("severity");
         return (
           <Badge
@@ -133,7 +230,7 @@ const ReportsPage: FC = () => {
     {
       accessorKey: "status",
       header: "Status",
-      cell: ({ row }: any) => {
+      cell: ({ row }: { row: { getValue: (key: string) => string } }) => {
         const status = row.getValue("status");
         return (
           <Badge
@@ -151,17 +248,17 @@ const ReportsPage: FC = () => {
       },
     },
     createSortableColumn("assignedTo", "Assigned To"),
-    createActionsColumn([
+    createActionsColumn<Alert>([
       {
         label: "Review",
-        onClick: (data: any) => {
+        onClick: (data: Alert) => {
           console.log("Review alert:", data.id);
           // Implement review logic
         },
       },
       {
         label: "Resolve",
-        onClick: (data: any) => {
+        onClick: (data: Alert) => {
           console.log("Resolve alert:", data.id);
           // Implement resolve logic
         },
@@ -174,20 +271,22 @@ const ReportsPage: FC = () => {
     totalReports: 45,
     activeAlerts: 8,
     resolvedAlerts: 32,
-    averageResponseTime: "2.3 hours"
+    averageResponseTime: "2.3 hours",
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Reports & Alerts</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Reports & Alerts
+          </h1>
           <p className="text-muted-foreground">
             Generate compliance reports and monitor AI-driven alerts
           </p>
         </div>
         <div className="flex gap-2">
-          <Button>
+          <Button onClick={generateReport}>
             <FileText className="mr-2 h-4 w-4" />
             Generate Report
           </Button>
@@ -213,23 +312,33 @@ const ReportsPage: FC = () => {
             <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.activeAlerts}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {stats.activeAlerts}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Resolved Alerts</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Resolved Alerts
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.resolvedAlerts}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.resolvedAlerts}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Response Time</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Avg. Response Time
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.averageResponseTime}</div>
+            <div className="text-2xl font-bold">
+              {stats.averageResponseTime}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -295,7 +404,7 @@ const ReportsPage: FC = () => {
                 id: "status",
                 title: "Status",
                 options: [
-                  { label: "", value: "all" },
+                  { label: "All", value: "all" },
                   { label: "Active", value: "active" },
                   { label: "Pending", value: "pending" },
                   { label: "Resolved", value: "resolved" },
@@ -309,4 +418,4 @@ const ReportsPage: FC = () => {
   );
 };
 
-export default ReportsPage; 
+export default ReportsPage;
