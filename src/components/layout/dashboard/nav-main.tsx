@@ -49,7 +49,7 @@ export function NavMain({
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
-        {user && user.role !== UserRole.LENDER && (
+        {user && (user.role !== UserRole.LENDER && user.role !== UserRole.BORROWER) && (
           <SidebarMenu>
             <SidebarMenuItem className="flex items-center gap-2">
               <SidebarMenuButton
