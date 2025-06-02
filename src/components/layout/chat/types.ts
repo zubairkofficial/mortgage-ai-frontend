@@ -17,7 +17,7 @@ export interface Message {
   isStreaming?: boolean;
 }
 
-export interface User {
+export interface Role {
   id: number;
   name: string;
   avatar: string | null;

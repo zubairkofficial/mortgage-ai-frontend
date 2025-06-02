@@ -1,49 +1,76 @@
-import {  Smile, Mic, Send, Paperclip, Image } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
+import { Send, Paperclip } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MessageInputProps {
   message: string;
   onMessageChange: (message: string) => void;
-  onSend: () => void;
+  onSend: (file?: File) => void;
+  file?: boolean;
 }
 
-export function MessageInput({ message, onMessageChange, onSend }: MessageInputProps) {
+export function MessageInput({
+  message,
+  onMessageChange,
+  onSend,
+  file = false,
+}: MessageInputProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleSend = () => {
+    if (selectedFile) {
+      onSend(selectedFile);
+      setSelectedFile(null);
+    } else {
+      onSend();
+    }
+  };
 
   return (
-    <div className="border-t absolute bottom-0 min-w-full border-border p-3 bg-background">
+    <div className="border-t absolute w-full bottom-0 border-border p-3 bg-background">
       <div className="flex items-center gap-2">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground">
-                <Paperclip className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Attach files</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground">
-                <Image className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Send image</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        
-        <div className={`flex-1 flex items-center rounded-full border ${isFocused ? 'border-primary' : 'border-input'} px-3 py-1`}>
+        {file && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground"
+                  onClick={() => {
+                    const input = document.createElement("input");
+                    input.type = "file";
+                    input.onchange = (e) => {
+                      const files = (e.target as HTMLInputElement).files;
+                      if (files && files.length > 0) {
+                        setSelectedFile(files[0]);
+                        onMessageChange(`Selected file: ${files[0].name}`);
+                      }
+                    };
+                    input.click();
+                  }}
+                >
+                  <Paperclip className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Attach files</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+
+        <div
+          className={`flex-1 flex items-center rounded-full border ${
+            isFocused ? "border-primary" : "border-input"
+          } px-3 py-1`}
+        >
           <Input
             type="text"
             placeholder="Type your message..."
@@ -53,26 +80,23 @@ export function MessageInput({ message, onMessageChange, onSend }: MessageInputP
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                onSend();
+                handleSend();
               }
             }}
           />
-      
         </div>
-        
-    
-        
-        <Button 
+
+        <Button
           size="icon"
           className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-          onClick={onSend}
-          disabled={!message.trim()}
+          onClick={handleSend}
+          disabled={!message.trim() && !selectedFile}
         >
           <Send className="h-5 w-5" />
         </Button>
       </div>
     </div>
   );
-} 
+}

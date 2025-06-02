@@ -1,13 +1,42 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DataTable, createSortableColumn, createActionsColumn } from "@/components/common/table";
+import {
+  DataTable,
+  createSortableColumn,
+  createActionsColumn,
+} from "@/components/common/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, Mail, Phone, Star } from "lucide-react";
+import { Plus, Mail, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { AddTeamMember } from "./add-team-member";
+
+interface TeamMember {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  position: string;
+  status: string;
+  specialization: string[];
+  performance: number;
+  activeLoans: number;
+  certifications: number;
+  joinDate: string;
+}
 
 // Mock data for the team table
-const teamData = [
+const initialTeamData: TeamMember[] = [
   {
     id: 1,
     name: "John Doe",
@@ -52,9 +81,93 @@ const teamData = [
 
 const TeamManagement: FC = () => {
   const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [teamData, setTeamData] = useState<TeamMember[]>(initialTeamData);
+
+  const handleAddTeamMember = (
+    newMember: Omit<TeamMember, "id" | "status" | "performance" | "activeLoans">
+  ) => {
+    const member: TeamMember = {
+      ...newMember,
+      id: teamData.length + 1,
+      status: "Active",
+      performance: 0,
+      activeLoans: 0,
+    };
+    setTeamData((prev) => [...prev, member]);
+    setIsDialogOpen(false);
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(20);
+    doc.text("Team Members Report", 14, 20);
+
+    // Add date
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
+
+    // Add summary
+    doc.setFontSize(14);
+    doc.text("Summary", 14, 40);
+    doc.setFontSize(12);
+    doc.text(`Total Team Members: ${teamData.length}`, 14, 50);
+    doc.text(
+      `Active Members: ${teamData.filter((m) => m.status === "Active").length}`,
+      14,
+      60
+    );
+    doc.text(
+      `Average Performance: ${(
+        teamData.reduce((acc, m) => acc + m.performance, 0) / teamData.length
+      ).toFixed(1)}%`,
+      14,
+      70
+    );
+    doc.text(
+      `Total Active Loans: ${teamData.reduce(
+        (acc, m) => acc + m.activeLoans,
+        0
+      )}`,
+      14,
+      80
+    );
+
+    // Add table
+    autoTable(doc, {
+      startY: 90,
+      head: [
+        [
+          "Name",
+          "Position",
+          "Status",
+          "Performance",
+          "Active Loans",
+          "Certifications",
+          "Join Date",
+        ],
+      ],
+      body: teamData.map((member) => [
+        member.name,
+        member.position,
+        member.status,
+        `${member.performance}%`,
+        member.activeLoans.toString(),
+        member.certifications.toString(),
+        new Date(member.joinDate).toLocaleDateString(),
+      ]),
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    // Save the PDF
+    doc.save("team-report.pdf");
+  };
 
   const columns = [
-    createSortableColumn("name", "Name", (row) => (
+    createSortableColumn("name", "Name", (row: TeamMember) => (
       <div className="flex items-center gap-2">
         <div className="font-medium">{row.name}</div>
         {row.position === "Senior Broker" && (
@@ -63,7 +176,7 @@ const TeamManagement: FC = () => {
       </div>
     )),
     createSortableColumn("position", "Position"),
-    createSortableColumn("status", "Status", (row) => (
+    createSortableColumn("status", "Status", (row: TeamMember) => (
       <Badge
         variant={row.status === "Active" ? "default" : "secondary"}
         className="capitalize"
@@ -71,16 +184,20 @@ const TeamManagement: FC = () => {
         {row.status}
       </Badge>
     )),
-    createSortableColumn("specialization", "Specialization", (row) => (
-      <div className="flex gap-1">
-        {row.specialization.map((spec: any) => (
-          <Badge key={spec} variant="outline" className="capitalize">
-            {spec}
-          </Badge>
-        ))}
-      </div>
-    )),
-    createSortableColumn("performance", "Performance", (row) => (
+    createSortableColumn(
+      "specialization",
+      "Specialization",
+      (row: TeamMember) => (
+        <div className="flex gap-1">
+          {row.specialization.map((spec: string) => (
+            <Badge key={spec} variant="outline" className="capitalize">
+              {spec}
+            </Badge>
+          ))}
+        </div>
+      )
+    ),
+    createSortableColumn("performance", "Performance", (row: TeamMember) => (
       <div className="flex items-center gap-2">
         <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
           <div
@@ -93,21 +210,24 @@ const TeamManagement: FC = () => {
     )),
     createSortableColumn("activeLoans", "Active Loans"),
     createSortableColumn("certifications", "Certifications"),
-    createSortableColumn("joinDate", "Join Date", (row) => (
+    createSortableColumn("joinDate", "Join Date", (row: TeamMember) => (
       <span>{new Date(row.joinDate).toLocaleDateString()}</span>
     )),
     createActionsColumn([
       {
         label: "View Profile",
-        onClick: (data: any) => navigate(`/branch-manager/team/${data.id}`),
+        onClick: (data: TeamMember) =>
+          navigate(`/branch-manager/team/${data.id}`),
       },
       {
         label: "Send Message",
-        onClick: (data: any) => window.location.href = `mailto:${data.email}`,
+        onClick: (data: TeamMember) =>
+          (window.location.href = `mailto:${data.email}`),
       },
       {
         label: "Call",
-        onClick: (data: any) => window.location.href = `tel:${data.phone}`,
+        onClick: (data: TeamMember) =>
+          (window.location.href = `tel:${data.phone}`),
       },
     ]),
   ];
@@ -121,33 +241,53 @@ const TeamManagement: FC = () => {
             Manage your broker team, track performance, and handle assignments
           </p>
         </div>
-        <Button onClick={() => navigate("/branch-manager/team/new")}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Team Member
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Team Member
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px] md:max-w-[800px] ">
+            <DialogHeader>
+              <DialogTitle>Add New Team Member</DialogTitle>
+              <DialogDescription>
+                Fill in the details to add a new team member to your broker
+                team.
+              </DialogDescription>
+            </DialogHeader>
+            <AddTeamMember onSubmit={handleAddTeamMember} />
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Team Members</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Team Members
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{teamData.length}</div>
             <p className="text-xs text-muted-foreground">
-              {teamData.filter(m => m.status === "Active").length} Active
+              {teamData.filter((m) => m.status === "Active").length} Active
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Performance</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Average Performance
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {Math.round(
-                teamData.reduce((acc, curr) => acc + curr.performance, 0) / teamData.length
-              )}%
+                teamData.reduce((acc, curr) => acc + curr.performance, 0) /
+                  teamData.length
+              )}
+              %
             </div>
             <p className="text-xs text-muted-foreground">
               Across all team members
@@ -156,7 +296,9 @@ const TeamManagement: FC = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Active Loans</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Active Loans
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -169,7 +311,9 @@ const TeamManagement: FC = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Certification Progress</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Certification Progress
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -177,7 +321,8 @@ const TeamManagement: FC = () => {
                 (teamData.reduce((acc, curr) => acc + curr.certifications, 0) /
                   (teamData.length * 5)) *
                   100
-              )}%
+              )}
+              %
             </div>
             <p className="text-xs text-muted-foreground">
               Of required certifications
@@ -197,7 +342,6 @@ const TeamManagement: FC = () => {
             id: "status",
             title: "Status",
             options: [
-           
               { label: "Active", value: "Active" },
               { label: "Training", value: "Training" },
             ],
@@ -205,7 +349,7 @@ const TeamManagement: FC = () => {
           {
             id: "position",
             title: "Position",
-              options: [
+            options: [
               { label: "Senior Broker", value: "Senior Broker" },
               { label: "Broker", value: "Broker" },
               { label: "Junior Broker", value: "Junior Broker" },
@@ -214,13 +358,10 @@ const TeamManagement: FC = () => {
         ]}
         actionButtonText="Export Team Data"
         actionButtonIcon={<Mail className="mr-2 h-4 w-4" />}
-        onActionButtonClick={() => {
-          // Handle export functionality
-          console.log("Export team data");
-        }}
+        onActionButtonClick={handleExportPDF}
       />
     </div>
   );
 };
 
-export default TeamManagement; 
+export default TeamManagement;
