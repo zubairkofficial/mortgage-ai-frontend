@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table";
 
 // Mock data for training metrics
 const trainingMetrics = {
@@ -468,9 +469,9 @@ const TrainingCenter: FC = () => {
             Create, manage, and upload materials for training courses
           </CardDescription>
         </CardHeader>
-        <CardContent>
+``        <CardContent>
           <DataTable
-            columns={coursesColumns}
+            columns={coursesColumns as ColumnDef<Course, any>[]}
             data={courses}
             searchKey="title"
             filterableColumns={[

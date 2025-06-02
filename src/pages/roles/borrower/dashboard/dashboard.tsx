@@ -105,19 +105,6 @@ const BorrowerDashboard: FC = () => {
         </CardFooter>
       </Card>
 
-      {/* Single Feature Card - My Applications */}
-      <div className="grid grid-cols-1 gap-4">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/borrower/applications")}>
-          <CardContent className="flex flex-col items-center justify-center p-8">
-            <FileText size={48} className="text-primary mb-4" />
-            <h3 className="text-lg font-semibold text-center mb-2">My Loan Applications</h3>
-            <p className="text-sm text-muted-foreground text-center">
-              View and manage all your loan applications in one place
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Application Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
@@ -164,7 +151,6 @@ const BorrowerDashboard: FC = () => {
                 <Card 
                   key={application.id} 
                   className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-primary"
-                  onClick={() => navigate(`/borrower/applications/${application.id}`)}
                 >
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">

@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Sparkles, } from 'lucide-react';
-import { Message, User } from '@/components/layout/chat/types';
+import { Message } from '@/components/layout/chat/types';
 import { MessageInput } from '@/components/layout/chat/message-input';
 import { motion } from 'framer-motion';
-import { useUser } from '@/stores/userStore';
+import { User, useUser } from '@/stores/userStore';
 import { UserRole } from '@/lib/users';
 import ChatBox from './components/chat-message-box';
 
@@ -89,11 +89,11 @@ const getSystemPrompt = (role: UserRole): string => {
 };
 
 // Mock AI user for the chat interface
-const aiUser: User = {
-  id: 0,
+const aiUser: any = {
+  id: '0',
   name: 'AI Assistant',
-  avatar: null,
-  status: 'online' as const,
+  avatar: '',
+  status: 'online',
   isOnline: true,
   messages: [
     {

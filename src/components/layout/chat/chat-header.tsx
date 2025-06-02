@@ -3,11 +3,7 @@ import { UserAvatar } from "./user-avatar";
 import { Button } from "@/components/ui/button";
 import {
   Search,
-  Phone,
-  Video,
-  BookmarkIcon,
   Info,
-  MoreVertical,
 } from "lucide-react";
 
 interface ChatHeaderProps {
@@ -28,16 +24,10 @@ export function ChatHeader({ role }: ChatHeaderProps) {
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Search className="h-4 w-4" />
         </Button>
-
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <BookmarkIcon className="h-4 w-4" />
-        </Button>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Info className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <MoreVertical className="h-4 w-4" />
-        </Button>
+  
       </div>
     </div>
   );

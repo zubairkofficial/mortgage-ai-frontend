@@ -44,9 +44,9 @@ import Transaction from "./pages/roles/account-executive/transaction/transaction
 import BorrowerDashboard from "./pages/roles/borrower/dashboard/dashboard";
 import BorrowerLayout from "./pages/roles/borrower/layout/layout";
 import OperationsSupport from './pages/roles/account-executive/operations/operations';
-import ComplianceMonitoring from './pages/roles/account-executive/compliance/compliance';
-import ReportsAnalytics from './pages/roles/account-executive/reports/reports';
-import TrainingResources from './pages/roles/account-executive/training/training';
+// import ComplianceMonitoring from './pages/roles/account-executive/compliance/compliance';
+// import ReportsAnalytics from './pages/roles/account-executive/reports/reports';
+// import TrainingResources from './pages/roles/account-executive/training/training';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -133,22 +133,22 @@ const router = createBrowserRouter([
         path: "ai-assistant",
         element: <AIAssistant />,
       },
-      {
-          path: "reports",
-          element: <ReportsAnalytics/>
-      },
-      {
-          path: "compliance",
-          element: <ComplianceMonitoring/>
-      },
+    //   {
+    //       path: "reports",
+    //       element: <ReportsAnalytics/>
+    //   },
+    //   {
+    //       path: "compliance",
+    //       element: <ComplianceMonitoring/>
+    //   },
       {
           path: "operations",
           element: <OperationsSupport/>
       },
-      {
-          path: "training",
-          element: <TrainingResources/>
-      }
+    //   {
+    //       path: "training",
+    //       element: <TrainingResources/>
+    //   }
     ],
   },
 
@@ -240,6 +240,10 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "ai-assistant",
+        element: <AIAssistant />,
       },
     ],
   },
