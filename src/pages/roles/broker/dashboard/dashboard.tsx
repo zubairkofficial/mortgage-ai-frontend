@@ -1,8 +1,11 @@
 import { FC } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter, CardAction } from "@/components/ui/card";
-import { Calendar, FileText, Plus, Check, Users, Briefcase, Bot, Building2 } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { FileText, Plus, Check, Users, Briefcase, Bot, Building2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
+import GreetingCard from "@/components/common/cards/greeting-card";
+import FeatureCards from "@/components/common/cards/feature-cards";
+import SupportCards from "@/components/common/cards/support-cards";
 
 // Define application type
 type Application = {
@@ -30,141 +33,89 @@ const applications: Application[] = [
     statusColor: "text-[var(--brand-teal)] bg-[color-mix(in_srgb,var(--brand-teal)_20%,transparent)]",
     stage: 2,
   },
-]
+];
 
-// Get time of day for greeting
-const getTimeOfDay = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "morning";
-  if (hour < 18) return "afternoon";
-  return "evening";
-};
+
+
+const featureCardsData = [
+  {
+    title: "Borrower Intake",
+    icon: FileText,
+    path: "/broker/application",
+  },
+  {
+    title: "Qualification",
+    icon: Check,
+    path: "/broker/matchmaking",
+  },
+  {
+    title: "Loan Structuring",
+    icon: Briefcase,
+    path: "/broker/loan-structuring",
+  },
+  {
+    title: "Lender Matchmaking",
+    icon: Building2,
+    path: "/broker/matchmaking",
+  },
+];
+
+const supportCardsData = [
+  {
+    title: "AI Assistant",
+    icon: Bot,
+    description: "Leverage AI to streamline your workflow:",
+    listItems: [
+      "Automated document analysis",
+      "Borrower qualification suggestions",
+      "Optimal loan structure recommendations",
+      "Lender matching based on criteria",
+    ],
+    buttonText: "Launch AI Assistant",
+    route: "/broker/ai-assistant",
+  },
+  {
+    title: "CRM Integration",
+    icon: Users,
+    description: "Manage your borrower relationships efficiently:",
+    listItems: [
+      "Synchronized contact management",
+      "Communication history tracking",
+      "Automated follow-ups and reminders",
+      "Pipeline management and reporting",
+    ],
+    buttonText: "Access CRM Dashboard",
+    route: "/broker/crm",
+  },
+];
+
 
 const BrokerDashboard: FC = () => {
   const { user } = useAuth();
-  const timeOfDay = getTimeOfDay();
   const navigate = useNavigate();   
-  const userName = user?.name;
  
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Greeting Card - Using global theme variables */}
-      <Card className="@container/card card-gradient-primary">
-        <CardHeader>
-          <CardDescription className="text-base">Welcome back</CardDescription>
-          <CardTitle className="text-2xl font-semibold @[250px]/card:text-3xl">
-            Good {timeOfDay}, {userName}!
-          </CardTitle>
-          <CardAction>
-      
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar size={18} className="text-primary" />
-              <span>Today: {new Date().toLocaleDateString()}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <FileText size={18} className="text-primary" />
-              <span>{applications.length} Active Applications</span>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Manage borrower intake, qualification, and loan structuring
-          </div>
-          <div className="text-muted-foreground">
-            Leverage AI and CRM integrations for efficient borrower-lender matchmaking
-          </div>
-        </CardFooter>
-      </Card>
+
+      <GreetingCard stats={[
+        { icon : <FileText size={18} className="text-primary" /> , 
+          label: "Active Applications", value: applications.length }]}
+          userName={user?.name || "Broker"}
+           description="Manage borrower intake, qualification, and loan structuring" 
+           footerDescription="Leverage AI and CRM integrations for efficient borrower-lender matchmaking" />
 
       {/* Feature Cards */}
+
+
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/application")}>
-          <CardContent className="flex flex-col items-center justify-center p-6">
-            <FileText size={32} className="text-primary mb-2" />
-            <span className="text-sm font-medium text-center">Borrower Intake</span>
-          </CardContent>
-        </Card>
-        
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/matchmaking")}>
-          <CardContent className="flex flex-col items-center justify-center p-6">
-            <Check size={32} className="text-primary mb-2" />
-            <span className="text-sm font-medium text-center">Qualification</span>
-          </CardContent>
-        </Card>
-        
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/loan-structuring")}>
-          <CardContent className="flex flex-col items-center justify-center p-6">
-            <Briefcase size={32} className="text-primary mb-2" />
-            <span className="text-sm font-medium text-center">Loan Structuring</span>
-          </CardContent>
-        </Card>
-        
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate("/broker/matchmaking")}>
-          <CardContent className="flex flex-col items-center justify-center p-6">
-            <Building2 size={32} className="text-primary mb-2" />
-            <span className="text-sm font-medium text-center">Lender Matchmaking</span>
-          </CardContent>
-        </Card>
+        <FeatureCards features={featureCardsData} />
       </div>
 
       {/* AI and CRM Integration Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">AI Assistant</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center mb-4">
-              <Bot size={48} className="text-primary mr-4" />
-              <div>
-                <p className="mb-2">Leverage AI to streamline your workflow:</p>
-                <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                  <li>Automated document analysis</li>
-                  <li>Borrower qualification suggestions</li>
-                  <li>Optimal loan structure recommendations</li>
-                  <li>Lender matching based on criteria</li>
-                </ul>
-              </div>
-            </div>
-            <button 
-              className="w-full py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-              onClick={() => navigate("/broker/ai-assistant")}
-            >
-              Launch AI Assistant
-            </button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">CRM Integration</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center mb-4">
-              <Users size={48} className="text-primary mr-4" />
-              <div>
-                <p className="mb-2">Manage your borrower relationships efficiently:</p>
-                <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                  <li>Synchronized contact management</li>
-                  <li>Communication history tracking</li>
-                  <li>Automated follow-ups and reminders</li>
-                  <li>Pipeline management and reporting</li>
-                </ul>
-              </div>
-            </div>
-            <button 
-              className="w-full py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-              onClick={() => navigate("/broker/crm")}
-            >
-              Access CRM Dashboard
-            </button>
-          </CardContent>
-        </Card>
+        <SupportCards cards={supportCardsData} />
       </div>
 
       {/* Loan Applications Status Cards */}

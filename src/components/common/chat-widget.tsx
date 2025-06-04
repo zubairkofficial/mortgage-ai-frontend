@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { MessageSquare, X, Send, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import ChatGPTFormatter from './chatgpt-formatter'
+import ChatGPTFormatter from '@/components/common/chatgpt-formatter'
 
 interface Message {
   id: string
@@ -204,7 +204,7 @@ const ChatWidget = () => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 20 }}
-            className="w-[420px] h-[600px] bg-background rounded-2xl shadow-2xl border border-border/40 flex flex-col overflow-hidden backdrop-blur-sm"
+            className="w-[420px] h-[90vh] bg-background rounded-2xl shadow-2xl border border-border/40 flex flex-col overflow-hidden backdrop-blur-sm"
           >
             {/* Header */}
             <div className="p-5 border-b border-border/40 flex items-center justify-between bg-gradient-to-r from-brand-blue/10 to-brand-teal/10">

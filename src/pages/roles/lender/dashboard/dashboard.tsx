@@ -33,6 +33,18 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import GreetingCard from "@/components/common/cards/greeting-card";
+
+
+export const greetingCardData = {
+    userName: "John Doe",
+    stats: [
+      { icon: <FileText size={18} className="text-primary" />, label: "Active Applications", value: 12 }
+    ],
+    description: "Welcome back",
+    footerTitle: "Manage loan applications, reviews, and funding decisions",
+    footerDescription: "Streamline your lending process with AI-powered insights",
+  }
 
 const LenderDashboard: FC = () => {
   const { user } = useAuth();
@@ -59,35 +71,7 @@ const LenderDashboard: FC = () => {
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Welcome Card */}
-      <Card className="@container/card card-gradient-primary">
-        <CardHeader>
-          <CardDescription className="text-base">Welcome back</CardDescription>
-          <CardTitle className="text-2xl font-semibold @[250px]/card:text-3xl">
-            Good {timeOfDay}, {userName}!
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar size={18} className="text-primary" />
-              <span>Today: {new Date().toLocaleDateString()}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <FileText size={18} className="text-primary" />
-              <span>12 Active Applications</span>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Manage loan applications, reviews, and funding decisions
-          </div>
-          <div className="text-muted-foreground">
-            Streamline your lending process with AI-powered insights
-          </div>
-        </CardFooter>
-      </Card>
-
+      <GreetingCard data={greetingCardData} />
       {/* Feature Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card
